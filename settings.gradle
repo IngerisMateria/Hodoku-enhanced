@@ -1,0 +1,6 @@
+plugins {
+    // Auto-provisions the JDK toolchain if the required version is not installed
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
+}
+
+rootProject.name = 'hodoku'

@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+// Lo que reporta el binario upstream (v2.3.2 Build 116); esquema propio del fork, a definir
+version = '2.3.2'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// Legacy layout: sources and resources (img/, intl/, help/, templates.dat) live together in src/
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['src']
+            excludes = ['**/*.java']
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainClass = 'sudoku.Main'
+}
+
+jar {
+    archiveBaseName = 'hodoku'
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+}
