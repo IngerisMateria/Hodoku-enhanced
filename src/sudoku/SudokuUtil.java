@@ -270,18 +270,13 @@ public class SudokuUtil {
 		}
 
 		// ok, the correct class name is now in className
-		// -> obtain an instance of the LaF class
-		ClassLoader classLoader = MainFrame.class.getClassLoader();
-		Class<?> lafClass = null;
-		try {
-			lafClass = classLoader.loadClass(className);
-		} catch (ClassNotFoundException e) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Error changing LaF 1", e);
-			return;
-		}
+		// -> obtain an instance of the LaF class; must go through UIManager,
+		// direct reflective instantiation of com.sun.* LaF classes is blocked
+		// by the module system on JDK 9+
 		LookAndFeel instance = null;
 		try {
-			instance = (LookAndFeel) lafClass.newInstance();
+			UIManager.setLookAndFeel(className);
+			instance = UIManager.getLookAndFeel();
 		} catch (Exception ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Error changing LaF 2", ex);
 			return;

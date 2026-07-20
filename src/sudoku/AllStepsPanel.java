@@ -234,7 +234,7 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 			if (last.getUserObject() instanceof String) {
 				// Erstes Step-Kind holen
 				@SuppressWarnings("unchecked")
-				Enumeration<DefaultMutableTreeNode> children = (Enumeration<DefaultMutableTreeNode>) last.children();
+				Enumeration<DefaultMutableTreeNode> children = (Enumeration<DefaultMutableTreeNode>) (Enumeration<?>) last.children();
 				while (children.hasMoreElements()) {
 					DefaultMutableTreeNode act = children.nextElement();
 					if (act.getUserObject() instanceof SolutionStep) {
@@ -867,7 +867,7 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 	private int getTopLevelIndex(DefaultMutableTreeNode root, SolutionStep step) {
 		int index = 0;
 		@SuppressWarnings("unchecked")
-		Enumeration<DefaultMutableTreeNode> nodes = (Enumeration<DefaultMutableTreeNode>) root.children();
+		Enumeration<DefaultMutableTreeNode> nodes = (Enumeration<DefaultMutableTreeNode>) (Enumeration<?>) root.children();
 		while (nodes.hasMoreElements()) {
 			DefaultMutableTreeNode nextNode = nodes.nextElement();
 			SolutionStep actStep = getStepFromNode(nextNode);
@@ -885,7 +885,7 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 		} else if (node.getUserObject() instanceof String) {
 			// erstes Kind suchen, das ein SolutionStep ist
 			@SuppressWarnings("unchecked")
-			Enumeration<DefaultMutableTreeNode> nodes = (Enumeration<DefaultMutableTreeNode>) node.children();
+			Enumeration<DefaultMutableTreeNode> nodes = (Enumeration<DefaultMutableTreeNode>) (Enumeration<?>) node.children();
 			while (nodes.hasMoreElements()) {
 				DefaultMutableTreeNode nextNode = nodes.nextElement();
 				if (nextNode.getUserObject() instanceof SolutionStep) {
@@ -903,7 +903,7 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 			if (last.getUserObject() instanceof String) {
 				// Erstes Step-Kind anzeigen
 				@SuppressWarnings("unchecked")
-				Enumeration<DefaultMutableTreeNode> children = (Enumeration<DefaultMutableTreeNode>) last.children();
+				Enumeration<DefaultMutableTreeNode> children = (Enumeration<DefaultMutableTreeNode>) (Enumeration<?>) last.children();
 				while (children.hasMoreElements()) {
 					DefaultMutableTreeNode act = children.nextElement();
 					if (act.getUserObject() instanceof SolutionStep) {

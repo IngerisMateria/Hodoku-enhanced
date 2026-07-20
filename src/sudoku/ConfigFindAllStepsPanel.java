@@ -697,7 +697,7 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 				continue;
 			}
 			@SuppressWarnings("unchecked")
-			Enumeration<CheckNode> en = (Enumeration<CheckNode>) root.children();
+			Enumeration<CheckNode> en = (Enumeration<CheckNode>) (Enumeration<?>) root.children();
 			CheckNode act = null;
 			while (en.hasMoreElements()) {
 				act = en.nextElement();
