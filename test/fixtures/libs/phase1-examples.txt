@@ -1,0 +1,18 @@
+# Casos de ejemplo del runner de librerias (milestone 0.3) — formato LIBRARY de HoDoKu,
+# el mismo que consume sudoku.RegressionTester:
+#   :codigo[-x]:cands:grid81:candidatos-ya-borrados:eliminaciones-del-paso:comentario
+# Un sufijo -x en el codigo marca caso negativo: NINGUN paso de esa tecnica debe
+# existir en ese estado. Estados cosechados de solve paths reales del corpus 0.2
+# (ver docs/harness.md). Codigos: 0803 = W-Wing, 1101 = Sue de Coq.
+
+# W-Wing presente (estado intermedio de un puzzle HARD del corpus)
+:0803:23:.+9+71...8+5+81.7.5..6+5+62+39+87+14..9...+1.31.......27.....4..9+48+25.6+3.6..8.9.4..7.+6.4...:445 355 455 365 199:311::
+
+# Sue de Coq presente (estado intermedio de un puzzle UNFAIR del corpus)
+:1101:36789:81..47.5......1+4..+42.6..+1...843.+29..7+3.8.6+5+24..2..438......5.4..+4.1......9.42..15:521 523 525 925 939 561 565 779 879 383 788 789 889:385 671 673 677 679 773 777 885 985::
+
+# Caso negativo: en el estado del W-Wing de arriba NO existe ningun Sue de Coq
+:1101-x:x:.+9+71...8+5+81.7.5..6+5+62+39+87+14..9...+1.31.......27.....4..9+48+25.6+3.6..8.9.4..7.+6.4...:445 355 455 365 199::
+
+# Caso negativo: en el estado del Sue de Coq de arriba NO existe ningun W-Wing
+:0803-x:x:81..47.5......1+4..+42.6..+1...843.+29..7+3.8.6+5+24..2..438......5.4..+4.1......9.42..15:521 523 525 925 939 561 565 779 879 383 788 789 889::

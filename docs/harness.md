@@ -1,8 +1,9 @@
-# Arnés de verificación (milestone 0.2)
+# Arnés de verificación (milestones 0.2 y 0.3)
 
-Tres piezas que custodian todo el desarrollo posterior: el **modo batch JSON**
-(consola), el **validador de soundness** y los **snapshot tests** sobre un corpus
-fijo. Todo el código vive en el paquete `harness` (`src/harness/`); los tests en
+Piezas que custodian todo el desarrollo posterior: el **modo batch JSON**
+(consola), el **validador de soundness**, los **snapshot tests** sobre un corpus
+fijo (0.2) y el **runner de librerías** para fixtures por técnica (0.3). Todo el
+código vive en el paquete `harness` (`src/harness/`); los tests en
 `test/harness/` con fixtures en `test/fixtures/`.
 
 ## Modo batch JSON (`--batch-json`)
@@ -121,6 +122,58 @@ legítimamente los solve paths):
 regenera `snapshots.jsonl` desde el corpus; el diff se revisa y commitea junto
 con el cambio que lo causó. Ese es el único camino válido: nunca editar el
 archivo a mano ni regenerarlo "porque el test está rojo" sin entender el diff.
+
+## Runner de librerías — formato v2 de fixtures por técnica (milestone 0.3)
+
+**Decisión: se reutiliza el formato de librería nativo de HoDoKu** (el de
+`sudoku.RegressionTester` / `ClipboardMode.LIBRARY`) en vez de inventar uno:
+
+```
+:codigo[-x]:cands:grid81:candidatos-ya-borrados:eliminaciones-del-paso:comentario
+```
+
+- `codigo`: código de técnica de `SolutionType.getLibraryType()` (p. ej. `0803` =
+  W-Wing, `1101` = Sue de Coq). Sufijo `-x` = **caso negativo**: ningún paso de esa
+  técnica debe existir en ese estado (fixtures anti-falsos-positivos).
+- `grid81`: los 81 caracteres del estado; `+` prefija celdas resueltas no-given.
+- `candidatos-ya-borrados`: tripletas `crc` (candidato, fila, columna) que definen,
+  junto con el grid, el estado exacto de candidatos.
+
+Razones para reutilizarlo: (a) `Sudoku2.setSudoku()` ya lo parsea nativamente, con lo
+que un fixture define un **estado intermedio exacto** (grid + candidatos) en una sola
+línea de texto; (b) soporta casos negativos, que la fase 1 necesita; (c) cualquier
+estado alcanzado en la GUI o en un solve se exporta a este formato con
+`getSudoku(ClipboardMode.LIBRARY, step)`, así que generar fixtures nuevos es barato;
+(d) los archivos lib del ecosistema HoDoKu existente son reusables tal cual.
+
+Piezas:
+
+- `harness.LibraryCaseRunner`: parsea una línea, reconstruye el estado y asserta
+  presencia/ausencia de la técnica vía `SudokuStepFinder.getStep(type)` con la config
+  default del arnés. **Alcance deliberado**: solo presencia/ausencia de la técnica, no
+  igualdad exacta de eliminaciones; las subvariantes numéricas `-N` de
+  RegressionTester (que togglean opciones del solver por caso) se rechazan con error.
+  Si un milestone de fase 1 las necesita, se agregan en ese momento.
+- `test/fixtures/libs/*.txt`: un archivo lib por grupo de casos; líneas `#` son
+  comentarios. Los milestones de técnica de fase 1 agregan acá sus fixtures
+  (positivos etiquetados + negativos).
+- `LibraryCaseRunnerTest`: corre todos los casos de `libs/` (hoy, 4 casos de ejemplo
+  con W-Wing y Sue de Coq cosechados de solve paths reales del corpus 0.2, dos
+  positivos y dos negativos cruzados).
+
+`sudoku.RegressionTester` (el tester legacy) queda intacto y sin uso directo: sus
+resultados van a stdout y sus contadores son privados, así que no sirve programático
+desde JUnit; lo que se reutiliza es su **formato**, no su código.
+
+## Subsets de corpus (milestone 0.3)
+
+- `CorporaSubsetTest`: unicidad de solución (brute force vía
+  `HarnessRunner.countSolutions`) de los 300 puzzles de
+  `te3-mith-200.txt` + `te2-eleven-100.txt`. Procedencia: `docs/corpora.md`.
+- `Te3SmokeTest`: sobre una muestra determinística del subset T&E(3) (1 de cada 10),
+  el solve completo con config default debe terminar resuelto y sound (hoy cae al
+  brute force: son monstruos sin técnica implementada que los muerda). La pasada
+  completa de los 200 se validó al cierre del 0.3 (ver `docs/log.md`).
 
 ## Correr los tests
 
