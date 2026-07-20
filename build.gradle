@@ -64,6 +64,42 @@ tasks.register('updateSnapshots', JavaExec) {
     args '--batch-json', 'test/fixtures/corpus.txt', '--out', 'test/fixtures/snapshots.jsonl'
 }
 
+// Corpus sources (see docs/corpora.md). Downloads the full collections into
+// data/corpora/ (gitignored). The committed fixtures under test/fixtures/ are
+// small curated subsets of these; this task is only needed to (re)curate them
+// or to run large-scale diffs, never for the normal build/test cycle.
+tasks.register('fetchCorpora') {
+    group = 'corpus'
+    description = 'Downloads the corpus collections from denis-berthier/Sudoku-classif into data/corpora/'
+    // pinned for reproducibility; bump deliberately when upstream adds collections
+    def commit = '15c9d217b08d2d3ebf0f147d4f7c0beb5c2fcdb2'
+    def base = "https://raw.githubusercontent.com/denis-berthier/Sudoku-classif/${commit}"
+    def files = [
+        'mith-158276-TE3/puzzles.txt',
+        'mith-158276-TE3/Sample1000/puzzles.txt',
+        'mith-158276-TE3/Sample1000/minimals.txt',
+        'mith-158276-TE3/Sample1000/list.txt',
+        'eleven-26370-TE2/puzzles.txt',
+    ]
+    def targetDir = layout.projectDirectory.dir('data/corpora/sudoku-classif')
+    outputs.dir(targetDir)
+    doLast {
+        files.each { path ->
+            def target = targetDir.file(path).asFile
+            if (target.exists()) {
+                logger.lifecycle("ya existe, se saltea: ${path}")
+                return
+            }
+            target.parentFile.mkdirs()
+            logger.lifecycle("bajando ${path}...")
+            new URL("${base}/${path}").withInputStream { in_ ->
+                target.withOutputStream { out -> out << in_ }
+            }
+        }
+        logger.lifecycle('Listo. ph_2010.zip (champagne) no se puede bajar automaticamente: ver docs/corpora.md')
+    }
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }

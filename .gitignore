@@ -3,3 +3,5 @@ bin/
 legacy/
 build/
 .gradle/
+# Corpus completos descargados (nunca se commitean; ver docs/corpora.md)
+data/corpora/
