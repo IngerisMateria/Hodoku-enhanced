@@ -391,6 +391,13 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 
+		// new console mode (milestone 0.2): double-dash syntax to avoid the
+		// MSYS path mangling of the legacy '/xy' options; bypasses the legacy
+		// argument parsing and config loading completely
+		if (args.length > 0 && args[0].equals("--batch-json")) {
+			System.exit(harness.BatchJsonMode.run(args));
+		}
+
 		Handler fh = new FileHandler("%t/hodoku.log", false);
 		fh.setFormatter(new SimpleFormatter());
 		fh.setLevel(Level.SEVERE);
