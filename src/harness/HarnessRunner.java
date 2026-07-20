@@ -43,7 +43,7 @@ public final class HarnessRunner {
 	private HarnessRunner() {
 	}
 
-	private static synchronized void initialize() {
+	static synchronized void initialize() {
 		if (!initialized) {
 			Options.resetAll();
 			// creating one Sudoku2 up front initializes the static tables
@@ -51,6 +51,24 @@ public final class HarnessRunner {
 			solver = new SudokuSolver();
 			initialized = true;
 		}
+	}
+
+	/**
+	 * Brute-force solution count only (0, 1 or 2 = "2 or more"), without the
+	 * logical solve of {@link #analyze(String)}. This is what the subset
+	 * uniqueness tests use: a full logical solve of a T&amp;E(3) monster is
+	 * expensive, the uniqueness check is not.
+	 */
+	public static synchronized int countSolutions(String line) {
+		initialize();
+		String puzzle = line == null ? "" : line.trim();
+		if (!isValidPuzzleLine(puzzle)) {
+			throw new IllegalArgumentException("invalid puzzle line (expected 81 chars of [0-9.]): " + line);
+		}
+		Sudoku2 sudoku = new Sudoku2();
+		sudoku.setSudoku(puzzle);
+		SudokuGenerator generator = SudokuGeneratorFactory.getDefaultGeneratorInstance();
+		return generator.getNumberOfSolutions(sudoku, 2);
 	}
 
 	/** true if <code>line</code> is 81 chars of digits and '.' (0 = empty). */
