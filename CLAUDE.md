@@ -56,27 +56,37 @@ del upstream 2.2.0 de hobiwan).
 ## Roadmap
 - [x] 0.1 Build reproducible (Gradle) con JDK 17/21 + GitHub Actions CI
 - [x] 0.2 Arnés: validador de soundness, batch JSON, snapshot tests
-- [ ] 0.3 Corpus etiquetado como fixtures (colecciones del foro / base de champagne)   ← PRÓXIMO
-- [ ] 1.1 WXYZ-Wing / bent naked subsets (establece la plantilla de técnica nueva)
-- [ ] 1.2 Fireworks (triple primero; pair/quad después)
-- [ ] 1.3 3D Medusa (el coloring actual es single-digit)
-- [ ] 1.4 Unicidad extendida: BUG-lite, MUG, reverse BUG, unique loops largos
-- [ ] 1.5 (opcional) Gurth's Symmetrical Placement
-- [ ] 2.1 SK-Loop (clásico de 16 celdas → generalización) + rendering
-- [ ] 2.2 MSLS (formulación de David P. Bird; 4×4 clásico → general)
-- [ ] 2.3 Multifish acotado
-- [ ] 3.1 JExocet básico
-- [ ] 3.2 Double JE
-- [ ] 3.3 Tabla completa de eliminaciones JE+
-- [ ] 3.4 Senior Exocet (stretch)
-- [ ] 4.1 Motor rank-0: sets/linksets + verificador-explicador (retro-valida la Fase 2)
-- [ ] 4.2 Búsquedas rank-0 dirigidas
-- [ ] 5.1 Chain engine v2: módulo AIC nuevo (grafo de links explícito, nodos como objetos)
-- [ ] 5.2 Correr en paralelo con TablingSolver y diffear sobre el corpus
-- [ ] 5.3 Nodos estructura: AHS → almost-fish → almost-UR
-- [ ] 5.4 Cadenas dinámicas / memoria (stretch)
-- [ ] 5.5 Decidir destino del TablingSolver (retirar u opción legacy)
-- [ ] 6.x Recalibración de dificultad, docs, release
+- [x] 0.3 Corpus etiquetado como fixtures (colecciones del foro / base de champagne)
+- [ ] 1.1 WXYZ-Wing (bent naked subset n=4; establece la plantilla de técnica nueva)
+- [ ] 1.2 VWXYZ-Wing y mayores (mismo motor, parametrizado n≥5)
+- [ ] 1.3 M-Wing / S-Wing / L-Wing / H-Wing
+- [ ] 1.4 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
+- [ ] 1.5 Bivalue Oddagon
+- [ ] 1.6 Tridagon* (fixtures: subset T&E(3) del 0.3)
+- [ ] 1.7 Pack Uniqueness: Unique Loop, Extended UR, BUG-Lite, Reverse BUG, MUG
+- [ ] 1.8 Fireworks*
+- [ ] 1.9 3D Medusa (+ trazar hallazgo B del inventario)
+- [ ] 1.10 GEM* + integración coloring→generador por estrategia
+- [ ] 1.11 APE / ATE
+- [ ] 1.12 ALS-W-Wing + Extended Sue de Coq + AHS
+- [ ] 1.13 Desglose fish: Siamese/endo/cannibal como ítems configurables estilo HoDoKu;
+      revisión de defaults (Kraken, mutants, tamaños ≥5)
+- [ ] 2.1 SK-Loop* (clásico 16 celdas → general) + rendering
+- [ ] 2.2 MSLS* (formulación DPB; 4×4 clásico → general)
+- [ ] 2.3 SET / Anillo de Phistomefel* (instancias geométricas fijas)
+- [ ] 3.1 Junior Exocet* → 3.2 Double JE* → 3.3 JE+ (tabla completa)* → 3.4 Senior Exocet*
+- [ ] 4.1 Motor AIC v2 (módulo nuevo en paralelo a TablingSolver, diff sobre corpus)
+- [ ] 4.2 Nodos ALS / AHS / AALS
+- [ ] 4.3 Nodos almost-fish (kraken en cadenas) / almost-UR
+- [ ] 4.4 Nishio + jerarquía forcing (Dynamic FC)
+- [ ] 4.5 Nested FC
+- [ ] 4.6 Destino del TablingSolver (retirar u opción legacy)
+- [ ] 5.x Recalibración de dificultad, docs, release
+
+Los ítems con * requieren spec previa en `docs/specs/`. **Fuera de alcance** (decisión del
+dueño, 2026-07-20): multifish / rank-0 genérico; SK-Loop, MSLS y SET/Phistomefel se
+implementan como patrones dirigidos sin el motor general (ver
+`docs/inventario-tecnicas.md`, que reemplaza el detalle de este roadmap).
 
 ## Reglas de trabajo
 - Un milestone por sesión. No se arranca el siguiente sin el criterio de aceptación en verde.
