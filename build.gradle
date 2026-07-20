@@ -12,7 +12,12 @@ java {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 // Legacy layout: sources and resources (img/, intl/, help/, templates.dat) live together in src/
+// Tests live in test/ (java + fixtures side by side, same pattern as src/)
 sourceSets {
     main {
         java {
@@ -23,6 +28,40 @@ sourceSets {
             excludes = ['**/*.java']
         }
     }
+    test {
+        java {
+            srcDirs = ['test']
+        }
+        resources {
+            srcDirs = ['test']
+            excludes = ['**/*.java']
+        }
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+    maxHeapSize = '1g'
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat 'full'
+    }
+}
+
+// Intentional snapshot updates only: regenerates the committed solve-path
+// snapshots from the corpus. Any other snapshot diff must stay red.
+tasks.register('updateSnapshots', JavaExec) {
+    group = 'verification'
+    description = 'Regenerates test/fixtures/snapshots.jsonl from test/fixtures/corpus.txt'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'sudoku.Main'
+    args '--batch-json', 'test/fixtures/corpus.txt', '--out', 'test/fixtures/snapshots.jsonl'
 }
 
 tasks.withType(JavaCompile).configureEach {

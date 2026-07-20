@@ -1,0 +1,8 @@
+# Puzzles extremos conocidos (smoke test: unicidad + soundness + terminación).
+# Verificados con el brute force del propio HoDoKu: solución única los tres.
+# Easter Monster (JExocet clásico / SK-Loop)
+1.......2.9.4...5...6...7...5.9.3.......7.......85..4.7.....6...3...9.8...2.....1
+# Golden Nugget
+.......39.....1..5..3.5.8....8.9...6.7...2...1..4.......9.8..5..2....6..4..7.....
+# Platinum Blonde
+.......12........3..23..4....18....5.6..7.8.......9.....85.....9...4.5..47...6...
