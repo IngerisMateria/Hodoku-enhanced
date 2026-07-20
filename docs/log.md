@@ -1,5 +1,49 @@
 # Log de milestones
 
+## 0.2 — Arnés de verificación — 2026-07-20
+
+Hecho: paquete `harness` nuevo (batch JSON, validador de soundness, extractor de pasos),
+source set de tests en `test/` con JUnit 5, corpus de 30 puzzles + 3 extremos como fixtures,
+snapshot tests con tarea `updateSnapshots`, y `docs/harness.md` con esquema y uso. Único
+toque fuera del paquete: hook de `--batch-json` al inicio de `sudoku.Main`. `gradlew build`
+ya arrastraba `test`, así que el workflow de CI no se tocó.
+
+Suite: 71 tests en verde (30 corpus + 3 extremos + 31 snapshots + 4 del validador con pasos
+sintéticos + 3 e2e del modo batch).
+
+Desvíos / hallazgos:
+
+- `Options.getInstance()` autolee un `hodoku.hcfg` de `%TEMP%` si existe: la config de
+  técnicas (y por lo tanto el solve path) dependería de la máquina. El arnés fuerza
+  `Options.resetAll()` antes de resolver; el modo `--batch-json` se saltea todo el parsing
+  legacy y la carga de config.
+- Los nombres visibles de niveles y técnicas salen de ResourceBundles (cambian con el
+  idioma). El JSON usa los nombres de enum (`DifficultyType`, `SolutionType`), que son
+  estables entre máquinas — clave para que los snapshots pasen igual acá y en CI.
+- Semántica de placements relevada de los `doStep()`: solo SimpleSolver (singles),
+  BruteForceSolver, TemplateSolver y TablingSolver (forcing chains/nets con verity)
+  colocan valores; todo el resto solo elimina candidatos. `StepRecord.from` replica eso.
+- Archivos escritos por PowerShell 5.1 llevan BOM UTF-8 y rompían la primera línea del
+  batch; el reader lo tolera (con test).
+- Easter Monster verificado: solución única (igual que Golden Nugget y Platinum Blonde,
+  los otros dos extremos elegidos). Los tres terminan en ~1s con la config default
+  (brute force habilitado como última técnica).
+- El corpus salió en 87 intentos de generación (la distribución del generador default
+  cubre UNFAIR/EXTREME más seguido de lo esperado). Generado una vez y commiteado;
+  regenerarlo invalidaría los snapshots.
+
+Cierre: pusheado y Actions en verde (mismo workflow del 0.1; `build` ejecuta la suite).
+
+### Resumen para el dueño del proyecto
+
+Le pusimos al proyecto su red de seguridad. Desde ahora, cada vez que subamos un cambio,
+un robot resuelve una colección fija de 33 sudokus (de fáciles a monstruos famosos) y
+verifica dos cosas: que ningún paso del programa contradiga jamás la solución real del
+puzzle, y que el camino de resolución no haya cambiado sin que nos demos cuenta. Además
+el programa ahora puede escupir, por consola, la resolución completa de cualquier lista
+de puzzles en un formato que otras herramientas pueden leer, para comparar contra
+programas de referencia. Probamos la alarma a propósito con pasos falsos: suena.
+
 ## 0.1 — Build reproducible (Gradle) — 2026-07-19
 
 Hecho: wrapper Gradle 8.14.3, `build.gradle` con toolchain Java 21 (foojay resolver para
