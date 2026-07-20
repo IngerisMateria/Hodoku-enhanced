@@ -34,6 +34,14 @@ Desvíos / hallazgos:
 - El bit ejecutable de `gradlew` se fijó en el índice git
   (`git update-index --chmod=+x gradlew`) para que el workflow corra en Linux.
 
-Pendiente para cerrar del todo el criterio de aceptación: push a un remoto GitHub propio
-para ver el workflow en verde (el clon apunta al upstream PseudoFish, sin permisos de
-push). Nada está commiteado todavía.
+Cierre: pusheado a IngerisMateria/Hodoku-enhanced (`origin`; el upstream PseudoFish quedó
+como remote `upstream`) y workflow de Actions en verde.
+
+### Resumen para el dueño del proyecto
+
+El programa ya se puede fabricar desde cero con un solo comando, en cualquier máquina y
+sin instalar nada a mano: eso antes no existía y era el paso previo a todo lo demás.
+Comprobamos que el resultado funciona: la aplicación abre, genera un sudoku y lo resuelve.
+Además, cada vez que subamos un cambio, un robot de GitHub rehace la fabricación y avisa
+si algo se rompió. Hubo que hacer dos arreglos chicos porque el código era de una época
+anterior de Java; nada del "cerebro" que resuelve sudokus se tocó.

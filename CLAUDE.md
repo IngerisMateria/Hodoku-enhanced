@@ -54,8 +54,8 @@ del upstream 2.2.0 de hobiwan).
 - Batch CLI con salida JSON para diffear contra oráculos externos.
 
 ## Roadmap
-- [ ] 0.1 Build reproducible (Gradle) con JDK 17/21 + GitHub Actions CI   ← PRÓXIMO
-- [ ] 0.2 Arnés: validador de soundness, batch JSON, snapshot tests
+- [x] 0.1 Build reproducible (Gradle) con JDK 17/21 + GitHub Actions CI
+- [ ] 0.2 Arnés: validador de soundness, batch JSON, snapshot tests   ← PRÓXIMO
 - [ ] 0.3 Corpus etiquetado como fixtures (colecciones del foro / base de champagne)
 - [ ] 1.1 WXYZ-Wing / bent naked subsets (establece la plantilla de técnica nueva)
 - [ ] 1.2 Fireworks (triple primero; pair/quad después)
