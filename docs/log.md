@@ -1,5 +1,60 @@
 # Log de milestones
 
+## 0.3 — Corpus etiquetado como fixtures — 2026-07-20
+
+Hecho: roadmap de CLAUDE.md reemplazado por la versión del inventario de técnicas
+(`docs/inventario-tecnicas.md`, sección D); `data/corpora/` gitignoreado con tarea
+`fetchCorpora` (descargas pineadas a commit fijo de denis-berthier/Sudoku-classif);
+subsets curados commiteados: 200 T&E(3) de mith (futuros fixtures de Tridagon, 1.6) y
+100 T&E(2) de eleven, con procedencia en cabecera y en `docs/corpora.md`; runner de
+librerías (`harness.LibraryCaseRunner` + `LibraryCaseRunnerTest`) reutilizando el
+formato LIBRARY nativo de HoDoKu como formato v2 de fixtures por técnica, con 4 casos
+de ejemplo (W-Wing / Sue de Coq, positivos y negativos); smoke del subset T&E(3).
+
+Suite nueva sobre la del 0.2: 300 tests de unicidad (`CorporaSubsetTest`), 20 de smoke
+T&E(3) (`Te3SmokeTest`, muestra determinística 1 de cada 10) y el runner con sus casos.
+
+Desvíos / hallazgos:
+
+- El repo Sudoku-classif trae `Sample1000`/`Sample500` curados por el propio Berthier
+  dentro de la colección T&E(3): el subset de 200 sale de ahí (1 de cada 5), no de la
+  colección completa — mejor muestra que cualquier curado propio. Licencia GPLv3
+  (misma que el fork); commit pineado `15c9d21`.
+- Smoke completo (una vez, al cierre): los 200 T&E(3) por `analyze()` + soundness →
+  0 violaciones, 65,6 s total, peor puzzle 1,2 s; y por CLI `--batch-json` → 200
+  líneas JSON, 0 errores, 200 `solved:true`. Con la config default caen rápido al
+  brute force (esperado: no hay técnica que los muerda todavía). En CI queda la
+  muestra de 20 para no pagar los 200 en cada push.
+- TablingSolver escupe `WARNING: Too many candidates` por logging en varios T&E(3);
+  es ruido conocido del legacy, no afecta resultados (soundness verde). Anotado para
+  la fase 4/5 (destino del TablingSolver).
+- `RegressionTester` legacy no sirve programático (resultados por stdout, contadores
+  privados): se reutiliza su **formato**, no su código. El runner nuevo asserta solo
+  presencia/ausencia de la técnica; subvariantes `-N` rechazadas explícitamente
+  (se agregan si un milestone de fase 1 las necesita). Justificación en
+  `docs/harness.md`.
+- Drive de champagne (`ph_2010.zip`): descarga automatizada imposible — carpeta con
+  ID pre-2021 sin `resourcekey` público, Google fuerza login anónimo (verificado por
+  navegador y HTTP directo). Link y pasos manuales en `docs/corpora.md`; **queda en
+  manos del dueño** bajarla a `data/corpora/champagne/`.
+- El primer post de t6539 (editado oct-2019) menciona `ph_1910.zip`; la versión
+  ago-2020 (`ph_2010.zip`) debería estar en la misma carpeta de Drive.
+
+Cierre: pusheado y Actions en verde.
+
+### Resumen para el dueño del proyecto
+
+Trajimos las dos colecciones de sudokus imposibles que sirven de banco de pruebas: 200
+"monstruos" del tipo que solo se rinde con la técnica Tridagon (la estrella de la fase
+1) y 100 duros de la generación anterior. Verificamos que los 300 tienen solución única
+y que el programa los procesa sin colgarse ni cometer errores (hoy los resuelve "por
+fuerza bruta", que es lo esperado: la técnica que los destraba se construye más
+adelante). Además dejamos armado el molde para los ejercicios de práctica de cada
+técnica nueva: archivos de casos que dicen "en esta posición tiene que aparecer tal
+jugada — y en esta otra NO", probado con dos técnicas que el programa ya conoce. La
+base gigante de champagne (3 millones de puzzles) hay que bajarla a mano porque Google
+pide login: los pasos están anotados, te aviso aparte.
+
 ## 0.2 — Arnés de verificación — 2026-07-20
 
 Hecho: paquete `harness` nuevo (batch JSON, validador de soundness, extractor de pasos),
