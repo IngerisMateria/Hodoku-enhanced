@@ -1,0 +1,92 @@
+# CLAUDE.md — Fork moderno de HoDoKu (nombre a definir)
+
+## Objetivo
+Fork de HoDoKu (solver/generator/trainer de sudoku, Java/Swing, GPLv3) actualizado a la teoría
+moderna de resolución: familia Exocet (JE / double JE / JE+ / SE), SK-Loop, MSLS, multifish /
+rank-0, fireworks, 3D Medusa, unicidad extendida (BUG-lite, MUG, reverse BUG, unique loops), y
+un motor de cadenas v2 con nodos ALS / AHS / almost-fish / almost-UR.
+Base: PseudoFish/Hodoku @ c37fe90 (se reporta como v2.3.2 Build 116; continuación mantenida
+del upstream 2.2.0 de hobiwan).
+
+## Decisiones tomadas
+- Seguimos en Java/Swing como fork genuino. JDK objetivo: 17 o 21 (LTS).
+- El modelo (`Sudoku2`, `SudokuSet*`) y la GUI se conservan; solo se tocan en puntos de extensión.
+- Todo código nuevo va en paquetes propios (p. ej. `solver.modern.*`), separado del legacy.
+- Rank-0: búsquedas dirigidas por familia de patrones, NO búsqueda genérica universal.
+- Licencia GPLv3. Se permite portar código del repo MIT kyoyama-kazusa/Sudoku (C#) con
+  atribución (header + archivo NOTICE). [Default provisorio; el dueño puede pedir clean-room.]
+
+## Referencias externas
+- Specs: compendio JExocet de David P. Bird + threads de forum.enjoysudoku.com
+  (SK-Loop, MSLS, fireworks, multifish).
+- Implementación abierta de referencia: github.com/kyoyama-kazusa/Sudoku (MIT, C#).
+- Oráculo de comportamiento: YZF_Sudoku (binario cerrado; usar para diffs de pasos encontrados).
+- Verificación manual de estructuras rank-0: Xsudo (Allan Barker).
+
+## Mapa del código (medido sobre 2.3.0)
+- 108 archivos Java, ~65.6k LOC. El repo NO trae build system (ni Ant ni Gradle): hay que crearlo.
+- Recursos DENTRO de `src/`: `img/`, `intl/` (ResourceBundles), `help/`, `templates.dat`.
+  Deben terminar en el classpath del jar.
+- Punto de entrada: `sudoku.Main` (`src/sudoku/Main.java`). Ojo: muchos diálogos Swing tienen
+  `main` de prueba propios; el real es ese.
+- Modelo: `src/sudoku/Sudoku2.java` (2.8k; bitmasks por celda + tablas precomputadas),
+  `SudokuSet` / `SudokuSetBase` (bitsets de 128 bits). No tocar sin necesidad.
+- Dispatcher de técnicas: `src/solver/SudokuStepFinder.java` (1.4k).
+- Cadenas legacy: `src/solver/TablingSolver.java` (3.3k; forcing chains/nets/AIC por tablas).
+  FRÁGIL: no extender ni tocar hasta Fase 5.
+- `src/sudoku/Chain.java`: nodos int-empaquetados con solo 3 tipos (NORMAL/GROUP/ALS).
+  Por eso el chain engine v2 será un módulo nuevo, no una extensión de este.
+- Catálogo de técnicas: `src/sudoku/SolutionType.java` (~96 entradas).
+- GUI: `MainFrame.java` (4.8k), `SudokuPanel.java` (4.3k; acá va el rendering nuevo de patrones).
+
+## Plantilla para agregar una técnica (6 puntos de contacto)
+1. Entrada en `SolutionType` + score/categoría default (StepConfig).
+2. Finder nuevo en paquete propio, registrado en `SudokuStepFinder`.
+3. Strings de hint en `intl/` (solo inglés por ahora).
+4. Rendering en `SudokuPanel` si el patrón necesita marcado nuevo.
+5. Fixtures: puzzles positivos etiquetados (ubicación la define el milestone 0.2).
+6. Tests: el paso se encuentra + pasa el validador de soundness.
+
+## Contrato de testing (no negociable)
+- Soundness: ninguna eliminación de ningún paso puede borrar un candidato presente en la
+  solución brute-force del puzzle. Corre sobre todo el corpus en CI.
+- Snapshot tests del solve path sobre un corpus fijo (detección de regresiones).
+- Batch CLI con salida JSON para diffear contra oráculos externos.
+
+## Roadmap
+- [ ] 0.1 Build reproducible (Gradle) con JDK 17/21 + GitHub Actions CI   ← PRÓXIMO
+- [ ] 0.2 Arnés: validador de soundness, batch JSON, snapshot tests
+- [ ] 0.3 Corpus etiquetado como fixtures (colecciones del foro / base de champagne)
+- [ ] 1.1 WXYZ-Wing / bent naked subsets (establece la plantilla de técnica nueva)
+- [ ] 1.2 Fireworks (triple primero; pair/quad después)
+- [ ] 1.3 3D Medusa (el coloring actual es single-digit)
+- [ ] 1.4 Unicidad extendida: BUG-lite, MUG, reverse BUG, unique loops largos
+- [ ] 1.5 (opcional) Gurth's Symmetrical Placement
+- [ ] 2.1 SK-Loop (clásico de 16 celdas → generalización) + rendering
+- [ ] 2.2 MSLS (formulación de David P. Bird; 4×4 clásico → general)
+- [ ] 2.3 Multifish acotado
+- [ ] 3.1 JExocet básico
+- [ ] 3.2 Double JE
+- [ ] 3.3 Tabla completa de eliminaciones JE+
+- [ ] 3.4 Senior Exocet (stretch)
+- [ ] 4.1 Motor rank-0: sets/linksets + verificador-explicador (retro-valida la Fase 2)
+- [ ] 4.2 Búsquedas rank-0 dirigidas
+- [ ] 5.1 Chain engine v2: módulo AIC nuevo (grafo de links explícito, nodos como objetos)
+- [ ] 5.2 Correr en paralelo con TablingSolver y diffear sobre el corpus
+- [ ] 5.3 Nodos estructura: AHS → almost-fish → almost-UR
+- [ ] 5.4 Cadenas dinámicas / memoria (stretch)
+- [ ] 5.5 Decidir destino del TablingSolver (retirar u opción legacy)
+- [ ] 6.x Recalibración de dificultad, docs, release
+
+## Reglas de trabajo
+- Un milestone por sesión. No se arranca el siguiente sin el criterio de aceptación en verde.
+- Al arrancar cada milestone, su spec/prompt completo se archiva verbatim en
+  `docs/milestones/NN.md`.
+- Cambios mínimos fuera del alcance del milestone; nada de refactors oportunistas.
+- Cada técnica nueva entra con sus fixtures y tests en el mismo commit/PR.
+- Las técnicas de Fase 2 en adelante requieren un spec previo en `docs/specs/` (se discute
+  fuera de Claude Code y se vuelca ahí antes de implementar).
+- TablingSolver y el generador no se tocan hasta sus fases respectivas.
+- Al cerrar un milestone: tildarlo acá y anotar desvíos o hallazgos en `docs/log.md`.
+- Todo cierre de milestone incluye, además del log técnico, un resumen de 3-5 líneas en
+  lenguaje llano para el dueño del proyecto (sin jerga de build ni de Java).
