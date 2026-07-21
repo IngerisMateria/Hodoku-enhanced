@@ -52,6 +52,13 @@ import sudoku.SolutionType;
  * then the three wings ascending; {@code fins} holds the Z candidates of the
  * pattern. The subtype is derived, not stored: type 1 iff the hinge carries Z
  * (the hinge index appears in {@code fins}).</li>
+ * <li>Oddagons ({@link SolutionType#BROKEN_WING} and
+ * {@link SolutionType#BIVALUE_ODDAGON}, milestone 1.6): {@code values} holds
+ * the digit d resp. the pair a,b ascending; {@code indices} holds the cycle
+ * cells in cycle order (NOT sorted); {@code fins} holds the guardians; empty
+ * {@code candidatesToDelete} marks the Broken Wing placement case (the
+ * target is {@code fins.get(0)}); one display chain traces the closed
+ * loop.</li>
  * </ul>
  */
 public class ModernStep extends SolutionStep {
@@ -79,6 +86,10 @@ public class ModernStep extends SolutionStep {
 		registerFormatter(SolutionType.TUVWXYZ_WING, bentSubsets);
 		registerFormatter(SolutionType.STUVWXYZ_WING, bentSubsets);
 		registerFormatter(SolutionType.RSTUVWXYZ_WING, bentSubsets);
+		// one shared formatter for both oddagon techniques (milestone 1.6)
+		HintFormatter oddagons = new OddagonFormatter();
+		registerFormatter(SolutionType.BROKEN_WING, oddagons);
+		registerFormatter(SolutionType.BIVALUE_ODDAGON, oddagons);
 	}
 
 	/**

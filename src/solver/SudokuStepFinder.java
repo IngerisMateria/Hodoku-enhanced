@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import solver.modern.BentSubsetSolver;
+import solver.modern.OddagonSolver;
 import solver.modern.WxyzWingSolver;
 import sudoku.FindAllStepsProgressDialog;
 import sudoku.SolutionStep;
@@ -60,6 +61,8 @@ public class SudokuStepFinder {
 	private BentSubsetSolver bentSubsetSolver;
 	/** The specialized solver for canonical WXYZ-Wings (modern fork). */
 	private WxyzWingSolver wxyzWingSolver;
+	/** The specialized solver for oddagons (modern fork, milestone 1.6). */
+	private OddagonSolver oddagonSolver;
 	/** The specialized solver for Coloring. */
 	private ColoringSolver coloringSolver;
 	/** The specialized solver for simple chains. */
@@ -236,6 +239,7 @@ public class SudokuStepFinder {
 			wingSolver = new WingSolver(this);
 			bentSubsetSolver = new BentSubsetSolver(this);
 			wxyzWingSolver = new WxyzWingSolver(this);
+			oddagonSolver = new OddagonSolver(this);
 			coloringSolver = new ColoringSolver(this);
 			chainSolver = new ChainSolver(this);
 			alsSolver = new AlsSolver(this);
@@ -246,8 +250,9 @@ public class SudokuStepFinder {
 			incompleteSolver = new IncompleteSolver(this);
 			giveUpSolver = new GiveUpSolver(this);
 			solvers = new AbstractSolver[] { simpleSolver, fishSolver, singleDigitPatternSolver, uniquenessSolver,
-					wingSolver, wxyzWingSolver, bentSubsetSolver, coloringSolver, chainSolver, alsSolver, miscellaneousSolver,
-					tablingSolver, templateSolver, bruteForceSolver, incompleteSolver, giveUpSolver };
+					wingSolver, wxyzWingSolver, bentSubsetSolver, oddagonSolver, coloringSolver, chainSolver, alsSolver,
+					miscellaneousSolver, tablingSolver, templateSolver, bruteForceSolver, incompleteSolver,
+					giveUpSolver };
 		} else {
 			solvers = new AbstractSolver[] { simpleSolver };
 		}
@@ -625,8 +630,24 @@ public class SudokuStepFinder {
 	}
 
 	/**
+	 * Find all Oddagons (Broken Wing, Bivalue Oddagon; modern fork, milestone
+	 * 1.6). Callers (FindAllSteps) filter by enabled step types themselves.
+	 *
+	 * @param newSudoku
+	 * @return
+	 */
+	public List<SolutionStep> getAllOddagons(Sudoku2 newSudoku) {
+		initialize();
+		Sudoku2 oldSudoku = getSudoku();
+		setSudoku(newSudoku);
+		List<SolutionStep> steps = oddagonSolver.getAllOddagons();
+		setSudoku(oldSudoku);
+		return steps;
+	}
+
+	/**
 	 * Find all Simple Colors
-	 * 
+	 *
 	 * @param newSudoku
 	 * @return
 	 */

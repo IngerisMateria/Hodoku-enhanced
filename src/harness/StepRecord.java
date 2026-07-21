@@ -80,6 +80,16 @@ public final class StepRecord {
 		case GIVE_UP:
 		case INCOMPLETE:
 			break;
+		case BROKEN_WING:
+			// modern fork (milestone 1.6): |G|=1 places the single guardian
+			// (kept in fins); otherwise a plain elimination step — mirrors
+			// OddagonSolver.doStep()
+			if (step.getCandidatesToDelete().isEmpty()) {
+				placements.add(new CellValue(step.getFins().get(0).getIndex(), step.getFins().get(0).getValue()));
+			} else {
+				addEliminations(step, eliminations);
+			}
+			break;
 		default:
 			addEliminations(step, eliminations);
 			break;

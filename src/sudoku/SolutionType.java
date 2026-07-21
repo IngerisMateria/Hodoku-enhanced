@@ -228,7 +228,14 @@ public enum SolutionType {
 	STUVWXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("STUVWXYZ-Wing"), "0808",
 			"stuvwxyz"),
 	RSTUVWXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("RSTUVWXYZ-Wing"), "0809",
-			"rstuvwxyz");
+			"rstuvwxyz"),
+	// Oddagon family (milestone 1.6): guardian logic over impossible odd cycles. Library
+	// codes 14xx: a fresh family block — every range through 13xx has upstream entries
+	// (ALS is 09xx, upstream reached 1304), verified free against every code in this
+	// enum. 1402 stays reserved for Tridagon (milestone 1.7).
+	BROKEN_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Broken_Wing"), "1400", "bw"),
+	BIVALUE_ODDAGON(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Bivalue_Oddagon"), "1401",
+			"bvo");
 	private String stepName;
 	private String libraryType;
 	private String argName;

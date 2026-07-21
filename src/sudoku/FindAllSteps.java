@@ -230,6 +230,13 @@ public class FindAllSteps implements Runnable {
 				steps1 = stepFinder.getAllWings(sudoku);
 				filterSteps(steps1);
 				steps.addAll(steps1);
+				// modern fork (milestone 1.6): oddagons, filtered by type like
+				// the uniqueness block above
+				if (isAllStepsEnabled(SolutionType.BROKEN_WING) || isAllStepsEnabled(SolutionType.BIVALUE_ODDAGON)) {
+					steps1 = stepFinder.getAllOddagons(sudoku);
+					filterSteps(steps1);
+					steps.addAll(steps1);
+				}
 				if (isAllStepsEnabled(SolutionType.SIMPLE_COLORS)) {
 					steps1 = stepFinder.findAllSimpleColors(sudoku);
 					steps.addAll(steps1);
