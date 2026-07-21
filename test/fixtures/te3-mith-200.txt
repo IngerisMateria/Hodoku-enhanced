@@ -1,4 +1,4 @@
-# T&E(3) subset — 200 puzzles, futuros fixtures del milestone 1.6 (Tridagon).
+# T&E(3) subset — 200 puzzles, futuros fixtures del milestone 1.7 (Tridagon, numeracion post-1.2).
 # Fuente: github.com/denis-berthier/Sudoku-classif @ 15c9d217b08d2d3ebf0f147d4f7c0beb5c2fcdb2
 #   archivo mith-158276-TE3/Sample1000/puzzles.txt (muestra aleatoria de 1000 del
 #   propio autor sobre la coleccion de 158.276 expansiones BRT a T&E-depth 3;

@@ -30,7 +30,7 @@ La columna `enabledTraining` es false, pero es false para TODAS las técnicas, a
 discrimina. La observación del dueño ("coloring no participa del generador de juegos por
 estrategia") apunta entonces a la capa de training/generación (filtrado en
 `ConfigTrainigPanel` / lógica de generación por técnica) y NO a los StepConfigs.
-**Ítem de verificación obligatorio en el milestone 1.9-1.10**: trazar ese filtrado y
+**Ítem de verificación obligatorio en el milestone 1.10-1.11** (numeración post-1.2): trazar ese filtrado y
 documentar la causa real. GEM y 3D Medusa: ausentes, confirmado.
 
 ## C. Gap real confirmado (~26 ítems), organizado por familia de implementación
@@ -57,19 +57,22 @@ Los ítems marcados con * requieren spec previa en `docs/specs/` antes de implem
 
 ## D. Roadmap revisado (reemplaza la sección Roadmap de CLAUDE.md desde 1.1)
 
-- [ ] 1.1 WXYZ-Wing (bent naked subset n=4; establece la plantilla de técnica nueva)
-- [ ] 1.2 VWXYZ-Wing y mayores (mismo motor, parametrizado n≥5)
-- [ ] 1.3 M-Wing / S-Wing / L-Wing / H-Wing
-- [ ] 1.4 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
-- [ ] 1.5 Bivalue Oddagon
-- [ ] 1.6 Tridagon* (fixtures: subset T&E(3) del 0.3)
-- [ ] 1.7 Pack Uniqueness: Unique Loop, Extended UR, BUG-Lite, Reverse BUG, MUG
-- [ ] 1.8 Fireworks*
-- [ ] 1.9 3D Medusa (+ trazar hallazgo B)
-- [ ] 1.10 GEM* + integración coloring→generador por estrategia
-- [ ] 1.11 APE / ATE
-- [ ] 1.12 ALS-W-Wing + Extended Sue de Coq + AHS
-- [ ] 1.13 Desglose fish: Siamese/endo/cannibal como ítems configurables estilo HoDoKu;
+- [x] 1.1 WXYZ-Wing (bent naked subset n=4; establece la plantilla de técnica nueva)
+- [x] 1.2 Desglose canónico/general del WXYZ: Bent Quad + WXYZ-Wing canónico + motor
+      bent-subset con n paramétrico (renumeración del roadmap: 2026-07-21)
+- [ ] 1.3 Bent subsets n=5..9 (VWXYZ-Wing .. RSTUVWXYZ-Wing, entradas separadas con
+      scores escalonados; defaults: 5 on, 6-9 off, estilo fish)
+- [ ] 1.4 M-Wing / S-Wing / L-Wing / H-Wing
+- [ ] 1.5 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
+- [ ] 1.6 Bivalue Oddagon
+- [ ] 1.7 Tridagon* (fixtures: subset T&E(3) del 0.3)
+- [ ] 1.8 Pack Uniqueness: Unique Loop, Extended UR, BUG-Lite, Reverse BUG, MUG
+- [ ] 1.9 Fireworks*
+- [ ] 1.10 3D Medusa (+ trazar hallazgo B)
+- [ ] 1.11 GEM* + integración coloring→generador por estrategia
+- [ ] 1.12 APE / ATE
+- [ ] 1.13 ALS-W-Wing + Extended Sue de Coq + AHS
+- [ ] 1.14 Desglose fish: Siamese/endo/cannibal como ítems configurables estilo HoDoKu;
       revisión de defaults (Kraken, mutants, tamaños ≥5)
 - [ ] 2.1 SK-Loop* (clásico 16 celdas → general) + rendering
 - [ ] 2.2 MSLS* (formulación DPB; 4×4 clásico → general)

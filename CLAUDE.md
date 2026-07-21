@@ -58,18 +58,21 @@ del upstream 2.2.0 de hobiwan).
 - [x] 0.2 Arnés: validador de soundness, batch JSON, snapshot tests
 - [x] 0.3 Corpus etiquetado como fixtures (colecciones del foro / base de champagne)
 - [x] 1.1 WXYZ-Wing (bent naked subset n=4; establece la plantilla de técnica nueva)
-- [ ] 1.2 VWXYZ-Wing y mayores (mismo motor, parametrizado n≥5) ← PRÓXIMO
-- [ ] 1.3 M-Wing / S-Wing / L-Wing / H-Wing
-- [ ] 1.4 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
-- [ ] 1.5 Bivalue Oddagon
-- [ ] 1.6 Tridagon* (fixtures: subset T&E(3) del 0.3)
-- [ ] 1.7 Pack Uniqueness: Unique Loop, Extended UR, BUG-Lite, Reverse BUG, MUG
-- [ ] 1.8 Fireworks*
-- [ ] 1.9 3D Medusa (+ trazar hallazgo B del inventario)
-- [ ] 1.10 GEM* + integración coloring→generador por estrategia
-- [ ] 1.11 APE / ATE
-- [ ] 1.12 ALS-W-Wing + Extended Sue de Coq + AHS
-- [ ] 1.13 Desglose fish: Siamese/endo/cannibal como ítems configurables estilo HoDoKu;
+- [x] 1.2 Desglose canónico/general del WXYZ: renombre a Bent Quad, WXYZ-Wing canónico
+      (bisagra + 3 alas) como entrada separada, motor bent-subset con n paramétrico
+- [ ] 1.3 Bent subsets n=5..9 (VWXYZ-Wing .. RSTUVWXYZ-Wing, entradas separadas con
+      scores escalonados; defaults: 5 on, 6-9 off, estilo fish) ← PRÓXIMO
+- [ ] 1.4 M-Wing / S-Wing / L-Wing / H-Wing
+- [ ] 1.5 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
+- [ ] 1.6 Bivalue Oddagon
+- [ ] 1.7 Tridagon* (fixtures: subset T&E(3) del 0.3)
+- [ ] 1.8 Pack Uniqueness: Unique Loop, Extended UR, BUG-Lite, Reverse BUG, MUG
+- [ ] 1.9 Fireworks*
+- [ ] 1.10 3D Medusa (+ trazar hallazgo B del inventario)
+- [ ] 1.11 GEM* + integración coloring→generador por estrategia
+- [ ] 1.12 APE / ATE
+- [ ] 1.13 ALS-W-Wing + Extended Sue de Coq + AHS
+- [ ] 1.14 Desglose fish: Siamese/endo/cannibal como ítems configurables estilo HoDoKu;
       revisión de defaults (Kraken, mutants, tamaños ≥5)
 - [ ] 2.1 SK-Loop* (clásico 16 celdas → general) + rendering
 - [ ] 2.2 MSLS* (formulación DPB; 4×4 clásico → general)

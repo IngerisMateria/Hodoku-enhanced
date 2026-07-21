@@ -30,7 +30,7 @@
 | `test/fixtures/te3-mith-200.txt` (200) | `mith-158276-TE3/Sample1000/puzzles.txt` (muestra aleatoria de 1000 del propio autor) | 1 de cada 5 líneas (1, 6, … 996) |
 | `test/fixtures/te2-eleven-100.txt` (100) | `eleven-26370-TE2/puzzles.txt` | 1 de cada 264 líneas (1, 265, … 26137), recortadas a los 81 chars del puzzle (las líneas originales traen ratings SER) |
 
-Destino: los T&E(3) son los futuros fixtures del milestone 1.6 (Tridagon); los T&E(2)
+Destino: los T&E(3) son los futuros fixtures del milestone 1.7 (Tridagon, numeración post-1.2); los T&E(2)
 sirven de corpus duro de control sin tridagon. Contrato en tests: unicidad de solución
 de los 300 (`CorporaSubsetTest`) y smoke de terminación+soundness sobre una muestra
 determinística del T&E(3) (`Te3SmokeTest`; la pasada completa de los 200 se corrió al

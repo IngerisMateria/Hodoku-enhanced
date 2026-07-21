@@ -1,5 +1,88 @@
 # Log de milestones
 
+## 1.2 — Desglose canónico/general del WXYZ + motor paramétrico — 2026-07-21
+
+Hecho, en cuatro commits lógicos:
+
+1. **Renombre** — `SolutionType.WXYZ_WING` del 1.1 pasó a `BENT_QUAD` (display "Bent
+   Quad", argName `bq`), conservando el library code `0802`: el fixture (renombrado a
+   `bent-quad.txt`) siguió andando sin tocar. Verificado: 0/30 snapshots contenían la
+   técnica, ninguno cambió. **El enum viejo muere**: saves `.hsol` de estos días que
+   referencien `WXYZ_WING` (o la clase `WxyzWingStep`, ver refactor) quedan huérfanos —
+   aceptable pre-release.
+2. **Refactor custodiado** — `WxyzWingSolver` → `solver.modern.BentSubsetSolver` con n
+   paramétrico vía `TYPE_BY_SIZE` (n=4 = Bent Quad; 1.3 registra 5..9); enumeración de
+   subconjuntos recursiva en orden lexicográfico, idéntico al de los loops fijos del
+   1.1 (primer paso estable). `WxyzWingStep` → `ModernStep`, subclase ÚNICA de
+   `SolutionStep` para todo el fork con registro de formateadores de hint por
+   `SolutionType` (cero campos nuevos; los finders registran el suyo en un static).
+   Dedup del nit del 1.1: en all-steps, pasos iguales (tipo + celdas + eliminaciones)
+   se emiten una sola vez. Criterio duro cumplido: suite verde SIN regenerar snapshots.
+3. **WXYZ-Wing canónico** — `SolutionType.WXYZ_WING` nuevo (código `0804`, siguiente
+   hueco de los wings 08xx), finder propio `solver.modern.WxyzWingSolver`: bisagra +
+   3 alas bivalue {a,Z}, Tipo 1 (Z en la bisagra) / Tipo 2 (Z fuera), naked quad
+   excluido; el tipo se reporta en el hint (estilo subtipos de fish) y se DERIVA de los
+   campos base (bisagra ∈ fins ⟺ Tipo 1) para respetar el cero-campos-nuevos de
+   `ModernStep`. Options: 5640/score 230, inmediatamente antes de Bent Quad (5650/250);
+   ambos enabled; solapamiento deliberado sin filtrado (principio de desglose).
+   Fixtures `wxyz-wing.txt`: 3 positivos T1 + 2 T2 + 3 negativos near-miss de puzzles
+   distintos (el obligatorio: el Bent Quad del screenshot del 1.1 — te2#4, r156c7+r2c8,
+   Z=5 — que NO es canónico; más un naked-quad degenerado y una estructura sin
+   eliminaciones).
+4. **Custodia + docs** — regla de custodia nueva (en CLAUDE.md y la plantilla) aplicada
+   retroactivamente: +3 puzzles te2 al corpus de snapshots.
+
+Métricas (corpus + te2-100):
+
+- Paths default: el canónico aparece en te2#47 y te2#48 (ambos Tipo 2); Bent Quad en
+  20 pasos repartidos en 16 puzzles te2; corpus: 0 y 0 (igual que en 1.1). Vs. 1.1:
+  los 22 pasos "WXYZ" en 18 puzzles ahora son 20 Bent Quad + 2 canónicos — el orden
+  5640 < 5650 hace que el canónico gane donde ambos existen, como se buscaba.
+- All-steps sobre los 10.557 estados de esos solve paths: 91 pasos canónicos (26 Tipo
+  1 — 7 corpus, 19 te2 — y 65 Tipo 2 — 9 y 56) contra 80.980 Bent Quads. Solapamiento:
+  exactamente los 91 canónicos tienen un Bent Quad con mismas celdas, Z y eliminaciones
+  idénticas (91/80.980 Bent Quads son también canónicos). O sea: en este corpus NO
+  apareció ninguna instancia canónica del caso fila+columna+caja que el motor bent no
+  cubre — la razón de que sea finder propio sigue siendo teórica, no empírica.
+- Revalidación soundness de todo lo cosechado: 81.071 pasos de ambos finders sobre los
+  10.557 estados contra brute force, **0 violaciones**.
+- Custodia: snapshot diff = exactamente 3 líneas nuevas (te2#8: 3×BENT_QUAD; te2#47 y
+  te2#48: 1×WXYZ_WING cada uno), 0 líneas modificadas. Suite verde antes y después.
+- GUI verificada sobre la ventana real (config fresca, te2#47 donde el canónico es el
+  próximo paso default): hint `WXYZ-Wing Type 2: 3/7/8/6 in r13c6,r2c35 (Z=6) =>
+  r2c4<>6`, bisagra r2c5 {3,7,8} y letras en verde, Z=6 de las alas en azul,
+  eliminación en rojo; captura revisada.
+
+Desvíos / hallazgos:
+
+- `gradlew run` ya existía desde el 0.1 (plugin `application`); el QoL nuevo es
+  `hodoku.bat` (doble clic → `gradlew -q jar` + `javaw`), documentado en
+  `docs/build.md`. Quirk Windows: con `NoDefaultCurrentDirectoryInExePath` seteado,
+  `cmd` no resuelve `gradlew.bat` del directorio actual — el .bat usa ruta explícita
+  `%~dp0gradlew.bat`.
+- Renumeración del roadmap (el nuevo 1.3 = bent subsets n=5..9): además de CLAUDE.md
+  se corrieron las referencias numéricas en `docs/inventario-tecnicas.md`,
+  `docs/corpora.md` y la cabecera de `te3-mith-200.txt` (Tridagon ahora es 1.7).
+- El formateador de hints del canónico vive en un static de su finder (se registra al
+  cargar la clase); si alguna vez un `ModernStep` se deserializa sin que el finder
+  haya cargado, `toString` tiraría — irrelevante hoy (la GUI siempre inicializa los
+  solvers antes), anotado por si aparece.
+
+Cierre: pusheado y Actions en verde.
+
+### Resumen para el dueño del proyecto
+
+Ordenamos la familia del WXYZ como pediste: lo que hicimos en el milestone pasado
+quedó con su nombre correcto ("Bent Quad", la forma general) y ahora el programa
+también conoce el WXYZ-Wing clásico de los libros, como jugada separada que se
+muestra primero cuando las dos aplican. El motor quedó preparado para las versiones
+más grandes (de 5 a 9 celdas), que son el próximo milestone. Verificamos todo igual
+que siempre: 81 mil apariciones contra la solución real sin un solo error, tres
+puzzles de guardia nuevos que vigilan que estas jugadas no se rompan en el futuro, y
+la jugada nueva vista en pantalla con su explicación. De regalo: ahora hay un archivo
+`hodoku.bat` en la carpeta del proyecto — doble clic y se abre el programa, sin
+consola ni comandos.
+
 ## 1.1 — WXYZ-Wing (primera técnica nueva + plantilla) — 2026-07-20
 
 Hecho: WXYZ-Wing en formulación bent naked subset (n=4) como primera técnica del fork:
