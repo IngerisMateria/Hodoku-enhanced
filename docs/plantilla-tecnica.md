@@ -118,10 +118,14 @@ log: cuántos solve paths cambiaron y cuántos pasos de la técnica aparecen; si
 no la ejercita, medir también sobre `te2-eleven-100.txt` con `--batch-json` (en 1.1:
 22 pasos en 18/100 puzzles).
 
-**Regla de custodia (milestone 1.2)**: toda técnica nueva queda custodiada por ≥1
-puzzle del corpus de snapshots cuyo solve path default la contenga. Si ningún puzzle
-del corpus la ejercita, sumar al corpus 1-3 puzzles (p. ej. de te2) cuyos paths default
-la contengan, regenerar snapshots como tarea documentada y reportar el diff en el log.
+**Regla de custodia (milestone 1.2, matizada en 1.3)**: toda técnica nueva **enabled
+por default** queda custodiada por ≥1 puzzle del corpus de snapshots cuyo solve path
+default la contenga. Si ningún puzzle del corpus la ejercita, sumar al corpus 1-3
+puzzles (p. ej. de te2) cuyos paths default la contengan, regenerar snapshots como
+tarea documentada y reportar el diff en el log. Para técnicas **apagadas por default**
+la custodia son sus fixtures de librería: los snapshots corren con la config default y
+no pueden ejercitarlas (el runner de librerías usa `getStep(type)` directo, que no
+mira el enable).
 
 ## 8. Cierre
 

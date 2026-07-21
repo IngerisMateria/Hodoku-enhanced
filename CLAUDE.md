@@ -84,6 +84,7 @@ del upstream 2.2.0 de hobiwan).
 - [ ] 4.4 Nishio + jerarquía forcing (Dynamic FC)
 - [ ] 4.5 Nested FC
 - [ ] 4.6 Destino del TablingSolver (retirar u opción legacy)
+- [ ] 5.0 Pasada de pulido: procesar todas las entradas de docs/pulido.md
 - [ ] 5.x Recalibración de dificultad, docs, release
 
 Los ítems con * requieren spec previa en `docs/specs/`. **Fuera de alcance** (decisión del
@@ -101,8 +102,12 @@ implementan como patrones dirigidos sin el motor general (ver
   de la literatura expone esos casos como entradas separadas del solver (SolutionType,
   score, enable y trainer propios), ordenadas antes que la generalización. Precedente:
   Skyscraper / 2-String Kite / Empty Rectangle coexisten con Turbot Fish.
-- Regla de custodia: toda técnica nueva queda custodiada por ≥1 puzzle del corpus de
-  snapshots cuyo solve path default la contenga (además de sus fixtures library).
+- Regla de custodia: toda técnica nueva enabled por default queda custodiada por ≥1
+  puzzle del corpus de snapshots cuyo solve path default la contenga (además de sus
+  fixtures library). Para técnicas apagadas por default, la custodia son sus fixtures
+  de librería (los snapshots no pueden ejercitarlas).
+- Objeción de diseño no bloqueante → entrada en docs/pulido.md con motivación completa;
+  se procesan en el milestone 5.0.
 - Las técnicas de Fase 2 en adelante requieren un spec previo en `docs/specs/` (se discute
   fuera de Claude Code y se vuelca ahí antes de implementar).
 - TablingSolver y el generador no se tocan hasta sus fases respectivas.
