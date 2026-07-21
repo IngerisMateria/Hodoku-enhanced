@@ -62,8 +62,8 @@ del upstream 2.2.0 de hobiwan).
       (bisagra + 3 alas) como entrada separada, motor bent-subset con n paramétrico
 - [x] 1.3 Bent subsets n=5..9 (VWXYZ-Wing .. RSTUVWXYZ-Wing, entradas separadas con
       scores escalonados; defaults: 5 on, 6-9 off, estilo fish)
-- [ ] 1.4 Registro de técnicas y opciones v1 + experimento T2 ← PRÓXIMO
-- [ ] 1.5 Aside v2 + buscador en config + split Kraken T1/T2 (P-002)
+- [x] 1.4 Registro de técnicas y opciones v1 + experimento T2
+- [ ] 1.5 Aside v2 + buscador en config + split Kraken T1/T2 (P-002) ← PRÓXIMO
 - [ ] 1.6 Oddagons I: Broken Wing + Bivalue Oddagon (framework guardianes)
 - [ ] 1.7 Oddagons II: Tridagon* (fixtures: subset te3)
 - [ ] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG

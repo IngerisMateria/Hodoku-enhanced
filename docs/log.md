@@ -1,5 +1,89 @@
 # Log de milestones
 
+## 1.4 — Registro de técnicas y opciones v1 + experimento T2 — 2026-07-21
+
+Hecho, en cinco commits lógicos (docs del dueño / arranque / registro / experimento
+/ cierre). Contexto nuevo del milestone: modo presupuesto-consciente — roadmap
+pendiente reescrito (M/S/L/H y desglose fino de fish diferidos al arco de cadenas
+4.x; carpetas/presets/resaltado → P-004), regla nueva de pestaña canónica + aside,
+P-002 plegada al 1.5, P-003 (posición de popups) y P-004 al backlog.
+
+1. **Docs del dueño commiteados** — `docs/sudoku_mapa_relacional.md` (mapa por
+   subsunción, 4 raíces) y `docs/estrategia-taxonomia.md` (regímenes R1/R0,
+   arquitectura de 3 capas). Son la semilla del DAG del registro.
+2. **Registro** (`solver.modern.registry`, SIN UI): `TechniqueInfo` por cada
+   StepConfig — 97 filas (90 legacy + 7 modernas; INCOMPLETE/GIVE_UP excluidos como
+   pseudo-pasos) — con display default = nombre intl (no pueden divergir), aliases
+   del mapa (SDC/foro incluidos), descripción 1-3 líneas, familia, motor, DAG de
+   subsunción multi-padre y régimen R1/R0. Las dos relaciones pedidas quedaron
+   separadas: taxonomía en `TechniqueInfo.subsumedBy`, propiedad de configuración
+   en `OptionInfo.owners` (la herencia del aside 1.5 va por la segunda).
+   `OptionInfo`: TODO ConfigStepPanel inventariado (21 opciones, pestaña STEPS),
+   descripciones derivadas del código consumidor. Hallazgos de semántica real:
+   `allowAlsOverlap` NO gobierna el doubly-linked (getAlsXZInt chequea el segundo
+   RC siempre; la opción solo excluye pares de ALS solapados de la colección de
+   RCs, exige pinzas disjuntas en el XY-Wing y pétalos disjuntos en Death
+   Blossom); `onlyOneAlsPerStep`, pese al nombre, solo dedupea ALS-XY-Chain y
+   Death Blossom por conjunto de eliminaciones (prefiere menos celdas ALS) y no
+   toca XZ ni XY-Wing; `maxFins` no aplica al kraken (tiene `maxKrakenFins`);
+   endo-fins solo existen en franken/mutant (dueños de `maxEndoFins`). Testigo de
+   multi-dueño: `allowDualsAndSiamese` → Skyscraper + 2-String Kite + ER + los 42
+   fish. `useZeroInsteadOfDot` quedó sin dueños (excepción documentada: es formato
+   de clipboard, no opción de técnica — desvío justificado de la regla "≥1").
+3. **Display-name v1** — preferencia por técnica persistida en `Options` como
+   string `ENUM=alias;...` (bean property nueva `techniqueDisplayNames`, XMLEncoder
+   la arrastra gratis; claves = nombres de enum, estables por el invariante duro
+   del §3 de la estrategia). API en `TechniqueRegistry.getDisplayName/
+   setPreferredDisplayName`, consumida por los DOS formateadores de `ModernStep`
+   (bent + canónico). Hints legacy intactos (incremento futuro anotado).
+4. **Tests de custodia** (`test/registry/TechniqueRegistryTest`): completitud en
+   ambas direcciones (StepConfig sin fila rompe el build — obliga a registrar toda
+   técnica futura — y fila sin StepConfig también), DAG acíclico (DFS tricolor),
+   aliases sin colisiones exactas (case-insensitive, incluye nombres default),
+   claves de opciones verificadas contra Options por reflexión, dueños
+   registrados, inventario ConfigStepPanel completo por lista espejo de
+   okPressed(), y roundtrip de la preferencia de display-name.
+5. **Experimento T2** (`test/harness/T2RegimeExperiment`, reporte en
+   `docs/experimentos/t2-regimen.md`): sobre 26.435 estados de los solve paths
+   default (corpus 35 + te2-100 + te3-200), 114 canónicos cosechados (33 T1 /
+   81 T2, 37 patrones distintos): **100 % régimen R1** (exactamente una Z no
+   restringida), **100 % cubiertos por un ALS-XZ simple de un solo RCC**, **cero**
+   necesitaron estructura doblemente enlazada. "Type 2 = Sue de Coq" refutado con
+   datos propios; el umbral del §8-4 del mapa se resuelve a favor de la línea 99.
+   P-001 actualizada con los datos. Runtime 99 s. (Clasificación simple/doble vía
+   endo-fins del paso: el AlsSolver registra ahí los dígitos RC — 1 = simple.)
+
+Desvíos / hallazgos:
+
+- Suite verde SIN regenerar snapshots: la indirección de display-name con
+  preferencia vacía devuelve exactamente los nombres de siempre, así que ningún
+  hint ni solve path cambió. Cero UI nueva, legacy tocado solo en Options
+  (property nueva) — dentro de la lista blanca.
+- La cuenta real es 90 legacy + 7 modernas = 97 técnicas configuradas (el prompt
+  estimaba ~96+8): WXYZ canónico + Bent Quad + 5 bent grandes son 7, no 8.
+- El experimento reusó `HarnessRunner.analyze` + replay manual de StepRecords;
+  el 100 % de cobertura ALS-XZ sobre canónicos contrasta con el 94,2 % del
+  diagnóstico 1.1 sobre bent quads generales — la diferencia es del motor legacy
+  sobre patrones no canónicos, no de la teoría (anotado en el reporte).
+- `T2RegimeExperiment` corre con `-Djava.util.Arrays.useLegacyMergeSort=true`
+  (quirk TimSort de SolutionStep.compareTo ya documentado en build.md) y termina
+  con `System.exit(0)` (threads no-daemon).
+
+Cierre: pusheado y Actions en verde.
+
+### Resumen para el dueño del proyecto
+
+Este milestone no agregó jugadas nuevas: construyó el fichero maestro donde cada
+una de las 97 técnicas del programa tiene su ficha — nombre, otros nombres con que
+la conoce la literatura, explicación corta, de qué técnica mayor es caso especial,
+y qué opciones de configuración la afectan (con la explicación real de cada opción,
+leída del código, incluidas dos que engañaban por el nombre). Sobre ese fichero se
+montará la configuración nueva del milestone que viene. Además el programa ya
+puede recordar tu nombre preferido para cada técnica. Y zanjamos con datos la
+polémica que traías del foro: revisamos las 114 apariciones del WXYZ-Wing clásico
+en nuestras colecciones y ninguna — cero — es un Sue de Coq disfrazado; tu
+intuición del mapa era correcta y quedó documentada para el futuro help.
+
 ## 1.3 — Bent subsets n=5..9 + backlog de pulido — 2026-07-21
 
 Hecho, en cuatro commits lógicos:
