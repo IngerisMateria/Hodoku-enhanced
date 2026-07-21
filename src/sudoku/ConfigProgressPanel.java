@@ -517,11 +517,14 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 		// okPressed() in ConfigSolverPanel has to be called first, here only the values
 		// for enabledHeuristics are set
 		Options instance = Options.getInstance();
+		// modern fork (milestone 1.8, A3): the tab lists ALL techniques now, so the
+		// legacy level filter (which silently dropped every EXTREME technique — and
+		// used the wrong index, orgSteps[i] instead of [j]) is gone here and in
+		// resetView()/buildTree().
 		StepConfig[] orgSteps = instance.solverSteps;
 		for (int i = 0; i < steps.length; i++) {
 			for (int j = 0; j < orgSteps.length; j++) {
-				if (steps[i].getType() == orgSteps[j].getType()
-						&& orgSteps[i].getLevel() <= DifficultyType.UNFAIR.ordinal()) {
+				if (steps[i].getType() == orgSteps[j].getType()) {
 					orgSteps[j].setEnabledProgress(steps[i].isEnabledProgress());
 					orgSteps[j].setIndexProgress(steps[i].getIndexProgress());
 					break;
@@ -542,8 +545,7 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 		orgSteps = instance.getOrgSolverSteps();
 		for (int i = 0; i < steps.length; i++) {
 			for (int j = 0; j < orgSteps.length; j++) {
-				if (steps[i].getType() == orgSteps[j].getType()
-						&& orgSteps[i].getLevel() <= DifficultyType.UNFAIR.ordinal()) {
+				if (steps[i].getType() == orgSteps[j].getType()) {
 					orgSteps[j].setEnabledProgress(steps[i].isEnabledProgress());
 					orgSteps[j].setIndexProgress(steps[i].getIndexProgress());
 					break;
@@ -553,6 +555,20 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 		instance.solverStepsProgress = instance.copyStepConfigs(instance.getOrgSolverSteps(), false, false, false,
 				true);
 //        Options.getInstance().sortProgressSteps();
+	}
+
+	/**
+	 * Modern fork (milestone 1.8, A5): rebuilds the tab from the current options
+	 * state when the user enters it. The progress copy is refreshed from
+	 * orgSolverSteps first, so solver enables applied when leaving the Solver
+	 * tab are reflected (the tab warns about progress techniques that are
+	 * disabled in the solver).
+	 */
+	public void tabEntered() {
+		Options instance = Options.getInstance();
+		instance.solverStepsProgress = instance.copyStepConfigs(instance.getOrgSolverSteps(), false, false, false,
+				true);
+		initAll(false);
 	}
 
 	private void initAll(boolean setDefault) {
@@ -589,10 +605,8 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 		// Liste neu laden
 		model.removeAllElements();
 		for (int i = 0; i < steps.length; i++) {
-			if (steps[i].getLevel() > DifficultyType.UNFAIR.ordinal()) {
-				// only steps with difficulty EASY - UNFAIR are allowed
-				continue;
-			}
+			// modern fork (milestone 1.8, A3): no level filter — every technique
+			// with a StepConfig is configurable for the progress rating
 			model.addElement(steps[i]);
 		}
 		stepList.setSelectedIndex(-1);
@@ -606,10 +620,7 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 	public void buildTree() {
 		CheckNode root = new CheckNode();
 		for (int i = 0; i < steps.length; i++) {
-			if (steps[i].getLevel() > DifficultyType.UNFAIR.ordinal()) {
-				// only steps with difficulty EASY - UNFAIR are allowed
-				continue;
-			}
+			// modern fork (milestone 1.8, A3): no level filter, see resetView()
 			@SuppressWarnings("unchecked")
 			Enumeration<CheckNode> en = (Enumeration<CheckNode>) (Enumeration<?>) root.children();
 			CheckNode act = null;

@@ -186,10 +186,15 @@ public final class Options {
 					SolutionCategory.CHAINS_AND_LOOPS, 280, 0, true, true, 5600, false, false),
 			// modern fork: the canonical WXYZ-Wing goes right before its generalization Bent Quad
 			// (desglose principle), both before ALS-XZ (5700)
+			// modern fork (milestone 1.8, A2): every modern technique ships with
+			// enabledProgress=true and indexProgress mirroring the solver order, so
+			// the progress-score rating solves with the same modern arsenal as the
+			// solver (without Tridagon the rating grinds te3 states through forcing
+			// nets, the find-all-steps "hang" of A1).
 			new StepConfig(5640, SolutionType.WXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
-					230, 0, true, true, 5640, false, false),
+					230, 0, true, true, 5640, true, false),
 			new StepConfig(5650, SolutionType.BENT_QUAD, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
-					250, 0, true, true, 5650, false, false),
+					250, 0, true, true, 5650, true, false),
 			// modern fork (milestone 1.3): bent subsets n=5..9, one entry per size right after
 			// Bent Quad (5650) and before ALS-XZ (5700). Scores: +40 per extra cell starting
 			// at 280 (n=5, above Bent Quad 250 and just below ALS-XZ 300 — a VWXYZ is about as
@@ -198,15 +203,15 @@ public final class Options {
 			// fish style (Squirmbag..Leviathan precedent): only n=5 enabled; n=6..9 exist,
 			// desglosadas, off — but with allSteps=true so find-all-steps can show them.
 			new StepConfig(5655, SolutionType.VWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
-					280, 0, true, true, 5655, false, false),
+					280, 0, true, true, 5655, true, false),
 			new StepConfig(5660, SolutionType.UVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
-					320, 0, false, true, 5660, false, false),
+					320, 0, false, true, 5660, true, false),
 			new StepConfig(5665, SolutionType.TUVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
-					360, 0, false, true, 5665, false, false),
+					360, 0, false, true, 5665, true, false),
 			new StepConfig(5670, SolutionType.STUVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
-					400, 0, false, true, 5670, false, false),
+					400, 0, false, true, 5670, true, false),
 			new StepConfig(5675, SolutionType.RSTUVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
-					440, 0, false, true, 5675, false, false),
+					440, 0, false, true, 5675, true, false),
 			new StepConfig(5700, SolutionType.ALS_XZ, DifficultyType.UNFAIR.ordinal(),
 					SolutionCategory.ALMOST_LOCKED_SETS, 300, 0, true, true, 5700, false, false),
 			new StepConfig(5800, SolutionType.ALS_XY_WING, DifficultyType.UNFAIR.ordinal(),
@@ -306,14 +311,14 @@ public final class Options {
 			// family 120-150); order 5370 = after coloring, before the X-Chain (5400)
 			// and the chain/forcing engines that subsume its deductions.
 			new StepConfig(5370, SolutionType.BROKEN_WING, DifficultyType.UNFAIR.ordinal(),
-					SolutionCategory.SINGLE_DIGIT_PATTERNS, 240, 0, true, true, 5370, false, false),
+					SolutionCategory.SINGLE_DIGIT_PATTERNS, 240, 0, true, true, 5370, true, false),
 			// Bivalue Oddagon: high-UNFAIR score 440 next to RSTUVWXYZ-Wing 440 and the
 			// mutant fish 450, below the EXTREME plateau 470; order 5690 = right before
 			// the ALS family (5700) and far before the forcing chains/nets that subsume
 			// it. No classic category fits an oddagon over a digit pair; MISCELLANEOUS
 			// (Sue de Coq's bucket) is the canonical STEPS tab drawer for it.
 			new StepConfig(5690, SolutionType.BIVALUE_ODDAGON, DifficultyType.UNFAIR.ordinal(),
-					SolutionCategory.MISCELLANEOUS, 440, 0, true, true, 5690, false, false),
+					SolutionCategory.MISCELLANEOUS, 440, 0, true, true, 5690, true, false),
 			// Tridagon (milestone 1.7): score 500 per the spec anchor — above BO 440 and
 			// the mutant fish 450, past the 470 "computer only" plateau, at kraken parity
 			// (500) since it cracks T&E(3) puzzles; EXTREME like everything above 470.
@@ -322,7 +327,17 @@ public final class Options {
 			// modernization, so it fires long before the chain/forcing engines.
 			// MISCELLANEOUS: BO's canonical STEPS drawer (no classic category fits).
 			new StepConfig(5695, SolutionType.TRIDAGON, DifficultyType.EXTREME.ordinal(),
-					SolutionCategory.MISCELLANEOUS, 500, 0, true, true, 5695, false, false) };
+					SolutionCategory.MISCELLANEOUS, 500, 0, true, true, 5695, true, false) };
+	// modern fork (milestone 1.8, A2): the modern techniques of this fork — the
+	// entries whose finders live in solver.modern. Used by the progress-flag
+	// migration below and guarded against the registry by test
+	// (ProgressConfigTest): adding a modern technique without extending this set
+	// breaks the build.
+	public static final java.util.EnumSet<SolutionType> MODERN_TECHNIQUES = java.util.EnumSet.of(
+			SolutionType.WXYZ_WING, SolutionType.BENT_QUAD, SolutionType.VWXYZ_WING, SolutionType.UVWXYZ_WING,
+			SolutionType.TUVWXYZ_WING, SolutionType.STUVWXYZ_WING, SolutionType.RSTUVWXYZ_WING,
+			SolutionType.BROKEN_WING, SolutionType.BIVALUE_ODDAGON, SolutionType.TRIDAGON);
+
 	// nicht sortierte steps mit allen Änderungen -> wird so in *.cfg-File
 	// geschrieben
 	private StepConfig[] orgSolverSteps = null;
@@ -1001,6 +1016,45 @@ public final class Options {
 		orgSolverSteps = migrated.toArray(new StepConfig[0]);
 	}
 
+	// modern fork (milestone 1.8, A2): pre-1.8 configs carry
+	// enabledProgress=false for every modern technique — a value the user could
+	// never have chosen, because the Progress tab filtered those entries out
+	// (the A3 bug). One-shot migration flag: false in files written before 1.8
+	// (property absent), true afterwards, so post-1.8 user choices survive.
+	private boolean modernProgressFlagsMigrated = false;
+
+	public boolean isModernProgressFlagsMigrated() {
+		return modernProgressFlagsMigrated;
+	}
+
+	public void setModernProgressFlagsMigrated(boolean modernProgressFlagsMigrated) {
+		this.modernProgressFlagsMigrated = modernProgressFlagsMigrated;
+	}
+
+	/**
+	 * Milestone 1.8 (A2): forces enabledProgress/indexProgress of every modern
+	 * technique to the current defaults, once per config file (see
+	 * {@link #modernProgressFlagsMigrated}). Idempotent.
+	 */
+	public void migrateModernProgressFlags() {
+		if (modernProgressFlagsMigrated || orgSolverSteps == null) {
+			return;
+		}
+		for (StepConfig act : orgSolverSteps) {
+			if (!MODERN_TECHNIQUES.contains(act.getType())) {
+				continue;
+			}
+			for (StepConfig def : DEFAULT_SOLVER_STEPS) {
+				if (def.getType() == act.getType()) {
+					act.setEnabledProgress(def.isEnabledProgress());
+					act.setIndexProgress(def.getIndexProgress());
+					break;
+				}
+			}
+		}
+		modernProgressFlagsMigrated = true;
+	}
+
 	/**
 	 * Resort the progressSteps (needed after options change)
 	 */
@@ -1157,6 +1211,9 @@ public final class Options {
 		// modern fork (milestone 1.5, P-002): migrate configs written before the
 		// Kraken Fish Type 1/2 split
 		instance.migrateKrakenFishStepConfig();
+		// modern fork (milestone 1.8, A2): force the progress flags of modern
+		// techniques to the new defaults, once per config file
+		instance.migrateModernProgressFlags();
 
 		// readObject() passt nur orgSolverSteps an,
 		// nicht aber solverSteps -> neu kopieren!
