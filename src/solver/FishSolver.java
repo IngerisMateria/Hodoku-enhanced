@@ -218,6 +218,12 @@ public class FishSolver extends AbstractSolver {
 	/** <code>true</code> if the search is for kraken fish only */
 	private boolean kraken;
 	/**
+	 * Restricts the kraken search to one type (modern fork, milestone 1.5,
+	 * P-002): {@link SolutionType#KRAKEN_FISH_TYPE_1},
+	 * {@link SolutionType#KRAKEN_FISH_TYPE_2} or <code>null</code> for both.
+	 */
+	private SolutionType krakenTypeFilter = null;
+	/**
 	 * The fish type: {@link #BASIC}, {@link #FRANKEN}, {@link #MUTANT} or
 	 * {@link #UNDEFINED} for kraken search.
 	 */
@@ -488,8 +494,13 @@ public class FishSolver extends AbstractSolver {
 		case KRAKEN_FISH:
 		case KRAKEN_FISH_TYPE_1:
 		case KRAKEN_FISH_TYPE_2:
+			// modern fork (milestone 1.5, P-002): Type 1 and Type 2 are configured
+			// separately; asking for one type must not return steps of the other.
+			// The generic KRAKEN_FISH request (no filter) is kept for compatibility.
 			searchAll = false;
+			krakenTypeFilter = (type == SolutionType.KRAKEN_FISH) ? null : type;
 			result = getKrakenFish();
+			krakenTypeFilter = null;
 			break;
 		default:
 			break;
@@ -707,6 +718,9 @@ public class FishSolver extends AbstractSolver {
 			steps = new ArrayList<SolutionStep>();
 			kraken = true;
 			searchAll = true;
+			// the all-steps search always collects both types; the caller filters
+			// by the per-type enables (FindAllSteps.filterSteps)
+			krakenTypeFilter = null;
 //        fishType = UNDEFINED;
 			tablingSolver.initForKrakenSearch();
 			long millis1 = System.currentTimeMillis();
@@ -1243,7 +1257,7 @@ public class FishSolver extends AbstractSolver {
 		// only one candidate at a time!
 
 		// deleteSet holds all potential eliminations, including cannibalistic ones
-		if (deleteSetM1 != 0 || deleteSetM2 != 0) {
+		if (krakenTypeFilter != SolutionType.KRAKEN_FISH_TYPE_2 && (deleteSetM1 != 0 || deleteSetM2 != 0)) {
 			// System.out.println("Possible Kraken: " + baseUnitsIncluded + "/" +
 			// coverUnitsIncluded);
 			krakenDeleteCandSet.set(deleteSetM1, deleteSetM2);
@@ -1286,6 +1300,9 @@ public class FishSolver extends AbstractSolver {
 		// a check is only necessary if the cover unit doesnt only contain base
 		// candidates
 		// for cannibalistic candidates no chain is needed
+		if (krakenTypeFilter == SolutionType.KRAKEN_FISH_TYPE_1) {
+			return null;
+		}
 		krakenCannibalisticSet.clear();
 //        System.out.println("================ search for kraken type 2 ========================");
 //        printSet("base units", baseSetM1, baseSetM2);

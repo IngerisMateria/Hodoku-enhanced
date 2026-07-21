@@ -32,9 +32,24 @@ reconstruirlo.
 
 ## P-002 — Separar Kraken Fish Type 1 y Type 2 en la configuración
 - Fecha: 2026-07-21 · Origen: dueño (dolor real del HoDoKu base) ·
-  Estado: plegada al milestone 1.5 (el des-colapso es acotado: el enum ya
-  tiene TYPE_1/0371 y TYPE_2/0372; solo la config los colapsa —
-  `SolutionType.getStepConfigType()` mapea ambos a KRAKEN_FISH)
+  Estado: **CERRADA/EJECUTADA en el milestone 1.5 (2026-07-21)**. Cómo
+  quedó: StepConfigs propias KRAKEN_FISH_TYPE_1 (índice 8450, el del
+  viejo genérico) y TYPE_2 (8460), ambas EXTREME/LAST_RESORT score 500
+  (derivado del genérico: 500/off) y off por default en las tres
+  superficies. La entrada genérica KRAKEN_FISH se retiró de la lista de
+  config (queda como ancla taxonómica en el registro, excepción
+  documentada en TechniqueRegistryTest); `FishSolver` filtra por tipo
+  pedido (krakenTypeFilter), FindAllSteps corre la búsqueda si cualquiera
+  de los dos está on y filtra el resultado por tipo. Migración de hcfg
+  viejos en `Options.migrateKrakenFishStepConfig()` (preserva
+  enabled/score/level/flags; roundtrip testeado en
+  KrakenConfigMigrationTest). Fixture dirigido
+  test/fixtures/kraken-split.txt + KrakenSplitFixtureTest (estado te3 con
+  22 T1 / 179 T2; con T2 off el all-steps devuelve solo T1). Snapshots:
+  cero cambios (kraken off por default, verificado en suite).
+- (Contexto original, ya resuelto:) el des-colapso era acotado: el enum ya
+  tenía TYPE_1/0371 y TYPE_2/0372; solo la config los colapsaba —
+  `SolutionType.getStepConfig()` mapeaba ambos a KRAKEN_FISH
 - Contexto verificado en la base: una sola StepConfig KRAKEN_FISH
   (default off) gobierna todo kraken; los tipos 1/2 que se ven en los
   listados no tienen enable, score ni orden propios. Consecuencia:

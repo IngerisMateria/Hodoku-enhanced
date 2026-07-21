@@ -405,9 +405,9 @@ public enum SolutionType {
 		if (type == SolutionType.FORCING_NET_CONTRADICTION || type == SolutionType.FORCING_NET_VERITY) {
 			type = SolutionType.FORCING_NET;
 		}
-		if (type == SolutionType.KRAKEN_FISH_TYPE_1 || type == SolutionType.KRAKEN_FISH_TYPE_2) {
-			type = SolutionType.KRAKEN_FISH;
-		}
+		// modern fork (milestone 1.5, P-002): KRAKEN_FISH_TYPE_1/2 have their own
+		// StepConfigs now; the generic KRAKEN_FISH has none anymore (old hcfg files
+		// are migrated in Options.readOptions()).
 		if (type == SolutionType.DUAL_TWO_STRING_KITE) {
 			type = SolutionType.TWO_STRING_KITE;
 		}

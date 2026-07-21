@@ -188,7 +188,11 @@ public class FindAllSteps implements Runnable {
 			case 18:
 				// System.out.println("Kraken Fish search cand " + (actStep - 9) + ": " +
 				// Options.getInstance().allStepsFishCandidates.charAt(actStep - 10));
-				if (isAllStepsEnabled(SolutionType.KRAKEN_FISH)
+				// modern fork (milestone 1.5, P-002): Kraken Type 1/2 are enabled
+				// separately; the search runs if either is on, the results are
+				// filtered by type afterwards
+				if ((isAllStepsEnabled(SolutionType.KRAKEN_FISH_TYPE_1)
+						|| isAllStepsEnabled(SolutionType.KRAKEN_FISH_TYPE_2))
 						&& Options.getInstance().getAllStepsKrakenFishCandidates().charAt(actStep - 10) == '1') {
 					updateProgress(
 							java.util.ResourceBundle.getBundle("intl/FindAllStepsProgressDialog")
@@ -199,6 +203,7 @@ public class FindAllSteps implements Runnable {
 							Options.getInstance().getAllStepsMaxKrakenFins(),
 							Options.getInstance().getAllStepsMaxKrakenEndoFins(), dlg, actStep - 9,
 							Options.getInstance().getAllStepsKrakenMaxFishType());
+					filterSteps(steps1);
 					steps.addAll(steps1);
 				}
 				break;
@@ -344,6 +349,18 @@ public class FindAllSteps implements Runnable {
 	}
 
 	public void setTestType(List<SolutionType> testStep) {
+		// modern fork (milestone 1.5, P-002): the generic KRAKEN_FISH test type
+		// (batch arg "kf") means "both kraken types"
+		if (testStep != null && testStep.contains(SolutionType.KRAKEN_FISH)) {
+			testStep = new java.util.ArrayList<SolutionType>(testStep);
+			testStep.remove(SolutionType.KRAKEN_FISH);
+			if (!testStep.contains(SolutionType.KRAKEN_FISH_TYPE_1)) {
+				testStep.add(SolutionType.KRAKEN_FISH_TYPE_1);
+			}
+			if (!testStep.contains(SolutionType.KRAKEN_FISH_TYPE_2)) {
+				testStep.add(SolutionType.KRAKEN_FISH_TYPE_2);
+			}
+		}
 		this.testTypes = testStep;
 	}
 

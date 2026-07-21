@@ -69,6 +69,13 @@ public class TechniqueRegistryTest {
 	 */
 	private static final Set<String> OWNERLESS_OPTIONS = Set.of("useZeroInsteadOfDot");
 
+	/**
+	 * Registry rows that intentionally have no StepConfig: pure taxonomy
+	 * anchors. KRAKEN_FISH lost its config in the P-002 split (milestone
+	 * 1.5) but remains the common parent of the two configured types.
+	 */
+	private static final Set<SolutionType> CONFIGLESS_ROWS = EnumSet.of(SolutionType.KRAKEN_FISH);
+
 	@BeforeAll
 	public static void resetOptions() {
 		// Options.getInstance() would silently load a hodoku.hcfg from
@@ -101,9 +108,24 @@ public class TechniqueRegistryTest {
 			configured.add(config.getType());
 		}
 		for (TechniqueInfo info : TechniqueRegistry.getInstance().all()) {
+			if (CONFIGLESS_ROWS.contains(info.getId())) {
+				continue;
+			}
 			assertTrue(configured.contains(info.getId()),
 					"registry row without a StepConfig (stale entry?): " + info.getId());
 		}
+	}
+
+	@Test
+	public void krakenSplitRowsExist() {
+		// P-002 (milestone 1.5): the two configured kraken types must be
+		// registered; the generic row stays as their taxonomy parent
+		TechniqueRegistry registry = TechniqueRegistry.getInstance();
+		assertNotNull(registry.get(SolutionType.KRAKEN_FISH_TYPE_1), "KRAKEN_FISH_TYPE_1 must have a registry row");
+		assertNotNull(registry.get(SolutionType.KRAKEN_FISH_TYPE_2), "KRAKEN_FISH_TYPE_2 must have a registry row");
+		assertNotNull(registry.get(SolutionType.KRAKEN_FISH), "the generic KRAKEN_FISH taxonomy anchor must stay");
+		assertTrue(registry.get(SolutionType.KRAKEN_FISH_TYPE_1).getSubsumedBy().contains(SolutionType.KRAKEN_FISH));
+		assertTrue(registry.get(SolutionType.KRAKEN_FISH_TYPE_2).getSubsumedBy().contains(SolutionType.KRAKEN_FISH));
 	}
 
 	@Test

@@ -115,10 +115,22 @@ final class TechniqueCatalog {
 
 		// --- fish matrix (FishSolver) ---
 		addFishRows(rows);
+		// Generic Kraken Fish: taxonomy anchor only since the P-002 split (milestone
+		// 1.5) — the configured entries are KRAKEN_FISH_TYPE_1/2 below; this row has
+		// no StepConfig anymore (documented exception in TechniqueRegistryTest).
 		rows.add(t(KRAKEN_FISH, Family.FISH, "FishSolver",
-				"A fish whose fins (or potential eliminations) are justified by chains instead of direct sight. "
-						+ "One config entry currently covers both Type 1 and Type 2 (the enum already has KRAKEN_FISH_TYPE_1/2; the split is P-002, milestone 1.5).")
+				"A fish whose eliminations are justified by chains instead of direct sight. Split into Type 1 and "
+						+ "Type 2 config entries (P-002, milestone 1.5); this generic entry remains as the common "
+						+ "taxonomy parent of both.")
 				.subsumedBy(FORCING_CHAIN).refs("docs/pulido.md P-002").build());
+		rows.add(t(KRAKEN_FISH_TYPE_1, Family.FISH, "FishSolver",
+				"A finned fish without direct eliminations where every fin reaches one candidate through a chain: "
+						+ "either the fish is true or a fin is, so that candidate is eliminated.")
+				.aliases("Kraken Fish (Type 1)").subsumedBy(KRAKEN_FISH).build());
+		rows.add(t(KRAKEN_FISH_TYPE_2, Family.FISH, "FishSolver",
+				"A fish where every base candidate of one cover sector, plus every fin, chains to the same candidate "
+						+ "elsewhere: that candidate is eliminated.")
+				.aliases("Kraken Fish (Type 2)").subsumedBy(KRAKEN_FISH).build());
 
 		// --- single digit patterns ---
 		rows.add(t(TURBOT_FISH, Family.SINGLE_DIGIT_PATTERNS, "ChainSolver",

@@ -96,7 +96,7 @@ final class OptionCatalog {
 				"Prunes the fish search with a template check: candidates no valid placement template allows are "
 						+ "excluded up front (FishSolver.doTemplates). Pure search-space pruning, does not change "
 						+ "which steps are valid.",
-				plus(ALL_FISH, KRAKEN_FISH)));
+				plus(ALL_FISH, KRAKEN_FISH_TYPE_1, KRAKEN_FISH_TYPE_2)));
 		options.add(o("onlyOneFishPerStep",
 				"Keeps only the smallest fish for every distinct set of eliminations when collecting fish steps "
 						+ "(FishSolver dedup cache).",
@@ -104,19 +104,22 @@ final class OptionCatalog {
 		options.add(o("fishDisplayMode",
 				"How fish hints are printed (SolutionStep.toString): 0 = normal, 1 = statistics numbers, "
 						+ "2 = statistics cells. Display only.",
-				plus(ALL_FISH, KRAKEN_FISH)));
+				plus(ALL_FISH, KRAKEN_FISH_TYPE_1, KRAKEN_FISH_TYPE_2)));
 
-		// --- kraken fish panel ---
+		// --- kraken fish panel (owners: both configured kraken types since P-002) ---
 		options.add(o("krakenMaxFishType",
 				"Largest fish class tried by the kraken search (FishSolver): 0 = basic, 1 = basic+franken, "
 						+ "2 = basic+franken+mutant.",
-				Set.of(KRAKEN_FISH)));
+				Set.of(KRAKEN_FISH_TYPE_1, KRAKEN_FISH_TYPE_2)));
 		options.add(o("krakenMaxFishSize",
-				"Maximum number of base/cover units of a kraken fish (FishSolver).", Set.of(KRAKEN_FISH)));
+				"Maximum number of base/cover units of a kraken fish (FishSolver).",
+				Set.of(KRAKEN_FISH_TYPE_1, KRAKEN_FISH_TYPE_2)));
 		options.add(o("maxKrakenFins",
-				"Maximum number of fins in the kraken fish search (FishSolver).", Set.of(KRAKEN_FISH)));
+				"Maximum number of fins in the kraken fish search (FishSolver).",
+				Set.of(KRAKEN_FISH_TYPE_1, KRAKEN_FISH_TYPE_2)));
 		options.add(o("maxKrakenEndoFins",
-				"Maximum number of endo fins in the kraken fish search (FishSolver).", Set.of(KRAKEN_FISH)));
+				"Maximum number of endo fins in the kraken fish search (FishSolver).",
+				Set.of(KRAKEN_FISH_TYPE_1, KRAKEN_FISH_TYPE_2)));
 
 		// --- chain panel ---
 		options.add(o("restrictChainLength",

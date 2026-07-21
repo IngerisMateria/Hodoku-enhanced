@@ -287,8 +287,15 @@ public final class Options {
 					150, 0, true, true, 5330, false, false),
 			new StepConfig(5360, SolutionType.MULTI_COLORS, DifficultyType.HARD.ordinal(), SolutionCategory.COLORING,
 					200, 0, true, true, 5360, false, false),
-			new StepConfig(8450, SolutionType.KRAKEN_FISH, DifficultyType.EXTREME.ordinal(),
+			// modern fork (milestone 1.5, P-002): the single KRAKEN_FISH entry is split
+			// into Type 1 and Type 2. Both inherit the old defaults (EXTREME/LAST_RESORT,
+			// score 500, disabled everywhere); Type 1 keeps the old index 8450, Type 2
+			// goes right after it (8460 < 8500 FORCING_CHAIN). Old hcfg files are
+			// migrated in readOptions().
+			new StepConfig(8450, SolutionType.KRAKEN_FISH_TYPE_1, DifficultyType.EXTREME.ordinal(),
 					SolutionCategory.LAST_RESORT, 500, 0, false, false, 8450, false, false),
+			new StepConfig(8460, SolutionType.KRAKEN_FISH_TYPE_2, DifficultyType.EXTREME.ordinal(),
+					SolutionCategory.LAST_RESORT, 500, 0, false, false, 8460, false, false),
 			new StepConfig(3120, SolutionType.TURBOT_FISH, DifficultyType.HARD.ordinal(),
 					SolutionCategory.SINGLE_DIGIT_PATTERNS, 120, 0, true, true, 3120, false, false),
 			new StepConfig(1210, SolutionType.LOCKED_CANDIDATES_2, DifficultyType.MEDIUM.ordinal(),
@@ -930,6 +937,48 @@ public final class Options {
 	}
 
 	/**
+	 * Migration for the Kraken Fish split (milestone 1.5, P-002): configs written
+	 * before the split hold one generic KRAKEN_FISH StepConfig and lack the
+	 * KRAKEN_FISH_TYPE_1/2 entries. The generic entry is removed and replaced by
+	 * the two new ones, both preserving everything the user could have changed
+	 * (enabled, scores, level, category, all-steps/progress/training flags);
+	 * Type 1 keeps the old index, Type 2 goes right after it. Idempotent: configs
+	 * written after the split (no generic entry) are left untouched.
+	 */
+	public void migrateKrakenFishStepConfig() {
+		if (orgSolverSteps == null) {
+			return;
+		}
+		int genericIndex = -1;
+		boolean hasSplit = false;
+		for (int i = 0; i < orgSolverSteps.length; i++) {
+			SolutionType type = orgSolverSteps[i].getType();
+			if (type == SolutionType.KRAKEN_FISH) {
+				genericIndex = i;
+			} else if (type == SolutionType.KRAKEN_FISH_TYPE_1 || type == SolutionType.KRAKEN_FISH_TYPE_2) {
+				hasSplit = true;
+			}
+		}
+		if (genericIndex < 0) {
+			return;
+		}
+		List<StepConfig> migrated = new ArrayList<StepConfig>(Arrays.asList(orgSolverSteps));
+		StepConfig old = migrated.remove(genericIndex);
+		if (!hasSplit) {
+			StepConfig type1 = new StepConfig(old.getIndex(), SolutionType.KRAKEN_FISH_TYPE_1, old.getLevel(),
+					old.getCategory(), old.getBaseScore(), old.getAdminScore(), old.isEnabled(),
+					old.isAllStepsEnabled(), old.getIndexProgress(), old.isEnabledProgress(), old.isEnabledTraining());
+			StepConfig type2 = new StepConfig(old.getIndex() + 10, SolutionType.KRAKEN_FISH_TYPE_2, old.getLevel(),
+					old.getCategory(), old.getBaseScore(), old.getAdminScore(), old.isEnabled(),
+					old.isAllStepsEnabled(), old.getIndexProgress() + 10, old.isEnabledProgress(),
+					old.isEnabledTraining());
+			migrated.add(genericIndex, type1);
+			migrated.add(genericIndex + 1, type2);
+		}
+		orgSolverSteps = migrated.toArray(new StepConfig[0]);
+	}
+
+	/**
 	 * Resort the progressSteps (needed after options change)
 	 */
 	public void sortProgressSteps() {
@@ -1081,6 +1130,10 @@ public final class Options {
 			}
 		}
 		
+		// modern fork (milestone 1.5, P-002): migrate configs written before the
+		// Kraken Fish Type 1/2 split
+		instance.migrateKrakenFishStepConfig();
+
 		// readObject() passt nur orgSolverSteps an,
 		// nicht aber solverSteps -> neu kopieren!
 		// the same for solverStepsProgress
