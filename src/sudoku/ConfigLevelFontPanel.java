@@ -734,6 +734,14 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 		}
 	}
 
+	/**
+	 * Modern fork (milestone 1.8, A5): rebuilds the tab from the current options
+	 * state when the user enters it.
+	 */
+	public void tabEntered() {
+		initAll(false);
+	}
+
 	private void initAll(boolean setDefault) {
 		if (setDefault) {
 			levels = Options.getInstance().copyDifficultyLevels(Options.DEFAULT_DIFFICULTY_LEVELS);

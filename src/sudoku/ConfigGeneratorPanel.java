@@ -391,6 +391,14 @@ public class ConfigGeneratorPanel extends javax.swing.JPanel {
 	 * 
 	 * @param setDefault
 	 */
+	/**
+	 * Modern fork (milestone 1.8, A5): rebuilds the tab from the current options
+	 * state when the user enters it.
+	 */
+	public void tabEntered() {
+		initAll(false);
+	}
+
 	private void initAll(boolean setDefault) {
 		if (setDefault) {
 			patterns = new ArrayList<GeneratorPattern>();

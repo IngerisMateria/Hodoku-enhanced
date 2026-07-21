@@ -255,6 +255,16 @@ public class ConfigTrainigPanel extends javax.swing.JPanel {
 		}
 	}
 
+	/**
+	 * Modern fork (milestone 1.8, A5): rebuilds the tab from the current options
+	 * state when the user enters it — the owner's showcase case: the training
+	 * list shows/hides techniques according to the solver enables applied when
+	 * the user left the Solver tab.
+	 */
+	public void tabEntered() {
+		initAll(false);
+	}
+
 	private void initAll(boolean setDefault) {
 		// Zuerst die Daten zurücksetzen
 		if (setDefault) {

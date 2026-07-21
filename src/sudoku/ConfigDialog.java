@@ -110,6 +110,82 @@ public class ConfigDialog extends javax.swing.JDialog {
 		if (tabIndex != -1) {
 			tabbedPane.setSelectedIndex(tabIndex);
 		}
+
+		// modern fork (milestone 1.8, A5): config tabs apply their changes when
+		// the user leaves them (not only on OK) and rebuild from the current
+		// options state when the user enters them, so cross-tab dependencies
+		// (solver enables -> training list, solver -> progress validity, steps
+		// options -> solver aside) are always up to date. Writing the options
+		// file remains OK-only; Cancel/Escape still discards the not-yet-applied
+		// edits of the current tab.
+		lastTabComponent = tabbedPane.getSelectedComponent();
+		tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+			@Override
+			public void stateChanged(javax.swing.event.ChangeEvent evt) {
+				java.awt.Component current = tabbedPane.getSelectedComponent();
+				if (current == lastTabComponent) {
+					return;
+				}
+				applyTab(lastTabComponent);
+				refreshTab(current);
+				lastTabComponent = current;
+			}
+		});
+	}
+
+	/** the tab content the user is leaving (A5 apply-on-leave). */
+	private java.awt.Component lastTabComponent;
+
+	/** Applies the pending changes of the tab the user is leaving (A5). */
+	private void applyTab(java.awt.Component tab) {
+		if (tab == solverPanel) {
+			// ordering contract of the shared steps arrays: the solver panel
+			// has to be applied before progress/training (see okPressed there)
+			myConfigSolverPanel.okPressed();
+		} else if (tab == generalPanel) {
+			myGeneralPanel.okPressed();
+		} else if (tab == levelFontPanel) {
+			myLevelFontPanel.okPressed();
+		} else if (tab == stepConfigPanel) {
+			myConfigStepPanel.okPressed();
+		} else if (tab == colorPanel) {
+			myConfigColorPanel.okPressed();
+		} else if (tab == findAllStepsPanel) {
+			myConfigFindAllStepsPanel.okPressed();
+		} else if (tab == heuristicsPanel) {
+			myConfigProgressPanel.okPressed();
+		} else if (tab == trainingPanel) {
+			myConfigTrainingPanel.okPressed();
+		} else if (tab == generatorPanel) {
+			myConfigGeneratorPanel.okPressed();
+		} else if (tab == colorKuPanel) {
+			myConfigColorkuPanel.okPressed();
+		}
+	}
+
+	/** Rebuilds the tab the user is entering from the current options (A5). */
+	private void refreshTab(java.awt.Component tab) {
+		if (tab == solverPanel) {
+			myConfigSolverPanel.tabEntered();
+		} else if (tab == generalPanel) {
+			myGeneralPanel.tabEntered();
+		} else if (tab == levelFontPanel) {
+			myLevelFontPanel.tabEntered();
+		} else if (tab == stepConfigPanel) {
+			myConfigStepPanel.tabEntered();
+		} else if (tab == colorPanel) {
+			myConfigColorPanel.tabEntered();
+		} else if (tab == findAllStepsPanel) {
+			myConfigFindAllStepsPanel.tabEntered();
+		} else if (tab == heuristicsPanel) {
+			myConfigProgressPanel.tabEntered();
+		} else if (tab == trainingPanel) {
+			myConfigTrainingPanel.tabEntered();
+		} else if (tab == generatorPanel) {
+			myConfigGeneratorPanel.tabEntered();
+		} else if (tab == colorKuPanel) {
+			myConfigColorkuPanel.tabEntered();
+		}
 	}
 
 	/**

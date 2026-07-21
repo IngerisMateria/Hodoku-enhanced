@@ -369,6 +369,14 @@ public class ConfigColorkuPanel extends javax.swing.JPanel {
 		}
 	}
 
+	/**
+	 * Modern fork (milestone 1.8, A5): rebuilds the tab from the current options
+	 * state when the user enters it.
+	 */
+	public void tabEntered() {
+		initAll(false);
+	}
+
 	private void initAll(boolean setDefault) {
 		if (colors == null) {
 			colors = new Color[buttons.length];
