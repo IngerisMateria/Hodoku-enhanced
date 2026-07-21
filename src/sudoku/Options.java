@@ -1056,7 +1056,8 @@ public final class Options {
 						tmp.append(", ");
 					}
 				}
-				tmp.append(step.getType().getStepName());
+				// modern fork (milestone 1.5): preferred display name
+				tmp.append(step.toString());
 			}
 		}
 		return tmp.toString();

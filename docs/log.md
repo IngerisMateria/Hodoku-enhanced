@@ -79,6 +79,32 @@ por separado — podés buscar solo los Type 1 (los humanamente encontrables)
 sin que la computadora te inunde con cientos de Type 2. Las configuraciones
 guardadas se convierten solas al formato nuevo.
 
+### Follow-up 1.5 (2026-07-21): nombre preferido en TODO el pipeline legacy
+
+Reporte del dueño tras el cierre: el nombre preferido no llegaba a la pestaña
+Training ni al tablero (hints vago/concreto de la pestaña Puzzle, área de
+texto del next hint, y las vistas Summary / All possible steps / Solution
+path). Causa: esas superficies resuelven nombres por
+`SolutionStep.getStepName()` (instancia + 2 estáticos) o por
+`SolutionType.getStepName()` directo, no por `StepConfig.toString()`.
+
+Fix central: los tres `SolutionStep.getStepName` rutean ahora por
+`TechniqueRegistry.getDisplayName` — con eso todo `toString(0/1/2)` (diálogos
+de hint vago/concreto, área de hint, solution path, print) sale con el nombre
+preferido. Call sites directos restantes ruteados: árbol de Training
+(ConfigTrainigPanel), árbol y comparadores de AllStepsPanel (ordena por
+nombre mostrado), SummaryPanel, árbol/diálogo de ConfigProgressPanel y
+`Options.getTrainingStepsString` (label de training). La limitación "hints
+legacy sin display names" anotada en 1.4/1.5 queda LEVANTADA.
+
+Seguridad: el arnés batch/snapshots es inmune (StepRecord persiste
+`getType().name()`, los códigos library no se tocan); custodia nueva en
+`DisplayNamePropagationTest` (preferencia → getStepName×3, toString(0),
+StepConfig.toString; identidades enum/library invariantes; quitar la
+preferencia restaura el default). Verificado además con probe GUI: pestaña
+Training mostrando "Y-Wing" (XY-Wing renombrado) y los textos exactos de
+toString(0/1/2) con un nombre custom.
+
 ## 1.4 — Registro de técnicas y opciones v1 + experimento T2 — 2026-07-21
 
 Hecho, en cinco commits lógicos (docs del dueño / arranque / registro / experimento

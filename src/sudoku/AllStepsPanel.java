@@ -396,7 +396,8 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 			public int compare(SolutionStep o1, SolutionStep o2) {
 				int ret = o1.getType().getStepConfig().getIndex() - o2.getType().getStepConfig().getIndex();
 				if (ret == 0) {
-					ret = o1.getType().getStepName().compareTo(o2.getType().getStepName());
+					// modern fork (milestone 1.5): sort by the displayed name
+					ret = SolutionStep.getStepName(o1.getType()).compareTo(SolutionStep.getStepName(o2.getType()));
 					if (ret == 0) {
 						ret = o1.compareTo(o2);
 					}
@@ -421,7 +422,8 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 					String dummy = (String) lastCat1.getUserObject();
 					lastCat1.setUserObject(dummy + " (" + lastCat1.getChildCount() + ")");
 				}
-				lastCat1 = new DefaultMutableTreeNode(step.getType().getStepName());
+				// modern fork (milestone 1.5): preferred display name
+				lastCat1 = new DefaultMutableTreeNode(step.getStepName());
 				root.add(lastCat1);
 				lastEntry = new DefaultMutableTreeNode(step);
 				lastCat1.add(lastEntry);
@@ -495,7 +497,8 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 				public int compare(SolutionStep o1, SolutionStep o2) {
 					int ret = o1.getType().getStepConfig().getIndex() - o2.getType().getStepConfig().getIndex();
 					if (ret == 0) {
-						ret = o1.getType().getStepName().compareTo(o2.getType().getStepName());
+						// modern fork (milestone 1.5): sort by the displayed name
+						ret = SolutionStep.getStepName(o1.getType()).compareTo(SolutionStep.getStepName(o2.getType()));
 						if (ret == 0) {
 							ret = o1.compareTo(o2);
 						}

@@ -452,7 +452,7 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 						buffer.append("\r\n");
 					}
 				}
-				buffer.append(invalidTypes.get(i).getType().getStepName());
+				buffer.append(invalidTypes.get(i).toString());
 			}
 			JOptionPane.showMessageDialog(this,
 					ResourceBundle.getBundle("intl/ConfigProgressPanel").getString("ConfigProgressPanel.techniques")
@@ -627,7 +627,8 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 						steps[i].getCategory());
 				root.add(act);
 			}
-			act.add(new CheckNode(steps[i].getType().getStepName(), false,
+			// modern fork (milestone 1.5): render the preferred display name
+			act.add(new CheckNode(steps[i].toString(), false,
 					steps[i].isEnabledProgress() ? CheckNode.FULL : CheckNode.NONE, steps[i], false, true, false,
 					null));
 			if (act.getSelectionState() == CheckNode.FULL && !steps[i].isEnabledProgress()) {

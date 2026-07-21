@@ -148,7 +148,8 @@ public class SummaryPanel extends javax.swing.JPanel {
 					if (anzSteps[i] > 0) {
 						StepConfig config = Options.getInstance().solverSteps[i];
 						content[index][0] = Integer.toString(anzSteps[i]);
-						content[index][1] = config.getType().getStepName();
+						// modern fork (milestone 1.5): preferred display name
+					content[index][1] = config.toString();
 						content[index][2] = Integer.toString(anzSteps[i] * config.getBaseScore() + config.getAdminScore());
 						content[index][3] = Options.getInstance().getDifficultyLevels()[config.getLevel()].getBackgroundColor();
 						index++;

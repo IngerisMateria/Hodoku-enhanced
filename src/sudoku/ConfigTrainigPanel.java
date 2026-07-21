@@ -318,7 +318,8 @@ public class ConfigTrainigPanel extends javax.swing.JPanel {
 						steps[i].getCategory());
 				root.add(act);
 			}
-			act.add(new CheckNode(steps[i].getType().getStepName(), false,
+			// modern fork (milestone 1.5): render the preferred display name
+			act.add(new CheckNode(steps[i].toString(), false,
 					steps[i].isEnabledTraining() ? CheckNode.FULL : CheckNode.NONE, steps[i], false, false, true,
 					null));
 			if (act.getSelectionState() == CheckNode.FULL && !steps[i].isEnabledTraining()) {

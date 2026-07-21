@@ -652,16 +652,21 @@ public class SolutionStep implements Comparable<SolutionStep>, Cloneable {
 		return endoFins;
 	}
 
+	// modern fork (milestone 1.5): every user-facing step name (hints, hint
+	// text area, solution path, summary, all-steps tree, print dialogs) goes
+	// through the registry so the preferred display name applies everywhere.
+	// Persistence and the batch/snapshot harness use enum names or library
+	// codes and are untouched by this indirection.
 	public String getStepName() {
-		return type.getStepName();
+		return solver.modern.registry.TechniqueRegistry.getInstance().getDisplayName(type);
 	}
 
 	public static String getStepName(SolutionType type) {
-		return type.getStepName();
+		return solver.modern.registry.TechniqueRegistry.getInstance().getDisplayName(type);
 	}
 
 	public static String getStepName(int type) {
-		return SolutionType.values()[type].getStepName();
+		return solver.modern.registry.TechniqueRegistry.getInstance().getDisplayName(SolutionType.values()[type]);
 	}
 
 	public String getEntityName(int name) {
