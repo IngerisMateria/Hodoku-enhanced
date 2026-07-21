@@ -50,3 +50,10 @@
 # docs/corpora.md.
 1...5...9......2...8.7...4..7.8...3.....6.5..5.......6.3...4.....4..3.1.9...2....
 1....67...5.1.......8.3...4...7...6...4.9...3.....5.......2..9...29..34.8.......2
+# CUSTODIA ODDAGON (milestone 1.6, regla de custodia): Broken Wing quedo custodiado
+# por el puzzle EXTREME de la linea 52 (su solve path default gano un paso Broken
+# Wing al habilitarse la tecnica). Para Bivalue Oddagon: puzzles del subset
+# te3-mith-200 (lineas 112 y 59) cuyos solve paths default contienen la tecnica —
+# te3#112: 5 pasos; te3#59: 1 paso. Fuente y licencia: docs/corpora.md.
+.2..56...45.1.92..6..........5....73..6....58....95.24.12.64.9.5.49.2...9..51..42
+1...567.9...1.9.36......15.2.49......61...39...85.........95....7.6.1....1.37..6.

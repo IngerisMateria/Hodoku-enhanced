@@ -69,6 +69,18 @@ sufre (`Options.resetAll()`).
   `getAllWings()`, que `FindAllSteps` ya llama incondicionalmente y filtra por técnica
   habilitada — así el panel "find all steps" de la GUI lo lista sin tocar
   `FindAllSteps`).
+- **Familias nuevas sin `getAll*` legacy donde colgarse** (desvío 1.6, precedente del
+  toque a `FindAllSteps` en 1.5): NO contaminar `getAllWings()` — se agrega un
+  `getAllXxx(Sudoku2)` público en `SudokuStepFinder` y una llamada gateada por
+  `isAllStepsEnabled(...)` + `filterSteps` en el `case 19` de `FindAllSteps.run()`
+  (espejo del bloque uniqueness). `FindAllSteps` entra así a la lista de legacy
+  modificable, siempre con adiciones mínimas de ese estilo.
+- **Técnicas con pasos de colocación** (desvío 1.6, Broken Wing |G|=1): el layout del
+  step documenta dónde vive el target (BW: `fins[0]`, con `candidatesToDelete` vacío
+  como marcador del caso); `doStep` hace `setCell` y **hay que agregar el caso al
+  switch de `harness/StepRecord.from()`** (espeja doStep para el validador de
+  soundness — un paso de colocación que caiga al default se registraría como "sin
+  cambios" y el harness no validaría la colocación).
 
 ## 4. Fixtures (formato library, `test/fixtures/libs/`)
 

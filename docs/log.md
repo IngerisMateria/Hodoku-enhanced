@@ -1,5 +1,93 @@
 # Log de milestones
 
+## 1.6 — Oddagons I: Broken Wing + Bivalue Oddagon (framework guardianes) — 2026-07-21
+
+Hecho, en cuatro commits lógicos (framework / broken wing / bivalue oddagon /
+custodia+docs). Prompt archivado verbatim en `docs/milestones/1.6.md`.
+
+1. **Framework de guardianes** — `solver.modern.Guardians` (buffer reusable:
+   colección de candidatos guardianes + `uniformDigit()` + intersección de
+   buddies; 1.7/Tridagon lo reusa tal cual) y `solver.modern.OddagonSolver`
+   (motor de ciclos impares L∈{5,7}: DFS canónico — celda mínima como inicio,
+   segunda < última para matar la dirección inversa, la asignación de casas es
+   parte de la identidad del ciclo). Condición de pureza: cada casa-eslabón
+   contiene exactamente sus dos extremos del ciclo — para BW es requisito duro
+   de soundness (una tercera celda del ciclo en la casa rompe el argumento de
+   enlaces conjugados), para BO es conservador y mantiene la definición
+   canónica (documentado en el javadoc). L=3 excluido (colapsa en básicas);
+   L≥9 fuera de alcance v1 (documentado). Escalera de deducciones: |G|=0 →
+   estado contradictorio, log y skip (jamás "eliminar todo"); |G|=1 → BW
+   coloca d en la celda guardiana (paso de colocación), BO elimina {a,b} de la
+   celda guardiana; |G|>1 uniforme → eliminar g de toda celda externa que ve
+   todas las celdas guardianas; |G|>1 mixto (solo BO) → sin deducción en 1.6
+   (territorio de cadenas; anotado en registro y javadoc). Layout del step en
+   campos base (`values`=dígito(s), `indices`=ciclo EN ORDEN, `fins`=
+   guardianes, colocación marcada por candidatesToDelete vacío con target en
+   fins[0]); pasos de colocación exigieron caso propio en
+   `harness/StepRecord.from()` (espeja doStep; plantilla actualizada).
+2. **Integración** — `BROKEN_WING` (library 1400, arg `bw`) y
+   `BIVALUE_ODDAGON` (1401, `bvo`): rango 14xx nuevo para la familia (09xx es
+   ALS del upstream; 1402 reservado Tridagon). Scores leyendo la escala
+   vecina: BW UNFAIR 240 / orden 5370 (post-coloring, pre-X-Chain; zona
+   Sashimi Swordfish 240–SDC 250, bien arriba de la familia turbot HARD
+   120-150), BO UNFAIR 440 / orden 5690 (pre-ALS; zona RSTUVWXYZ 440 / mutant
+   450, bajo la meseta EXTREME 470). Ambas enabled. Categorías clásicas:
+   BW SINGLE_DIGIT_PATTERNS, BO MISCELLANEOUS (no se agregó
+   SolutionCategory nueva: legacy intacto; la familia moderna vive en el
+   registro). Familia `ODDAGON` en el registro (rama "rank −1 / dark logic"
+   §2.d del mapa, raíz taxonómica propia sin padres), aliases "Guardians" /
+   "Single-Digit Oddagon" (BW) y "Bi-Value Oddagon" (BO). Hook all-steps:
+   `getAllOddagons` público + llamada gateada en el case 19 de FindAllSteps
+   (desvío documentado en plantilla: familias no-wing no contaminan
+   getAllWings; precedente del toque 1.5).
+3. **Rendering (decisión)** — chain de display construido por el finder (ciclo
+   cerrado, primer nodo repetido, links strong) y SudokuPanel lo dibuja SIN
+   modificaciones: el loop sale con flechas sobre el candidato del ciclo (en
+   BO, sobre el menor de los dos). Resaltado estándar: ciclo verde, guardianes
+   azul (fins), eliminaciones rojo. Verificado en ambas capturas.
+4. **Cosecha y métricas** (26.431 estados de los paths default de
+   corpus 35 / te2 100 / te3 200): 7.832 pasos oddagon, **0 violaciones de
+   soundness** (validación inline contra brute force). BW 6.303 (L5 3.054 /
+   L7 3.249; corpus 606, te2 2.805, te3 2.892), BO 1.529 (L5 678 / L7 851;
+   corpus 25, te2 9, te3 1.495 — la técnica es de monstruos, como predice la
+   teoría). Distribución |G|: BW G1=966 G2=2.465 G3=1.802 G4=783 G5=200 G6=73
+   G7=13 G8=1; BO G1=679 G2=433 G3=269 G4=146 G5=2. Colocaciones: 966 (todos
+   los |G|=1 de BW). Pasada all-steps oddagon: 410,9 s totales ≈ 15,5 ms/estado
+   (enumeración acotada; el costo real del replay lo pone el tabling legacy).
+5. **Fixtures** — `libs/broken-wing.txt` (4 positivos: L5 default-path del
+   snapshot, L5 estado inicial, L7, colocación |G|=1; 2 near-miss: ciclo par
+   L6, casa-eslabón repetida) y `libs/bivalue-oddagon.txt` (4 positivos: L5
+   default te3#112, L7 corpus, |G|=1, L5 default te3#59; 3 near-miss: ciclo
+   par, casa repetida, celda sin el par completo). Todos de puzzles distintos
+   por categoría; ninguno construido a mano (todo apareció natural).
+6. **Custodia** — BW: el puzzle EXTREME línea 52 del corpus ganó 1 paso BW en
+   su path default (diff de snapshot: 1 línea, r7c4<>5). BO: 74 estados
+   default-step en 43 puzzles, TODOS te3 → se sumaron te3#112 (5 pasos BO,
+   solve 642 ms) y te3#59 (1 paso, 272 ms) al corpus de snapshots (+2 líneas).
+7. **GUI** — 2 capturas revisadas con config fresca en estados default-step:
+   BW corpus#35 (`Broken Wing: 5 in r4c3,r4c9,r8c9,r8c1,r5c1 (guardians:
+   r7c9,r8c5,r7c1) => r7c4<>5`, loop con flechas) y BO te3#112 (`Bivalue
+   Oddagon: 3/7 in r2c3,r3c2,r3c6,r9c6,r9c3 (guardians: 8 in ...) =>
+   r13c3<>8`).
+
+Desvíos / hallazgos: (i) el tool de cosecha scratch quedó "colgado" 70 min
+tras terminar en 17 — las factories legacy arrancan un thread housekeeping
+no-daemon y la JVM no muere sin `System.exit()`; diagnóstico por jstack (main
+ya era DestroyJavaVM). Regla para tools scratch: `System.exit(0)` siempre.
+(ii) El |G|>1 de BW es siempre uniforme (un dígito); el mixto solo existe en
+BO y quedó sin deducción directa, como pide la spec. (iii) Los dos StepConfigs
+nuevos no migran a hcfg viejos (limitación conocida de la plantilla, misma
+que 1.1-1.3).
+
+**Resumen llano:** el programa aprendió dos técnicas nuevas de la familia
+"oddagon": anillos impares de celdas que serían imposibles si no fuera por
+unos pocos candidatos "guardianes" que los desarman — y de ahí se deduce qué
+eliminar o incluso qué número colocar. La maquinaria de guardianes quedó
+armada como pieza reutilizable: la próxima técnica de la escalera (Tridagon,
+la de los sudokus monstruo modernos) la va a enchufar directo. Las dos
+técnicas quedaron activas por defecto, con sus casos de prueba, sus puzzles
+custodios y verificación visual en pantalla.
+
 ## 1.5 — Aside v2 + buscador en config + split Kraken T1/T2 (P-002) — 2026-07-21
 
 Hecho, en cuatro commits lógicos (kraken / aside / buscador / cierre). Prompt
