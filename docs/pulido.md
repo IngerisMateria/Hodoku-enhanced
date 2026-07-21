@@ -24,7 +24,9 @@ reconstruirlo.
 
 ## P-002 — Separar Kraken Fish Type 1 y Type 2 en la configuración
 - Fecha: 2026-07-21 · Origen: dueño (dolor real del HoDoKu base) ·
-  Estado: diferido
+  Estado: plegada al milestone 1.5 (el des-colapso es acotado: el enum ya
+  tiene TYPE_1/0371 y TYPE_2/0372; solo la config los colapsa —
+  `SolutionType.getStepConfigType()` mapea ambos a KRAKEN_FISH)
 - Contexto verificado en la base: una sola StepConfig KRAKEN_FISH
   (default off) gobierna todo kraken; los tipos 1/2 que se ven en los
   listados no tienen enable, score ni orden propios. Consecuencia:
@@ -48,3 +50,39 @@ reconstruirlo.
 - Criterio de cierre: en la GUI se puede habilitar T1 sin T2 en las tres
   superficies, y un all-steps sobre un puzzle kraken-pesado termina en
   tiempo razonable con T2 apagado.
+
+## P-003 — Memoria de posición de popups
+- Fecha: 2026-07-21 · Origen: dueño (queja de uso) · Estado: diferido
+- Contexto: los diálogos/popups de la GUI (config, find-all-steps,
+  training, etc.) se abren siempre en su posición default; el usuario
+  los mueve y la posición se pierde al cerrar.
+- Cambio deseado: todos los popups recuerdan dónde los movió el usuario.
+  Si una implementación global es eficiente (interceptar en un ancestro
+  común / helper compartido que persista bounds por clase de diálogo en
+  Options), preferirla a tocar diálogo por diálogo.
+- Nota: QoL puro, sin relación con el registro de técnicas
+  (estrategia-taxonomia.md §5, "nueva queja 1").
+- Criterio de cierre: mover un diálogo, cerrarlo, reabrirlo (incluso tras
+  reiniciar la app) → reaparece donde quedó.
+
+## P-004 — Carpetas/presets/resaltado de solapamiento (UX de config avanzada)
+- Fecha: 2026-07-21 · Origen: dueño · Estado: diferido post-release por
+  presupuesto (decisión 2026-07-21, modo presupuesto-consciente)
+- Contexto: el registro de metadatos (milestone 1.4) deja lista la fuente
+  de datos; la UX rica encima se difiere. Diseño completo en
+  estrategia-taxonomia.md §5 y en el prompt archivado de 1.4
+  (docs/milestones/1.4.md).
+- Alcance diferido:
+  - Carpetas del solver: 3 vistas (por familia, por convención de
+    nomenclatura, jerárquica por las 4 raíces del mapa del dueño) +
+    vistas custom del usuario. Las vistas son SOLO visuales: el orden de
+    ejecución vive únicamente en la lista plana exhaustiva, y una técnica
+    puede repetirse en varias carpetas.
+  - Presets de enable para find-all-steps (máscaras de enable guardadas;
+    propuesta inicial: "Wings", "ALS", "Cadenas", "Fish", "Unicidad",
+    "Clásico HoDoKu").
+  - Resaltado de solapamiento: técnicas con relaciones "interfiere con"
+    marcadas en la lista; al abrirlas, lista de interferencias (datos ya
+    presentes en el registro como taxonomía/overlaps).
+- Criterio de cierre: decisión del dueño post-release sobre qué subconjunto
+  entra, con el registro como única fuente de datos.

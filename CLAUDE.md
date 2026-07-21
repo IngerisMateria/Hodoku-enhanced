@@ -62,35 +62,28 @@ del upstream 2.2.0 de hobiwan).
       (bisagra + 3 alas) como entrada separada, motor bent-subset con n paramétrico
 - [x] 1.3 Bent subsets n=5..9 (VWXYZ-Wing .. RSTUVWXYZ-Wing, entradas separadas con
       scores escalonados; defaults: 5 on, 6-9 off, estilo fish)
-- [ ] 1.4 M-Wing / S-Wing / L-Wing / H-Wing ← PRÓXIMO
-- [ ] 1.5 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
-- [ ] 1.6 Bivalue Oddagon
-- [ ] 1.7 Tridagon* (fixtures: subset T&E(3) del 0.3)
-- [ ] 1.8 Pack Uniqueness: Unique Loop, Extended UR, BUG-Lite, Reverse BUG, MUG
-- [ ] 1.9 Fireworks*
-- [ ] 1.10 3D Medusa (+ trazar hallazgo B del inventario)
-- [ ] 1.11 GEM* + integración coloring→generador por estrategia
-- [ ] 1.12 APE / ATE
-- [ ] 1.13 ALS-W-Wing + Extended Sue de Coq + AHS
-- [ ] 1.14 Desglose fish: Siamese/endo/cannibal como ítems configurables estilo HoDoKu;
-      revisión de defaults (Kraken, mutants, tamaños ≥5)
-- [ ] 2.1 SK-Loop* (clásico 16 celdas → general) + rendering
-- [ ] 2.2 MSLS* (formulación DPB; 4×4 clásico → general)
-- [ ] 2.3 SET / Anillo de Phistomefel* (instancias geométricas fijas)
-- [ ] 3.1 Junior Exocet* → 3.2 Double JE* → 3.3 JE+ (tabla completa)* → 3.4 Senior Exocet*
-- [ ] 4.1 Motor AIC v2 (módulo nuevo en paralelo a TablingSolver, diff sobre corpus)
-- [ ] 4.2 Nodos ALS / AHS / AALS
-- [ ] 4.3 Nodos almost-fish (kraken en cadenas) / almost-UR
-- [ ] 4.4 Nishio + jerarquía forcing (Dynamic FC)
-- [ ] 4.5 Nested FC
-- [ ] 4.6 Destino del TablingSolver (retirar u opción legacy)
-- [ ] 5.0 Pasada de pulido: procesar todas las entradas de docs/pulido.md
-- [ ] 5.x Recalibración de dificultad, docs, release
+- [ ] 1.4 Registro de técnicas y opciones v1 + experimento T2 ← PRÓXIMO
+- [ ] 1.5 Aside v2 + buscador en config + split Kraken T1/T2 (P-002)
+- [ ] 1.6 Oddagons I: Broken Wing + Bivalue Oddagon (framework guardianes)
+- [ ] 1.7 Oddagons II: Tridagon* (fixtures: subset te3)
+- [ ] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG
+- [ ] 1.9 SDC extendido básico = régimen R0 del motor bent (locked n=4..9)
+- [ ] 1.10 3D Medusa + GEM (+ hallazgo B: coloring→generador)
+- [ ] 1.11 Fireworks*
+- [ ] 2.x Arco multi-sector*: SK-Loop, MSLS, SET
+- [ ] 3.x Arco Exocet*: JE → Double → JE+ → SE
+- [ ] 4.x Cadenas: motor AIC v2 (acá vuelven M/S/L/H, Nishio, dynamic/nested)
+- [ ] 5.0 Pulido (backlog) · 5.x recalibración, docs
+
+Contexto (2026-07-21): modo presupuesto-consciente — maximizar novedad teórica por
+iteración hasta una release pública financiable. M/S/L/H y el desglose fino de fish
+se difieren al arco de cadenas (4.x); carpetas/presets/resaltado van a backlog (P-004).
 
 Los ítems con * requieren spec previa en `docs/specs/`. **Fuera de alcance** (decisión del
 dueño, 2026-07-20): multifish / rank-0 genérico; SK-Loop, MSLS y SET/Phistomefel se
 implementan como patrones dirigidos sin el motor general (ver
-`docs/inventario-tecnicas.md`, que reemplaza el detalle de este roadmap).
+`docs/inventario-tecnicas.md` y `docs/estrategia-taxonomia.md`, que reemplazan el
+detalle de este roadmap).
 
 ## Reglas de trabajo
 - Un milestone por sesión. No se arranca el siguiente sin el criterio de aceptación en verde.
@@ -108,6 +101,9 @@ implementan como patrones dirigidos sin el motor general (ver
   de librería (los snapshots no pueden ejercitarlas).
 - Objeción de diseño no bloqueante → entrada en docs/pulido.md con motivación completa;
   se procesan en el milestone 5.0.
+- Toda opción de configuración tiene pestaña clásica canónica (GENERAL/SOLVER/ALL
+  POSSIBLE STEPS/STEPS/COLORS, pensar en cuál a juzgar por lo que contiene cada una)
+  y aparece además en el aside de sus técnicas dueñas.
 - Las técnicas de Fase 2 en adelante requieren un spec previo en `docs/specs/` (se discute
   fuera de Claude Code y se vuelca ahí antes de implementar).
 - TablingSolver y el generador no se tocan hasta sus fases respectivas.
