@@ -1,5 +1,84 @@
 # Log de milestones
 
+## 1.5 — Aside v2 + buscador en config + split Kraken T1/T2 (P-002) — 2026-07-21
+
+Hecho, en cuatro commits lógicos (kraken / aside / buscador / cierre). Prompt
+archivado verbatim en `docs/milestones/1.5.md`.
+
+1. **Split Kraken T1/T2 (P-002 cerrada, detalle en docs/pulido.md)** —
+   `KRAKEN_FISH_TYPE_1` (índice 8450, hereda el slot del genérico) y `TYPE_2`
+   (8460) con StepConfig propia, ambas derivadas del genérico (EXTREME /
+   LAST_RESORT / score 500 / off en solver, all-steps y training). Decisión
+   sobre la entrada genérica: **retirada de la lista de config** (la GUI
+   muestra solo Type 1/Type 2); la fila KRAKEN_FISH del registro queda como
+   ancla taxonómica sin StepConfig (excepción `CONFIGLESS_ROWS` en el test de
+   completitud, que ahora exige además las dos filas nuevas). El colapso de
+   `SolutionType.getStepConfig()` se eliminó; `FishSolver` gana
+   `krakenTypeFilter` (pedir un tipo nunca devuelve el otro; el request
+   genérico KRAKEN_FISH sigue buscando ambos por compatibilidad);
+   `FindAllSteps` corre kraken si cualquiera de los dos está on y filtra el
+   resultado por tipo; `setTestType` normaliza el arg batch `kf` → kf1+kf2
+   (quirk preexistente: el check de `/bt` en Main filtraba los pasos kraken
+   incluso antes del split; `kf1`/`kf2` ahora funcionan de punta a punta).
+   Migración de hcfg pre-split en `Options.migrateKrakenFishStepConfig()`
+   (idempotente, preserva enabled/score/level/category/flags; roundtrip en
+   `KrakenConfigMigrationTest`). Fixture `test/fixtures/kraken-split.txt`:
+   estado te3 (puzzle #2 del subset, básicos jugados) con 22 T1 + 179 T2 bajo
+   los parámetros del test; `KrakenSplitFixtureTest` asierta que con T2 off el
+   all-steps devuelve solo T1, que el estado contiene ambos tipos, y que el
+   finder honra el tipo pedido. Snapshots: cero cambios (kraken off por
+   default) — suite completa verde antes y después.
+2. **Aside v2** (`ConfigSolverPanel`) — al seleccionar técnica muestra:
+   descripción del registro, "Other names:" (aliases), selector "Show as:"
+   (persistencia ENUM=alias del 1.4; bufferizado en el diálogo y aplicado en
+   okPressed → semántica OK/Cancel intacta), y las opciones cuya DUEÑA es la
+   técnica, editables in situ. Sincronización con la pestaña clásica por
+   **modelos Swing compartidos** (ButtonModel/ComboBoxModel/Document de los
+   controles de ConfigStepPanel, expuestos vía `getOptionEditor(key)`): ambas
+   vistas coinciden siempre y el valor se escribe en Options una sola vez, en
+   el okPressed clásico — el aside es espejo puro. Multi-dueño: etiqueta
+   "also affects: X, Y, +N more" (testigos: allowDualsAndSiamese con +41,
+   opciones kraken con "also affects: Kraken Fish Type 2"). El caso
+   afectada-no-dueña (grisado + click navega al dueño) quedó implementado
+   estructuralmente (`addOptionRow(..., owned=false)` +
+   `affectedNotOwnedOptions()`, hoy vacío — sin instancias, como se esperaba).
+   Los nombres preferidos se renderizan ahora en TODAS las listas de config
+   vía `StepConfig.toString()` → registro (lista y árbol del solver, árbol de
+   find-all-steps, combos de training/progress); hints legacy sin tocar
+   (limitación ya anotada en el log del 1.4).
+3. **Buscador** — campo de filtro sobre nombre + aliases + descripción
+   (predicado `TechniqueRegistry.matches`, case-insensitive). En el solver:
+   en la toolbar lista/árbol, filtra ambas vistas; mientras hay filtro activo
+   se deshabilita el reordenamiento (Up/Down y drag&drop — los índices
+   filtrados no mapean al orden de resolución). Reuso en Find-All-Steps: SÍ
+   resultó barato — mismo predicado, campo montado como columnHeader del
+   scrollpane del árbol (cero cirugía del layout generado).
+4. **Verificación GUI** — 4 capturas revisadas: (a) aside ALS-XZ con
+   descripción + "Allow overlap" editable y su alcance; (b) aside Skyscraper
+   con "Allow Duals/Siamese" y "also affects: … +41 more"; (c) lista del
+   solver con Kraken Fish Type 1 y Type 2 separados (aside de T1 con sus 6
+   opciones fish/kraken); (d) "disjoint" filtra a Sue de Coq (matchea
+   descripción "Two-Sector Disjoint Subsets" y alias TSDS).
+
+Desvíos/hallazgos: ninguno de alcance; dos notas. (i) El probe headless de
+javac se congela si `src/` está en el classpath de compilación (sourcepath
+implícito) — compilar tools scratch solo contra `build/classes/java/main`.
+(ii) `FindAllSteps.run()` termina con `Thread.interrupt()` sobre su propio
+thread: los tests que lo invocan inline deben limpiar el flag
+(`Thread.interrupted()`), ya contemplado en `KrakenSplitFixtureTest`.
+
+**Resumen para el dueño (en llano):** El panel del solver ahora te cuenta qué
+es cada técnica: al tocar una, al costado aparece su explicación, sus otros
+nombres, y podés elegir con cuál nombre querés verla en todo el programa.
+Las opciones que gobiernan esa técnica se editan ahí mismo (son las mismas de
+la pestaña Steps, no un duplicado), y si una opción también afecta a otras
+técnicas, te lo avisa. Arriba de la lista hay un buscador: escribís
+"disjoint" y aparece Sue de Coq aunque el nombre no se parezca. Y el pedido
+viejo del Kraken quedó resuelto: Type 1 y Type 2 ahora se prenden y apagan
+por separado — podés buscar solo los Type 1 (los humanamente encontrables)
+sin que la computadora te inunde con cientos de Type 2. Las configuraciones
+guardadas se convierten solas al formato nuevo.
+
 ## 1.4 — Registro de técnicas y opciones v1 + experimento T2 — 2026-07-21
 
 Hecho, en cinco commits lógicos (docs del dueño / arranque / registro / experimento
