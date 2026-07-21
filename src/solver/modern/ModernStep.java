@@ -59,6 +59,11 @@ import sudoku.SolutionType;
  * {@code candidatesToDelete} marks the Broken Wing placement case (the
  * target is {@code fins.get(0)}); one display chain traces the closed
  * loop.</li>
+ * <li>Tridagon ({@link SolutionType#TRIDAGON}, milestone 1.7): {@code values}
+ * holds the triple a,b,c ascending; {@code indices} holds the 8 loop cells in
+ * loop order, then the 4 rectangle cells; {@code fins} holds the guardians
+ * (digits outside the triple) followed by the rectangle cells with the triple
+ * digits (display); one display chain traces the closed 8-loop.</li>
  * </ul>
  */
 public class ModernStep extends SolutionStep {
@@ -90,6 +95,8 @@ public class ModernStep extends SolutionStep {
 		HintFormatter oddagons = new OddagonFormatter();
 		registerFormatter(SolutionType.BROKEN_WING, oddagons);
 		registerFormatter(SolutionType.BIVALUE_ODDAGON, oddagons);
+		// the Tridagon (milestone 1.7)
+		registerFormatter(SolutionType.TRIDAGON, new TridagonFormatter());
 	}
 
 	/**

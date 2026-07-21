@@ -46,8 +46,12 @@ import sudoku.SudokuSet;
  */
 public class Guardians {
 
-	/** More than enough for cycles of length &le; 7 (&le; 7 houses &times; 7 cells). */
-	private static final int MAX_GUARDIANS = 64;
+	/**
+	 * More than enough for every client pattern: oddagon cycles of length
+	 * &le; 7, and the Tridagon's 12 cells &times; up to 6 non-triple
+	 * candidates each (milestone 1.7).
+	 */
+	private static final int MAX_GUARDIANS = 128;
 
 	/** The guardian cells (parallel to {@link #digits}; cells may repeat). */
 	private final int[] cells = new int[MAX_GUARDIANS];
