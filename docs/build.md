@@ -39,6 +39,12 @@ o directo desde Gradle:
 ./gradlew run
 ```
 
+### Lanzador sin terminal (Windows)
+
+Doble clic en **`hodoku.bat`** (raíz del repo): builda el jar si hace falta (`gradlew -q jar`)
+y abre la GUI con `javaw` (sin dejar consola abierta). Si el build falla, la ventana queda
+abierta mostrando el error. Requiere Java en el PATH (el mismo requisito de `gradlew.bat`).
+
 Modo consola (ejemplo: batch solve de un archivo con un puzzle por línea):
 
 ```
