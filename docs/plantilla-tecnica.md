@@ -118,6 +118,11 @@ log: cuántos solve paths cambiaron y cuántos pasos de la técnica aparecen; si
 no la ejercita, medir también sobre `te2-eleven-100.txt` con `--batch-json` (en 1.1:
 22 pasos en 18/100 puzzles).
 
+**Regla de custodia (milestone 1.2)**: toda técnica nueva queda custodiada por ≥1
+puzzle del corpus de snapshots cuyo solve path default la contenga. Si ningún puzzle
+del corpus la ejercita, sumar al corpus 1-3 puzzles (p. ej. de te2) cuyos paths default
+la contengan, regenerar snapshots como tarea documentada y reportar el diff en el log.
+
 ## 8. Cierre
 
 - `gradlew test` verde local; commit(s) lógicos (técnica+fixtures+tests juntos); push;

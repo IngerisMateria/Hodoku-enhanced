@@ -209,7 +209,10 @@ public enum SolutionType {
 	// Techniques of the modern fork start here. Append only: existing ordinals must stay stable.
 	// Library code 0802 was never used upstream (wings: 0800 XY, 0801 XYZ, 0803 W); verified free
 	// against every code in this enum.
-	WXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("WXYZ-Wing"), "0802", "wxyz");
+	// Milestone 1.2: renamed from WXYZ_WING — what 1.1 shipped is the general "bent naked
+	// subset n=4", not the canonical hinge+wings WXYZ-Wing (which is a separate entry now).
+	// The library code stays 0802, so existing fixtures keep working.
+	BENT_QUAD(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Bent_Quad"), "0802", "bq");
 	private String stepName;
 	private String libraryType;
 	private String argName;

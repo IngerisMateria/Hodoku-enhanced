@@ -90,7 +90,7 @@ public class WxyzWingSolver extends AbstractSolver {
 	protected SolutionStep getStep(SolutionType type) {
 		SolutionStep result = null;
 		sudoku = finder.getSudoku();
-		if (type == SolutionType.WXYZ_WING) {
+		if (type == SolutionType.BENT_QUAD) {
 			result = findWxyzWing(true);
 		}
 		return result;
@@ -100,7 +100,7 @@ public class WxyzWingSolver extends AbstractSolver {
 	protected boolean doStep(SolutionStep step) {
 		boolean handled = true;
 		sudoku = finder.getSudoku();
-		if (step.getType() == SolutionType.WXYZ_WING) {
+		if (step.getType() == SolutionType.BENT_QUAD) {
 			for (Candidate cand : step.getCandidatesToDelete()) {
 				sudoku.delCandidate(cand.getIndex(), cand.getValue());
 			}
@@ -289,7 +289,7 @@ public class WxyzWingSolver extends AbstractSolver {
 		}
 		// ok, wing found!
 		globalStep.reset();
-		globalStep.setType(SolutionType.WXYZ_WING);
+		globalStep.setType(SolutionType.BENT_QUAD);
 		// values: the three restricted candidates ascending, Z last
 		for (int i = 0; i < cands.length; i++) {
 			if (cands[i] != zCand) {

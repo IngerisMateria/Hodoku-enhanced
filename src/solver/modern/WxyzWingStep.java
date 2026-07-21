@@ -44,7 +44,7 @@ public class WxyzWingStep extends SolutionStep {
 
 	/** Required for cloning via super.clone() and for XMLEncoder. */
 	public WxyzWingStep() {
-		super(SolutionType.WXYZ_WING);
+		super(SolutionType.BENT_QUAD);
 	}
 
 	/**

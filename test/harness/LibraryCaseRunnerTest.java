@@ -42,7 +42,7 @@ public class LibraryCaseRunnerTest {
 	 */
 	private static final String[] LIB_FILES = {
 			"phase1-examples.txt",
-			"wxyz-wing.txt", // milestone 1.1
+			"bent-quad.txt", // milestone 1.1 (como WXYZ-Wing; renombrado en 1.2)
 	};
 
 	@TestFactory

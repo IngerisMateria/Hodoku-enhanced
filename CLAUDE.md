@@ -94,6 +94,12 @@ implementan como patrones dirigidos sin el motor general (ver
   `docs/milestones/NN.md`.
 - Cambios mínimos fuera del alcance del milestone; nada de refactors oportunistas.
 - Cada técnica nueva entra con sus fixtures y tests en el mismo commit/PR.
+- Principio de desglose (estilo HoDoKu): toda generalización que subsuma casos nombrados
+  de la literatura expone esos casos como entradas separadas del solver (SolutionType,
+  score, enable y trainer propios), ordenadas antes que la generalización. Precedente:
+  Skyscraper / 2-String Kite / Empty Rectangle coexisten con Turbot Fish.
+- Regla de custodia: toda técnica nueva queda custodiada por ≥1 puzzle del corpus de
+  snapshots cuyo solve path default la contenga (además de sus fixtures library).
 - Las técnicas de Fase 2 en adelante requieren un spec previo en `docs/specs/` (se discute
   fuera de Claude Code y se vuelca ahí antes de implementar).
 - TablingSolver y el generador no se tocan hasta sus fases respectivas.

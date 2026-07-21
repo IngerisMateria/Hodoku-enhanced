@@ -184,8 +184,8 @@ public final class Options {
 					SolutionCategory.CHAINS_AND_LOOPS, 260, 0, true, true, 5500, false, false),
 			new StepConfig(5600, SolutionType.NICE_LOOP, DifficultyType.UNFAIR.ordinal(),
 					SolutionCategory.CHAINS_AND_LOOPS, 280, 0, true, true, 5600, false, false),
-			// modern fork: WXYZ-Wing sits right before ALS-XZ, score between XYZ-Wing (180) and ALS-XZ (300)
-			new StepConfig(5650, SolutionType.WXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
+			// modern fork: Bent Quad sits right before ALS-XZ, score between XYZ-Wing (180) and ALS-XZ (300)
+			new StepConfig(5650, SolutionType.BENT_QUAD, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
 					250, 0, true, true, 5650, false, false),
 			new StepConfig(5700, SolutionType.ALS_XZ, DifficultyType.UNFAIR.ordinal(),
 					SolutionCategory.ALMOST_LOCKED_SETS, 300, 0, true, true, 5700, false, false),
