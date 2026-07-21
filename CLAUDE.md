@@ -65,8 +65,8 @@ del upstream 2.2.0 de hobiwan).
 - [x] 1.4 Registro de técnicas y opciones v1 + experimento T2
 - [x] 1.5 Aside v2 + buscador en config + split Kraken T1/T2 (P-002)
 - [x] 1.6 Oddagons I: Broken Wing + Bivalue Oddagon (framework guardianes)
-- [ ] 1.7 Oddagons II: Tridagon* (fixtures: subset te3) ← PRÓXIMO
-- [ ] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG
+- [x] 1.7 Oddagons II: Tridagon* (fixtures: subset te3)
+- [ ] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG ← PRÓXIMO
 - [ ] 1.9 SDC extendido básico = régimen R0 del motor bent (locked n=4..9)
 - [ ] 1.10 3D Medusa + GEM (+ hallazgo B: coloring→generador)
 - [ ] 1.11 Fireworks*

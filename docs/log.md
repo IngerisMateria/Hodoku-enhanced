@@ -1,5 +1,93 @@
 # Log de milestones
 
+## 1.7 — Oddagons II: Tridagon — 2026-07-21
+
+Hecho, en cinco commits lógicos (spec+prompt / detector / integración /
+fixtures+custodia / docs). Spec del PM en `docs/specs/tridagon.md` (manda sobre
+cualquier interpretación); prompt archivado verbatim en `docs/milestones/1.7.md`.
+
+1. **Detector** — `solver.modern.TridagonSolver` (clase propia: la detección por
+   rectángulos de cajas × transversales no comparte nada con la enumeración de
+   ciclos de `OddagonSolver`; lo compartido es exactamente `Guardians`, reusado
+   SIN cambios de contrato). Enumeración acotada según spec §4: 84 triples ×
+   transversales elegibles por caja (≤6 permutaciones locales filas→columnas,
+   filtradas por elegibilidad v1: celda sin resolver con los TRES dígitos) × 9
+   rectángulos de cajas × producto cartesiano; poda de triples sin 4 cajas
+   pobladas. Condición 3 vía signos: producto = −1. **Hallazgo estructural
+   aprovechado**: la permutación de monodromía (componer los enlaces
+   fila/columna alrededor del rectángulo) tiene paridad = producto de los 4
+   signos; es transposición ⟺ paridad impar ⟺ la descomposición en ciclos de
+   las 12 celdas es EXACTAMENTE rectángulo de 4 + lazo de 8 (paridad par da
+   3×4-ciclos o un 12-ciclo) — el detector la computa y de ahí salen gratis el
+   lazo y el rectángulo del rendering. Escalera de guardianes de la spec §3
+   completa (|G|=1 elimina el triple de la celda guardiana; uniforme → visión
+   común; mixto → skip documentado (tridagon links/ORk, fase 4); cero →
+   log+skip, contrato 1.6). Dedup tipo+celdas+deducción (mecanismo 1.2/1.6).
+   Ajuste al buffer de `Guardians`: MAX_GUARDIANS 64→128 (12 celdas × hasta 6
+   candidatos extra = 72 > 64; cambio de capacidad interna, no de contrato).
+2. **Integración** — `TRIDAGON` (library 1402, el código reservado desde 1.6;
+   arg `trid`), display "Tridagon", aliases "Trivalue Oddagon" y "Thor's
+   Hammer". Score 500 / EXTREME / orden 5695 (documentado en Options: sobre BO
+   440 y mutant fish 450, pasada la meseta 470 "computer only", a la par de los
+   kraken 500 porque rompe puzzles T&E(3), pero orden justo tras sus hermanos
+   oddagon y antes de ALS 5700 — es baratísimo de enumerar y es EL titular de
+   la modernización). Categoría clásica MISCELLANEOUS (el cajón de BO). Familia
+   ODDAGON en el registro con refs de la spec (t39885 de mith, t39859 de
+   Berthier); sin padres de subsunción (las cadenas no re-derivan el argumento
+   de paridad — por eso rompe T&E(3)). Hint vía `TridagonFormatter` con la
+   justificación corta del §2. Layout del step: values=triple, indices=lazo de
+   8 EN ORDEN + rectángulo, fins=guardianes (dígitos fuera del triple) +
+   celdas del rectángulo con el triple (solo display). All-steps: `getAllTridagons`
+   + gate en FindAllSteps (patrón 1.6). StepRecord: sin caso nuevo (solo
+   eliminaciones, cae al default correcto).
+3. **Rendering (verificado con captura)** — chain de display del lazo de 8
+   (cerrado, primer nodo repetido, links strong) sobre el menor dígito del
+   triple; SudokuPanel intacto. En pantalla: lazo con flechas rojas recorriendo
+   las 8 celdas alternando fila/columna, candidatos del triple en verde en las
+   celdas del lazo, el rectángulo en azul (fins), el guardián en azul y las
+   eliminaciones en rojo — lazo y rectángulo se distinguen a simple vista.
+4. **Cosecha y métricas** (paths default con validación inline vs brute force):
+   te3-200 → **129/200 puzzles con Tridagon en el path default** (129 pasos, 1
+   por puzzle); all-steps 805 instancias en 14.316 estados, |G|: G1=742 G2=60
+   G3=3; modos: 742 single / 63 uniforme; **0 violaciones de soundness**.
+   te2-100 → 0 instancias en 8.813 estados (colección T&E(2), pre-tridagon: el
+   negativo teórico esperado, sanity del corpus). corpus-37 → 9 instancias
+   all-steps (todas |G|=1) pero 0 en paths default (los 37 snapshots previos no
+   cambian). Pasada all-steps: 12 µs promedio por estado (máx 28 ms con el
+   warm-up incluido) — enumeración acotada confirmada.
+5. **Fixtures** (`libs/tridagon.txt`, registrado en LibraryCaseRunnerTest) — 4
+   positivos de te3: te3#0 (|G|=1, próximo paso default, custodiado), te3#5
+   (|G|=1, otra geometría de bandas/stacks), te3#7 (multi-guardián uniforme,
+   próximo paso default, custodiado), te3#195 (uniforme con eliminación doble
+   externa). 3 negativos near-miss de puzzles distintos: **te3#30 = el negativo
+   rey, split de paridad PAR (2/2) con todo lo demás válido** (guardianes
+   uniformes con visión común incluidos: un detector de siluetas emitiría paso);
+   te3#1 (caja sin transversal); te2#72 (4 cajas con transversales y producto
+   −1 pero fuera del rectángulo bandas/stacks). **Desvío documentado**: el
+   negativo de paridad par NO existe naturalmente en los 3 corpus (donde hay
+   silueta completa casi siempre hay también un combo impar que deduce, y los
+   estados par-solos nunca tienen guardianes deducibles); se sintetizó desde el
+   estado inicial real de te3#30 podando SOLO candidatos no-solución (el estado
+   queda sound), método anotado en el propio fixture.
+6. **Custodia** — te3#0 y te3#7 sumados al corpus de snapshots (37→39). Diff de
+   snapshots: +2 líneas nuevas (cada una con 1 paso TRIDAGON y solved:true),
+   0 líneas existentes modificadas.
+7. **Fuera de alcance v1** (spec §7, anotado en registro/javadoc): celdas
+   2-de-3; patrones de 6 cajas; Patto Patto / Fryer's Ring / Socks / Broken
+   Windmill (candidatos a backlog); tridagon links / virtual pairs / ORk
+   (fase 4); anti-tridagon.
+
+**Resumen para el dueño**: el programa ya encuentra el Tridagon, el patrón
+estrella de los sudokus más difíciles que se conocen (los que ningún método
+clásico rompe). De los 200 puzzles monstruo de la colección de prueba, 129 lo
+usan en su camino de resolución — y el solver ahora los explica con una pista
+en texto y un dibujo: un lazo de flechas recorriendo 8 celdas más un rectángulo
+marcado aparte, con la celda "salvavidas" resaltada. Dos de esos puzzles quedan
+de guardia permanente en las pruebas automáticas: si alguien rompe la técnica
+sin querer, las pruebas avisan solas. También quedó una trampa deliberada: un
+tablero casi idéntico al patrón real pero matemáticamente inofensivo, para
+comprobar que el detector entiende la lógica y no matchea por silueta.
+
 ## 1.6 — Oddagons I: Broken Wing + Bivalue Oddagon (framework guardianes) — 2026-07-21
 
 Hecho, en cuatro commits lógicos (framework / broken wing / bivalue oddagon /
