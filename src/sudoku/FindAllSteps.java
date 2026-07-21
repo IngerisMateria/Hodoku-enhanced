@@ -237,6 +237,12 @@ public class FindAllSteps implements Runnable {
 					filterSteps(steps1);
 					steps.addAll(steps1);
 				}
+				// modern fork (milestone 1.7): Tridagon, same filtering
+				if (isAllStepsEnabled(SolutionType.TRIDAGON)) {
+					steps1 = stepFinder.getAllTridagons(sudoku);
+					filterSteps(steps1);
+					steps.addAll(steps1);
+				}
 				if (isAllStepsEnabled(SolutionType.SIMPLE_COLORS)) {
 					steps1 = stepFinder.findAllSimpleColors(sudoku);
 					steps.addAll(steps1);

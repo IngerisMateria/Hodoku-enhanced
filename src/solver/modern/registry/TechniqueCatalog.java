@@ -226,6 +226,22 @@ final class TechniqueCatalog {
 						+ "from cells seeing them all. Mixed-digit guardian sets give no direct elimination (chain territory).")
 				.aliases("Bi-Value Oddagon")
 				.refs("docs/sudoku_mapa_relacional.md §2.d").build());
+		// Tridagon (TridagonSolver, milestone 1.7): same taxonomy root as BW/BO —
+		// the contradiction+guardians branch. Chains cannot re-derive its parity
+		// argument directly (that is why it cracks T&E(3) puzzles), so no
+		// subsumption parents here either; the mixed-guardian deductions
+		// ("tridagon links" / ORk) are phase 4 territory.
+		rows.add(t(TRIDAGON, Family.ODDAGON, "TridagonSolver",
+				"A digit triple {a,b,c} over four boxes in two bands and two stacks, three cells per box covering the "
+						+ "box's rows and columns (a transversal), with the four local permutations multiplying to odd "
+						+ "parity: confined to the triple, the pattern cannot close — some guardian (a candidate "
+						+ "outside the triple in the 12 cells) must be true. A single guardian strips the triple from "
+						+ "its cell; several of one digit eliminate that digit from cells seeing them all. "
+						+ "Mixed-digit guardian sets give no direct elimination (phase 4 chain territory).")
+				.aliases("Trivalue Oddagon", "Thor's Hammer")
+				.refs("docs/specs/tridagon.md", "forum.enjoysudoku.com/chromatic-patterns-t39885.html",
+						"forum.enjoysudoku.com/the-tridagon-rule-t39859.html", "docs/sudoku_mapa_relacional.md §2.d")
+				.build());
 
 		// --- coloring (ColoringSolver) ---
 		rows.add(t(SIMPLE_COLORS, Family.COLORING, "ColoringSolver",

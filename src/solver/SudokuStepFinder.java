@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.ListIterator;
 import solver.modern.BentSubsetSolver;
 import solver.modern.OddagonSolver;
+import solver.modern.TridagonSolver;
 import solver.modern.WxyzWingSolver;
 import sudoku.FindAllStepsProgressDialog;
 import sudoku.SolutionStep;
@@ -63,6 +64,8 @@ public class SudokuStepFinder {
 	private WxyzWingSolver wxyzWingSolver;
 	/** The specialized solver for oddagons (modern fork, milestone 1.6). */
 	private OddagonSolver oddagonSolver;
+	/** The specialized solver for Tridagons (modern fork, milestone 1.7). */
+	private TridagonSolver tridagonSolver;
 	/** The specialized solver for Coloring. */
 	private ColoringSolver coloringSolver;
 	/** The specialized solver for simple chains. */
@@ -240,6 +243,7 @@ public class SudokuStepFinder {
 			bentSubsetSolver = new BentSubsetSolver(this);
 			wxyzWingSolver = new WxyzWingSolver(this);
 			oddagonSolver = new OddagonSolver(this);
+			tridagonSolver = new TridagonSolver(this);
 			coloringSolver = new ColoringSolver(this);
 			chainSolver = new ChainSolver(this);
 			alsSolver = new AlsSolver(this);
@@ -250,7 +254,8 @@ public class SudokuStepFinder {
 			incompleteSolver = new IncompleteSolver(this);
 			giveUpSolver = new GiveUpSolver(this);
 			solvers = new AbstractSolver[] { simpleSolver, fishSolver, singleDigitPatternSolver, uniquenessSolver,
-					wingSolver, wxyzWingSolver, bentSubsetSolver, oddagonSolver, coloringSolver, chainSolver, alsSolver,
+					wingSolver, wxyzWingSolver, bentSubsetSolver, oddagonSolver, tridagonSolver, coloringSolver,
+					chainSolver, alsSolver,
 					miscellaneousSolver, tablingSolver, templateSolver, bruteForceSolver, incompleteSolver,
 					giveUpSolver };
 		} else {
@@ -641,6 +646,22 @@ public class SudokuStepFinder {
 		Sudoku2 oldSudoku = getSudoku();
 		setSudoku(newSudoku);
 		List<SolutionStep> steps = oddagonSolver.getAllOddagons();
+		setSudoku(oldSudoku);
+		return steps;
+	}
+
+	/**
+	 * Find all Tridagons (modern fork, milestone 1.7). Callers (FindAllSteps)
+	 * filter by enabled step types themselves.
+	 *
+	 * @param newSudoku
+	 * @return
+	 */
+	public List<SolutionStep> getAllTridagons(Sudoku2 newSudoku) {
+		initialize();
+		Sudoku2 oldSudoku = getSudoku();
+		setSudoku(newSudoku);
+		List<SolutionStep> steps = tridagonSolver.getAllTridagons();
 		setSudoku(oldSudoku);
 		return steps;
 	}

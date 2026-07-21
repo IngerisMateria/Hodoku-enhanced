@@ -313,7 +313,16 @@ public final class Options {
 			// it. No classic category fits an oddagon over a digit pair; MISCELLANEOUS
 			// (Sue de Coq's bucket) is the canonical STEPS tab drawer for it.
 			new StepConfig(5690, SolutionType.BIVALUE_ODDAGON, DifficultyType.UNFAIR.ordinal(),
-					SolutionCategory.MISCELLANEOUS, 440, 0, true, true, 5690, false, false) };
+					SolutionCategory.MISCELLANEOUS, 440, 0, true, true, 5690, false, false),
+			// Tridagon (milestone 1.7): score 500 per the spec anchor — above BO 440 and
+			// the mutant fish 450, past the 470 "computer only" plateau, at kraken parity
+			// (500) since it cracks T&E(3) puzzles; EXTREME like everything above 470.
+			// Order 5695 = right after its oddagon siblings and before the ALS family
+			// (5700): the pattern is cheap to enumerate and is THE headline of the
+			// modernization, so it fires long before the chain/forcing engines.
+			// MISCELLANEOUS: BO's canonical STEPS drawer (no classic category fits).
+			new StepConfig(5695, SolutionType.TRIDAGON, DifficultyType.EXTREME.ordinal(),
+					SolutionCategory.MISCELLANEOUS, 500, 0, true, true, 5695, false, false) };
 	// nicht sortierte steps mit allen Änderungen -> wird so in *.cfg-File
 	// geschrieben
 	private StepConfig[] orgSolverSteps = null;
