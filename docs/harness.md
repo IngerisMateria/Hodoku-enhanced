@@ -156,10 +156,11 @@ Piezas:
   Si un milestone de fase 1 las necesita, se agregan en ese momento.
 - `test/fixtures/libs/*.txt`: un archivo lib por grupo de casos; líneas `#` son
   comentarios. Los milestones de técnica de fase 1 agregan acá sus fixtures
-  (positivos etiquetados + negativos).
-- `LibraryCaseRunnerTest`: corre todos los casos de `libs/` (hoy, 4 casos de ejemplo
-  con W-Wing y Sue de Coq cosechados de solve paths reales del corpus 0.2, dos
-  positivos y dos negativos cruzados).
+  (positivos etiquetados + negativos) y registran el archivo en la lista `LIB_FILES`
+  de `LibraryCaseRunnerTest` (receta completa en `docs/plantilla-tecnica.md`).
+- `LibraryCaseRunnerTest`: corre todos los casos de los archivos registrados
+  (`phase1-examples.txt`: 4 casos de ejemplo con W-Wing y Sue de Coq del 0.3;
+  `wxyz-wing.txt`: 4 positivos + 3 negativos near-miss del 1.1).
 
 `sudoku.RegressionTester` (el tester legacy) queda intacto y sin uso directo: sus
 resultados van a stdout y sus contadores son privados, así que no sirve programático

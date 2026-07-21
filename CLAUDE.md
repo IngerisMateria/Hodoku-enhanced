@@ -57,8 +57,8 @@ del upstream 2.2.0 de hobiwan).
 - [x] 0.1 Build reproducible (Gradle) con JDK 17/21 + GitHub Actions CI
 - [x] 0.2 Arnés: validador de soundness, batch JSON, snapshot tests
 - [x] 0.3 Corpus etiquetado como fixtures (colecciones del foro / base de champagne)
-- [ ] 1.1 WXYZ-Wing (bent naked subset n=4; establece la plantilla de técnica nueva)
-- [ ] 1.2 VWXYZ-Wing y mayores (mismo motor, parametrizado n≥5)
+- [x] 1.1 WXYZ-Wing (bent naked subset n=4; establece la plantilla de técnica nueva)
+- [ ] 1.2 VWXYZ-Wing y mayores (mismo motor, parametrizado n≥5) ← PRÓXIMO
 - [ ] 1.3 M-Wing / S-Wing / L-Wing / H-Wing
 - [ ] 1.4 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
 - [ ] 1.5 Bivalue Oddagon

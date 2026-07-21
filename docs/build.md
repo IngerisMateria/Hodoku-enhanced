@@ -66,6 +66,26 @@ Warnings pendientes (no bloqueantes, se dejan para más adelante): usos de
 `new Integer(...)` / `new Float(...)` / `new Boolean(...)` deprecados y marcados
 para remoción, y APIs Swing deprecadas.
 
+## Quirk: threads no-daemon del solver (la JVM no termina sola)
+
+`SudokuSolverFactory` y `SudokuGeneratorFactory` arrancan threads de mantenimiento
+**no-daemon** al primer uso (y `BackgroundGeneratorThread` hace lo propio si se toca la
+GUI/opciones). Consecuencia: cualquier `main` que use el solver o el generador y termine
+"cayéndose por el final" deja la JVM viva — el proceso no muere nunca aunque el trabajo
+haya terminado.
+
+Regla práctica para todo código de consola/herramientas (el harness batch ya lo hace):
+**terminar siempre con `System.exit(0)` explícito**. Vale también para tools ad-hoc de
+un milestone (harvesters de fixtures, probes de GUI, etc.). Los tests JUnit no lo
+sufren porque el launcher de Gradle mata la JVM del worker.
+
+Quirk relacionado al ordenar pasos: `SolutionStep.compareTo` viola el contrato de
+`Comparable` (lo detecta TimSort con `IllegalArgumentException: Comparison method
+violates its general contract!`, p. ej. al ordenar listas grandes de pasos ALS en
+`AlsSolver.getAllAlses`). Es legacy conocido; para herramientas ad-hoc que disparen ese
+sort, correr la JVM con `-Djava.util.Arrays.useLegacyMergeSort=true`. No afecta el uso
+normal de GUI/tests.
+
 ## CI
 
 `.github/workflows/build.yml` compila con JDK 21 en cada push/PR (`./gradlew build`) y

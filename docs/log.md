@@ -1,5 +1,71 @@
 # Log de milestones
 
+## 1.1 — WXYZ-Wing (primera técnica nueva + plantilla) — 2026-07-20
+
+Hecho: WXYZ-Wing en formulación bent naked subset (n=4) como primera técnica del fork:
+`solver.modern.WxyzWingSolver` (paso único + all-steps, espejo de `WingSolver`) +
+`solver.modern.WxyzWingStep`; integración legacy limitada EXACTAMENTE a los 4 puntos
+permitidos (`SolutionType` — código library `0802`, hueco libre de los wings 08xx —,
+`Options` — StepConfig 5650/UNFAIR/WINGS/score 250, antes de ALS-XZ —,
+`SudokuStepFinder` — registro + inclusión en `getAllWings()`, con lo que el "find all
+steps" de la GUI lo lista sin tocar `FindAllSteps` —, `intl/SolutionType.properties`);
+fixtures library `test/fixtures/libs/wxyz-wing.txt` (4 positivos diversos + 3 negativos
+near-miss, registrados en `LIB_FILES` del runner); `docs/plantilla-tecnica.md` con la
+receta ejecutada; quirks de threads no-daemon y de `SolutionStep.compareTo` en
+`docs/build.md`.
+
+Métricas (punto 7 del milestone):
+
+- El corpus de snapshots tiene **30** puzzles (el prompt decía 33; los 3 extremes no
+  forman parte de los snapshots): **0/30 cambiaron de solve path y 0 pasos WXYZ**
+  aparecen. Es genuino, no un bug de integración: con orden 5650 (después de X-Chain
+  5500 / Nice Loop 5600) en esos 30 siempre gana antes una técnica más barata.
+- Donde sí muerde: en los paths default del subset T&E(2) (`--batch-json` sobre
+  `te2-eleven-100.txt`) aparecen **22 pasos WXYZ-Wing en 18 de 100 puzzles**.
+- Cosecha: 5.967 estados positivos distintos sobre los solve paths de corpus+te2;
+  revalidación fuerte de TODO lo cosechado contra brute force: **15.282 estados,
+  85.552 pasos WXYZ hallados, 0 violaciones de soundness**, 0 inconsistencias
+  presencia/ausencia en los negativos.
+- Diagnóstico ALS-XZ (no assert): 5.622/5.967 (94,2%) de los positivos tienen un
+  ALS-XZ del AlsSolver con eliminaciones que cubren las del WXYZ en el mismo estado;
+  los 345 restantes son ALS-XZ que el AlsSolver legacy no emite (el fixture 4 del lib
+  documenta uno).
+- GUI verificada sobre la ventana real (config fresca, estado te2#4 donde WXYZ es el
+  próximo paso default): hint `WXYZ-Wing: 3/4/7/5 in r156c7,r2c8 (Z=5) =>
+  r3c7,r45c8<>5`, resaltado estándar correcto (celdas verde, Z azul, eliminaciones
+  rojo), captura revisada.
+
+Desvíos / hallazgos:
+
+- **`SolutionStep.toString(int)` tira RuntimeException para tipos desconocidos** y no
+  está en la lista de archivos modificables → cada técnica del fork trae subclase de
+  `SolutionStep` con su `toString` (cero campos nuevos; clone/XMLEncoder intactos).
+  Patrón acuñado en `WxyzWingStep` y documentado en la plantilla. Alternativa
+  descartada: agregar el case al switch legacy (5° archivo fuera de la regla).
+- Configs `hodoku.hcfg` guardadas por builds previos no traen el StepConfig nuevo y el
+  merge de `readOptions` no lo agrega: con config vieja la técnica queda invisible en
+  la GUI. Anotado en la plantilla (config fresca para probar).
+- El caso "0 no-restringidos" (locked set puro) queda explícitamente fuera del 1.1;
+  anotado como extensión futura en el javadoc del finder.
+- El corpus de snapshots no ejercita WXYZ; si se quiere que los snapshots custodien la
+  técnica habría que sumar 2-3 puzzles T&E(2) al corpus — NO se hizo (el corpus fijo es
+  la base del determinismo del 0.2; decisión del dueño si vale la pena).
+- `AlsSolver.getAllAlses` dispara `Comparison method violates its general contract!`
+  (TimSort) al ordenar listas grandes — legacy conocido, workaround en `docs/build.md`.
+
+Cierre: pusheado y Actions en verde.
+
+### Resumen para el dueño del proyecto
+
+El programa ya conoce su primera jugada nueva: el WXYZ-Wing, en su forma moderna y más
+general. La probamos a fondo: la buscamos en miles de posiciones intermedias de los
+puzzles de prueba y verificamos contra la solución real que ninguna de las 85 mil
+apariciones comete un error. En los 100 puzzles duros de la colección, la jugada
+aparece de verdad en 18 y ninguno de los resultados anteriores se rompió. También la
+vimos funcionando en la pantalla, con su explicación y su resaltado de colores, como la
+vería un usuario. Y lo más importante para lo que viene: quedó escrita la receta paso a
+paso que vamos a repetir para las ~25 técnicas que siguen.
+
 ## 0.3 — Corpus etiquetado como fixtures — 2026-07-20
 
 Hecho: roadmap de CLAUDE.md reemplazado por la versión del inventario de técnicas
