@@ -301,7 +301,7 @@ public class WxyzWingSolver extends AbstractSolver {
 	private static class WxyzWingFormatter implements ModernStep.HintFormatter {
 		@Override
 		public String format(ModernStep step, int art) {
-			StringBuilder tmp = new StringBuilder(step.getStepName());
+			StringBuilder tmp = new StringBuilder(step.getDisplayName());
 			List<Integer> indices = step.getIndices();
 			if (!indices.isEmpty()) {
 				// type 1 iff the hinge (first index) carries Z (is in the fins)

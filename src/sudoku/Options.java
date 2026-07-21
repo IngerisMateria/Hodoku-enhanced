@@ -337,6 +337,20 @@ public final class Options {
 	private boolean allowAlsOverlap = ALLOW_ALS_OVERLAP;
 	private boolean allStepsOnlyOneAlsPerStep = ALL_STEPS_ONLY_ONE_ALS_PER_STEP;
 	private boolean allStepsAllowAlsOverlap = ALL_STEPS_ALLOW_ALS_OVERLAP;
+	// Modern technique registry (milestone 1.4): per-user preferred display names.
+	// Format "ENUM_NAME=Display Name;ENUM_NAME2=..." keyed by SolutionType enum name
+	// (stable across aliasing); empty = defaults everywhere. Resolved through
+	// solver.modern.registry.TechniqueRegistry; no UI yet (milestone 1.5).
+	public static final String TECHNIQUE_DISPLAY_NAMES = "";
+	private String techniqueDisplayNames = TECHNIQUE_DISPLAY_NAMES;
+
+	public String getTechniqueDisplayNames() {
+		return techniqueDisplayNames;
+	}
+
+	public void setTechniqueDisplayNames(String techniqueDisplayNames) {
+		this.techniqueDisplayNames = techniqueDisplayNames == null ? "" : techniqueDisplayNames;
+	}
 	// FishSolver
 	public static final int MAX_FINS = 5; // Maximale Anzahl Fins
 	public static final int MAX_ENDO_FINS = 2; // Maximale Anzahl Endo-Fins

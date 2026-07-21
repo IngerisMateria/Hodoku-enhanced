@@ -118,6 +118,18 @@ public class ModernStep extends SolutionStep {
 	}
 
 	/**
+	 * The name to show for this step's technique: the user's preferred alias
+	 * if one is persisted, the default name otherwise (milestone 1.4
+	 * display-name indirection). All modern formatters use this instead of
+	 * {@code getStepName()}; the legacy hint pipeline stays untouched.
+	 *
+	 * @return the display name of the technique
+	 */
+	public String getDisplayName() {
+		return solver.modern.registry.TechniqueRegistry.getInstance().getDisplayName(getType());
+	}
+
+	/**
 	 * Formatter for bent naked subsets of any size. Mirrors the XY-/XYZ-Wing
 	 * format: name, candidates, cells, eliminations. Example:
 	 * {@code Bent Quad: 1/2/5/9 in r1c25,r2c12 (Z=9) => r1c1<>9}
@@ -125,7 +137,7 @@ public class ModernStep extends SolutionStep {
 	private static class BentSubsetFormatter implements HintFormatter {
 		@Override
 		public String format(ModernStep step, int art) {
-			StringBuilder tmp = new StringBuilder(step.getStepName());
+			StringBuilder tmp = new StringBuilder(step.getDisplayName());
 			List<Integer> values = step.getValues();
 			if (art >= 1 && values.size() >= 2) {
 				tmp.append(": ").append(values.get(0));
