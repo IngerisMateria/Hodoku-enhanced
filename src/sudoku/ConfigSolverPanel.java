@@ -88,8 +88,9 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		doc.addDocumentListener(new MyDocumentListener());
 		scoreTextField.setDocument(doc);
 
-		// modern fork (milestone 1.5): technique aside v2
+		// modern fork (milestone 1.5): technique aside v2 + search field
 		initAside();
+		initSearchField();
 
 		// Alle Werte aus den Default-Optionen setzen
 		initAll(false);
@@ -357,15 +358,12 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 			scoreTextField.setText(Integer.toString(conf.getBaseScore()));
 			// modern fork (milestone 1.5): refresh the technique aside
 			updateAside(conf);
-			// "Nach oben" und "Nach unten" Buttons anpassen
-			upButton.setEnabled(true);
-			downButton.setEnabled(true);
-			if (stepList.getSelectedIndex() == 0) {
-				upButton.setEnabled(false);
-			}
-			if (stepList.getSelectedIndex() >= steps.length - 1) {
-				downButton.setEnabled(false);
-			}
+			// "Nach oben" und "Nach unten" Buttons anpassen (modern fork:
+			// reordering is disabled while the search filter is active, the
+			// filtered indices do not match the solve order)
+			boolean canReorder = !isFiltered();
+			upButton.setEnabled(canReorder && stepList.getSelectedIndex() > 0);
+			downButton.setEnabled(canReorder && stepList.getSelectedIndex() < steps.length - 1);
 		}
 	}// GEN-LAST:event_stepListValueChanged
 
@@ -400,6 +398,11 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 
 	@Override
 	public void moveStep(int fromIndex, int toIndex) {
+		if (isFiltered()) {
+			// modern fork (milestone 1.5): while the search filter is active the
+			// model indices do not match the solve order — no reordering
+			return;
+		}
 		// System.out.println("moving: " + fromIndex + "/" + toIndex);
 		boolean up = fromIndex < toIndex ? true : false;
 		int anz = Math.abs(fromIndex - toIndex);
@@ -418,6 +421,10 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 
 	@Override
 	public void setDropLocation(int index, StepConfig object) {
+		if (isFiltered()) {
+			dropIndex = -1;
+			return;
+		}
 		dropIndex = index;
 		dropObject = object;
 		if (index != -1) {
@@ -451,11 +458,8 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 			steps = Options.getInstance().copyStepConfigs(Options.getInstance().solverSteps, true, false);
 		}
 
-		// Liste neu laden
-		model.removeAllElements();
-		for (int i = 0; i < steps.length; i++) {
-			model.addElement(steps[i]);
-		}
+		// Liste neu laden (modern fork: through the search filter)
+		applyFilter();
 		stepList.setSelectedIndex(-1);
 		stepList.ensureIndexIsVisible(0);
 		stepList.repaint();
@@ -468,8 +472,14 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 	}
 
 	public void buildTree() {
+		// modern fork (milestone 1.5): the tree honors the search filter too
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		String query = searchField != null ? searchField.getText() : null;
 		CheckNode root = new CheckNode();
 		for (int i = 0; i < steps.length; i++) {
+			if (!registry.matches(steps[i].getType(), query)) {
+				continue;
+			}
 			@SuppressWarnings("unchecked")
 			Enumeration<CheckNode> en = (Enumeration<CheckNode>) (Enumeration<?>) root.children();
 			CheckNode act = null;
@@ -629,6 +639,66 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 	/** Wired by ConfigDialog so the aside can mirror the classic Steps tab. */
 	public void setClassicStepPanel(ConfigStepPanel panel) {
 		classicStepPanel = panel;
+	}
+
+	/** search field over the technique list (modern fork, milestone 1.5) */
+	private javax.swing.JTextField searchField;
+
+	/** true while the search filter hides part of the technique list */
+	private boolean isFiltered() {
+		return searchField != null && !searchField.getText().trim().isEmpty();
+	}
+
+	/** Builds the search field and adds it to the list/tree toolbar. */
+	private void initSearchField() {
+		java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel");
+		searchField = new javax.swing.JTextField();
+		searchField.setToolTipText(bundle.getString("ConfigSolverPanel.searchField.tooltip"));
+		searchField.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE,
+				searchField.getPreferredSize().height));
+		searchField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				applyFilter();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				applyFilter();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				applyFilter();
+			}
+		});
+		jToolBar1.addSeparator();
+		jToolBar1.add(searchField);
+	}
+
+	/**
+	 * Reloads the list model with the steps matching the search filter
+	 * (name + aliases + description via the registry) and keeps the tree in
+	 * sync. Selection survives if the selected technique still matches.
+	 */
+	private void applyFilter() {
+		if (model == null || steps == null) {
+			return;
+		}
+		StepConfig selected = stepList.getSelectedValue();
+		String query = searchField != null ? searchField.getText() : null;
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		model.removeAllElements();
+		for (int i = 0; i < steps.length; i++) {
+			if (registry.matches(steps[i].getType(), query)) {
+				model.addElement(steps[i]);
+			}
+		}
+		if (selected != null && model.contains(selected)) {
+			stepList.setSelectedValue(selected, true);
+		}
+		stepList.repaint();
+		buildTree();
 	}
 
 	/** Builds the aside content inside jPanel3 (called once from the constructor). */

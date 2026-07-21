@@ -137,6 +137,35 @@ public final class TechniqueRegistry {
 		Options.getInstance().setTechniqueDisplayNames(encode(prefs));
 	}
 
+	/**
+	 * Case-insensitive match of one technique against a filter string: current
+	 * display name, default name, aliases and description (the predicate of
+	 * the config search fields, milestone 1.5). Blank queries match everything;
+	 * techniques without a registry row only match on their step name.
+	 */
+	public boolean matches(SolutionType type, String query) {
+		if (query == null || query.trim().isEmpty()) {
+			return true;
+		}
+		String needle = query.trim().toLowerCase(java.util.Locale.ROOT);
+		if (getDisplayName(type).toLowerCase(java.util.Locale.ROOT).contains(needle)) {
+			return true;
+		}
+		TechniqueInfo info = techniques.get(type);
+		if (info == null) {
+			return type.getStepName().toLowerCase(java.util.Locale.ROOT).contains(needle);
+		}
+		if (info.getDisplayNameDefault().toLowerCase(java.util.Locale.ROOT).contains(needle)) {
+			return true;
+		}
+		for (String alias : info.getAliases()) {
+			if (alias.toLowerCase(java.util.Locale.ROOT).contains(needle)) {
+				return true;
+			}
+		}
+		return info.getDescription().toLowerCase(java.util.Locale.ROOT).contains(needle);
+	}
+
 	/** Parses (and caches) the persisted preference string. */
 	private Map<String, String> preferences() {
 		String raw = Options.getInstance().getTechniqueDisplayNames();

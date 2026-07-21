@@ -81,6 +81,31 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 			alsChainLengthComboBox.addItem(alsChainLengths[i]);
 		}
 
+		// modern fork (milestone 1.5): search field over the technique tree,
+		// same predicate as the solver list (name + aliases + description);
+		// mounted as the scroll pane's column header to keep the generated
+		// layout untouched
+		searchField = new javax.swing.JTextField();
+		searchField.setToolTipText(java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel")
+				.getString("ConfigSolverPanel.searchField.tooltip"));
+		searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+			@Override
+			public void insertUpdate(javax.swing.event.DocumentEvent e) {
+				buildTree();
+			}
+
+			@Override
+			public void removeUpdate(javax.swing.event.DocumentEvent e) {
+				buildTree();
+			}
+
+			@Override
+			public void changedUpdate(javax.swing.event.DocumentEvent e) {
+				buildTree();
+			}
+		});
+		jScrollPane1.setColumnHeaderView(searchField);
+
 		// Alle Werte aus den Default-Optionen setzen
 		initAll(false);
 	}
@@ -682,8 +707,14 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 	}
 
 	public void buildTree() {
+		// modern fork (milestone 1.5): honor the search filter
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		String query = searchField != null ? searchField.getText() : null;
 		CheckNode root = new CheckNode();
 		for (int i = 0; i < steps.length; i++) {
+			if (!registry.matches(steps[i].getType(), query)) {
+				continue;
+			}
 			// we dont show: all kinds of fish and Brute Force
 			if (steps[i].getCategory() == SolutionCategory.BASIC_FISH
 					|| steps[i].getCategory() == SolutionCategory.FINNED_BASIC_FISH
@@ -713,7 +744,8 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 						steps[i].getCategory());
 				root.add(act);
 			}
-			act.add(new CheckNode(steps[i].getType().getStepName(), false,
+			// modern fork (milestone 1.5): render the preferred display name
+			act.add(new CheckNode(steps[i].toString(), false,
 					steps[i].isAllStepsEnabled() ? CheckNode.FULL : CheckNode.NONE, steps[i], true, false, false,
 					null));
 			if (act.getSelectionState() == CheckNode.FULL && !steps[i].isAllStepsEnabled()) {
@@ -729,6 +761,9 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 		stepTree.setRootVisible(false);
 		stepTree.setRowHeight(-1);
 	}
+
+	/** search field over the technique tree (modern fork, milestone 1.5) */
+	private javax.swing.JTextField searchField;
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JCheckBox alsBiDirCheckBox;
