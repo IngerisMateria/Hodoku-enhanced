@@ -190,6 +190,23 @@ public final class Options {
 					230, 0, true, true, 5640, false, false),
 			new StepConfig(5650, SolutionType.BENT_QUAD, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
 					250, 0, true, true, 5650, false, false),
+			// modern fork (milestone 1.3): bent subsets n=5..9, one entry per size right after
+			// Bent Quad (5650) and before ALS-XZ (5700). Scores: +40 per extra cell starting
+			// at 280 (n=5, above Bent Quad 250 and just below ALS-XZ 300 — a VWXYZ is about as
+			// hard to spot as an easy ALS-XZ), interleaving with the ALS family (320/340/360)
+			// and capped at 440 < 470, the "computer only" score of the big fish. Defaults
+			// fish style (Squirmbag..Leviathan precedent): only n=5 enabled; n=6..9 exist,
+			// desglosadas, off — but with allSteps=true so find-all-steps can show them.
+			new StepConfig(5655, SolutionType.VWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
+					280, 0, true, true, 5655, false, false),
+			new StepConfig(5660, SolutionType.UVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
+					320, 0, false, true, 5660, false, false),
+			new StepConfig(5665, SolutionType.TUVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
+					360, 0, false, true, 5665, false, false),
+			new StepConfig(5670, SolutionType.STUVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
+					400, 0, false, true, 5670, false, false),
+			new StepConfig(5675, SolutionType.RSTUVWXYZ_WING, DifficultyType.UNFAIR.ordinal(), SolutionCategory.WINGS,
+					440, 0, false, true, 5675, false, false),
 			new StepConfig(5700, SolutionType.ALS_XZ, DifficultyType.UNFAIR.ordinal(),
 					SolutionCategory.ALMOST_LOCKED_SETS, 300, 0, true, true, 5700, false, false),
 			new StepConfig(5800, SolutionType.ALS_XY_WING, DifficultyType.UNFAIR.ordinal(),

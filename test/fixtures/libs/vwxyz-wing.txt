@@ -1,0 +1,38 @@
+# VWXYZ-Wing (milestone 1.3, bent naked subset n=5) — casos en formato LIBRARY (codigo 0805),
+# cosechados con el propio finder corriendo all-steps sobre estados de solve paths default
+# del corpus de snapshots (corpus.txt), del subset T&E(2) (te2-eleven-100.txt) y del subset
+# T&E(3) (te3-mith-200.txt). Todos los estados fueron revalidados contra la solucion
+# brute-force (0 violaciones de soundness). Los 4 positivos son ademas pasos del PATH
+# DEFAULT de su puzzle (VWXYZ es el proximo hint en ese estado).
+#
+# Positivos: el paso debe encontrarse en el estado dado.
+
+# te2#32: region doblada de columna (col 8 + caja 3), eliminacion simple
+# VWXYZ-Wing: 1/4/6/8/9 in r1c89,r3c89,r4c8 (Z=9) => r2c8<>9
+:0805:14689:.23...7.....78......9.32...2...+738......4+1+26....5+2...13....79...6......4....1..5.:519 529 539 694:928::
+
+# te2#52: columna 5 + caja 1, con celda de la interseccion (r1c5)
+# VWXYZ-Wing: 1/2/5/8/4 in r1c45,r3c4,r46c5 (Z=4) => r2c5<>4
+:0805:12458:1....67...5.1.......8.3...4...7...6...4+69+2+8.3.....5.......2..9...29..34.8.......2:814 218 518 819 228 829 261:425::
+
+# te3#26: region doblada de fila (filas 1/3 + caja 1), eliminaciones multiples (r1c12)
+# VWXYZ-Wing: 4/7/8/9/3 in r1c34,r3c123 (Z=3) => r1c12<>3
+:0805:34789:....56......7.9......21.645...6..81.......2.4..18.2.56.45.6..286.2.....18...2..6.:411 711 911 712 912 713 913 321 322 822 323 823 352 552 752 952 353 753 953 387 787 987 397 797 997:311 312::
+
+# te2#23: forma de ala repartida en 3 filas (col 7/9 + caja 9), 2 eliminaciones en 2 celdas
+# VWXYZ-Wing: 1/2/4/5/8 in r4c79,r6c7,r78c9 (Z=8) => r78c7<>8
+:0805:12458:1...5...9......2...8.7...4..7.8.+5.3.....6+15+9+75.......6.3...4.....4..3.1.9...2....:924 925 462 863 697 797 897 599 899:877 887::
+
+# Negativos near-miss (sufijo -x): NINGUN VWXYZ-Wing existe en el estado, pero hay una
+# estructura "casi": la asercion de ausencia del runner los custodia.
+
+# corpus#2: conjunto doblado de 5 celdas con union de 6 candidatos (un no-restringido con
+# eliminaciones posibles, pero union != 5)
+:0805-x:x:1.+597+4.2+3.+7+8+3+16.95+9.32+8+5.+7+1+6....+7.34.59.3+821+773+2.+9+1.+6+8+3..+8+527+4+959+47+6+3+1+8+2+82+7+149+3+56:::
+
+# corpus#3: conjunto doblado de 5 celdas con union de 5 pero DOS candidatos no-restringidos
+:0805-x:x:3+714+2+5+6+9+85891+7+6+3+4+2+2..+8+3+9+1+7+59...4+1+7.345+7683+9211...9+7+4.6+8..+7+1+4+2+6+9+7+1+2+9+68534+6+9+4+3+528+17:::
+
+# corpus#7: conjunto de 5 celdas con union de 5 pero integro en una casa (naked quint
+# clasico en la fila 9, no es un bent set)
+:0805-x:x:5+1+6+4+8+2+3+7+97+29+13+5+6+8+4+4+8+3...5129..5+1+823.+1..9+43+8+5.+358+2+67+9+41891+6+5+4+7+2+3+6.+5.2+14+98+2.....+1+65:::

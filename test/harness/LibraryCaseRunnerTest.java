@@ -44,6 +44,11 @@ public class LibraryCaseRunnerTest {
 			"phase1-examples.txt",
 			"bent-quad.txt", // milestone 1.1 (como WXYZ-Wing; renombrado en 1.2)
 			"wxyz-wing.txt", // milestone 1.2 (WXYZ-Wing canonico)
+			"vwxyz-wing.txt", // milestone 1.3 (bent subsets n=5..9)
+			"uvwxyz-wing.txt",
+			"tuvwxyz-wing.txt",
+			"stuvwxyz-wing.txt",
+			"rstuvwxyz-wing.txt",
 	};
 
 	@TestFactory

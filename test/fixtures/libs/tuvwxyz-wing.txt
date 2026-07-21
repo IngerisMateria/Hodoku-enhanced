@@ -1,0 +1,23 @@
+# TUVWXYZ-Wing (milestone 1.3, bent naked subset n=7) — casos en formato LIBRARY (codigo 0807),
+# cosechados con el propio finder corriendo all-steps sobre estados de solve paths default de
+# corpus.txt, te2-eleven-100.txt y te3-mith-200.txt. Revalidados contra brute force
+# (0 violaciones). La tecnica esta APAGADA por default (custodia = estos fixtures,
+# regla de custodia matizada en 1.3): el runner usa getStep(tipo) directo, sin mirar enable.
+#
+# Positivos: el paso debe encontrarse en el estado dado.
+
+# corpus#3: filas 1-3 + caja 2, 5 celdas de caja y 2 de fila
+# TUVWXYZ-Wing: 3/5/6/7/8/9/2 in r1c56,r2c69,r3c456 (Z=2) => r2c5<>2
+:0807:2356789:3.14.....5891..............9...4...345.683.211...9...6..............8534.....28.7::225::
+
+# corpus#4, estado 4: fila 9 + caja 7, con valores ya colocados en el path
+# TUVWXYZ-Wing: 1/2/3/4/8/9/6 in r7c123,r8c12,r9c25 (Z=6) => r9c3<>6
+:0807:1234689:7345+8...6....+34....5.62....67..4...9..19764..4...1+5.63....92.7....4.....5....8192::693::
+
+# te2#3: fila 7 + caja 7, eliminaciones multiples (r7c46)
+# TUVWXYZ-Wing: 1/2/4/5/7/9/3 in r7c123,r8c12,r9c24 (Z=3) => r7c46<>3
+:0807:1234579:....5..89...1..2..6..........1..4....3+82+1....9...6..7.....9..68..4...3..8.+6..7..5:741 742 562 282:374 376::
+
+# te2#5: region doblada de columna (col 7 + caja 9), eliminaciones multiples (r78c9)
+# TUVWXYZ-Wing: 2/4/5/6/7/8/3 in r123489c7,r5c9 (Z=3) => r78c9<>3
+:0807:2345678:1...5.........9.3..8.7....4.3.9....85...2.+9....6...1....2...6...7...4.9......3..7:214 224:379 389::

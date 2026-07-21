@@ -1,0 +1,23 @@
+# STUVWXYZ-Wing (milestone 1.3, bent naked subset n=8) — casos en formato LIBRARY (codigo 0808),
+# cosechados con el propio finder corriendo all-steps sobre estados de solve paths default de
+# corpus.txt, te2-eleven-100.txt y te3-mith-200.txt. Revalidados contra brute force
+# (0 violaciones). La tecnica esta APAGADA por default (custodia = estos fixtures,
+# regla de custodia matizada en 1.3): el runner usa getStep(tipo) directo, sin mirar enable.
+#
+# Positivos: el paso debe encontrarse en el estado dado.
+
+# corpus#6: fila 1 + caja 1, 5 eliminaciones en 5 celdas (r1c12 y r2c456)
+# STUVWXYZ-Wing: 1/4/5/6/7/8/9/2 in r1c3456789,r2c2 (Z=2) => r1c12,r2c456<>2
+:0808:12456789:.........4.9....13657.934.2.72.......8.9.6.5.......23.1.367.52474....8.6.........::211 212 224 225 226::
+
+# corpus#2: region doblada de columna (col 7 + caja 9)
+# STUVWXYZ-Wing: 1/3/4/5/6/7/9/8 in r123489c7,r56c9 (Z=8) => r6c7<>8
+:0808:13456789:1..97..2......6.95..32............34.59.3.21.73............27..59.7......2..49..6::867::
+
+# te2#2, estado profundo (77 pasos): fila 7/8 + caja 9, 2 eliminaciones en celdas distintas
+# STUVWXYZ-Wing: 1/3/4/5/6/7/8/2 in r7c3459,r8c789,r9c9 (Z=2) => r7c8,r8c3<>2
+:0808:12345678:+1.+34+5.7.9.5+7.+89+23...+9+3+7.+1.52+4+18+9....+5+36+74+1+8+9+2+79+8.+23..1+37...49..8+1.+96....+9+642+3.+51.:648 649 668 878 488 789:278 283::
+
+# te2#6, estado medio (31 pasos): filas 7-9 + caja 8
+# STUVWXYZ-Wing: 1/2/3/4/5/7/8/9 in r7c56,r8c56,r9c1468 (Z=9) => r7c2<>9
+:0808:12345789:..34...89.5....2...+89............5.+7+7+3+5+621+9+4+88..7....33.4....7...83...9..1..6....:716 534 135 535 536 736 441 642 262 662 874 575 576 281 585 586 489 291 994 596 996 298:972::

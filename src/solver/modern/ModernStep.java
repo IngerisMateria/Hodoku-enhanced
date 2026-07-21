@@ -42,8 +42,8 @@ import sudoku.SolutionType;
  *
  * Data layout conventions per technique (kept strictly in base fields):
  * <ul>
- * <li>Bent subsets ({@link SolutionType#BENT_QUAD}; sizes &ge; 5 come in
- * milestone 1.3): {@code values} holds the n candidates with the n-1
+ * <li>Bent subsets ({@link SolutionType#BENT_QUAD} and the size 5..9 entries
+ * VWXYZ_WING .. RSTUVWXYZ_WING): {@code values} holds the n candidates with the n-1
  * restricted ones first (ascending) and the non-restricted candidate Z last;
  * {@code indices} holds the n cells ascending; {@code fins} holds the Z
  * candidates inside the set.</li>
@@ -71,7 +71,14 @@ public class ModernStep extends SolutionStep {
 			SolutionType.class);
 
 	static {
-		registerFormatter(SolutionType.BENT_QUAD, new BentSubsetFormatter());
+		// one shared formatter instance for all bent subset sizes (n=4..9)
+		HintFormatter bentSubsets = new BentSubsetFormatter();
+		registerFormatter(SolutionType.BENT_QUAD, bentSubsets);
+		registerFormatter(SolutionType.VWXYZ_WING, bentSubsets);
+		registerFormatter(SolutionType.UVWXYZ_WING, bentSubsets);
+		registerFormatter(SolutionType.TUVWXYZ_WING, bentSubsets);
+		registerFormatter(SolutionType.STUVWXYZ_WING, bentSubsets);
+		registerFormatter(SolutionType.RSTUVWXYZ_WING, bentSubsets);
 	}
 
 	/**

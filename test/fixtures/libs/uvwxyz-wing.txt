@@ -1,0 +1,23 @@
+# UVWXYZ-Wing (milestone 1.3, bent naked subset n=6) — casos en formato LIBRARY (codigo 0806),
+# cosechados con el propio finder corriendo all-steps sobre estados de solve paths default de
+# corpus.txt, te2-eleven-100.txt y te3-mith-200.txt. Revalidados contra brute force
+# (0 violaciones). La tecnica esta APAGADA por default (custodia = estos fixtures,
+# regla de custodia matizada en 1.3): el runner usa getStep(tipo) directo, sin mirar enable.
+#
+# Positivos: el paso debe encontrarse en el estado dado.
+
+# corpus#8: fila 4 + caja 5, eliminaciones multiples (r5c89)
+# UVWXYZ-Wing: 3/4/5/6/9/7 in r4c458,r5c46,r6c5 (Z=7) => r5c89<>7
+:0806:345679:84...6.......7..2....4..69..35..81.9..8.2.4..9.41..58..26..9....8..6.......7...61::758 759::
+
+# corpus#12: region doblada de columna (col 1 + caja 1)
+# UVWXYZ-Wing: 2/4/5/8/9/6 in r15678c1,r2c3 (Z=6) => r3c1<>6
+:0806:245689:..23..8.51...79.4..........5......9...31674...1......7..........3.89...47.8..62..::631::
+
+# te2#2, estado profundo (20 pasos): col 3 + caja 7, con candidatos ya eliminados
+# UVWXYZ-Wing: 2/5/6/7/8/3 in r1267c3,r7c1,r9c2 (Z=3) => r8c3<>3
+:0806:235678:...4..7.9.5...9.3...+9.....52..8+9......6+74+1.+9..9..+23..1.7...49..8..+96....+9.42...1.:112 113 123 132 332 563 567 171 173 287 289:383::
+
+# te3#1: fila 8 + caja 9, 2 eliminaciones en celdas distintas (r8c8 y r9c6)
+# UVWXYZ-Wing: 1/2/5/6/8/7 in r8c1456,r9c78 (Z=7) => r8c8,r9c6<>7
+:0806:125678:1..4.6...4..18.......37.41..4.....9759.7..3.17..9..54.37..9..54.14...9.39.5......:295 695 296 896 297 697 897 298 698 898:788 796::

@@ -52,8 +52,9 @@ import sudoku.SudokuSet;
  * set cells containing Z.
  *
  * Only sizes with an entry in {@link #TYPE_BY_SIZE} are searched; milestone
- * 1.2 registers n = 4 ({@link SolutionType#BENT_QUAD}), milestone 1.3 adds
- * n = 5..9. In all-steps mode equal steps (type + cells + eliminations) found
+ * 1.2 registered n = 4 ({@link SolutionType#BENT_QUAD}), milestone 1.3 added
+ * n = 5..9 (VWXYZ- .. RSTUVWXYZ-Wing, one {@link SolutionType} per size). In
+ * all-steps mode equal steps (type + cells + eliminations) found
  * through different bent regions are emitted only once.
  *
  * Structure mirrors {@link solver.WingSolver} (single-step and all-steps
@@ -75,6 +76,12 @@ public class BentSubsetSolver extends AbstractSolver {
 
 	static {
 		TYPE_BY_SIZE[4] = SolutionType.BENT_QUAD;
+		// milestone 1.3: sizes 5..9, one SolutionType per size
+		TYPE_BY_SIZE[5] = SolutionType.VWXYZ_WING;
+		TYPE_BY_SIZE[6] = SolutionType.UVWXYZ_WING;
+		TYPE_BY_SIZE[7] = SolutionType.TUVWXYZ_WING;
+		TYPE_BY_SIZE[8] = SolutionType.STUVWXYZ_WING;
+		TYPE_BY_SIZE[9] = SolutionType.RSTUVWXYZ_WING;
 	}
 
 	/** One global step for eliminations (cloned when a subset is found). */

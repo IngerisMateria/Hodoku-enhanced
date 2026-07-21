@@ -217,7 +217,18 @@ public enum SolutionType {
 	// next free slot of the wings family 08xx (0800 XY, 0801 XYZ, 0802 Bent Quad, 0803 W),
 	// verified free against every code in this enum. Not the same entry as the pre-1.2
 	// WXYZ_WING constant, which was the bent naked subset and is BENT_QUAD now.
-	WXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("WXYZ-Wing"), "0804", "wxyz");
+	WXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("WXYZ-Wing"), "0804", "wxyz"),
+	// Bent naked subsets n=5..9 (milestone 1.3): separate entries per size (desglose
+	// principle, fish style). Library codes 0805..0809: next free slots of the wings
+	// family 08xx (0800 XY, 0801 XYZ, 0802 Bent Quad, 0803 W, 0804 WXYZ canonical),
+	// each verified free against every code in this enum.
+	VWXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("VWXYZ-Wing"), "0805", "vwxyz"),
+	UVWXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("UVWXYZ-Wing"), "0806", "uvwxyz"),
+	TUVWXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("TUVWXYZ-Wing"), "0807", "tuvwxyz"),
+	STUVWXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("STUVWXYZ-Wing"), "0808",
+			"stuvwxyz"),
+	RSTUVWXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("RSTUVWXYZ-Wing"), "0809",
+			"rstuvwxyz");
 	private String stepName;
 	private String libraryType;
 	private String argName;
