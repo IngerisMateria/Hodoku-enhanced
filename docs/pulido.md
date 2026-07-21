@@ -19,6 +19,14 @@ reconstruirlo.
 - Nota técnica: el subtipo NO se almacena — se deriva (T1 sii la bisagra,
   primer índice del paso, aparece en fins). Cambiar la presentación es
   tocar solo el formateador en ModernStep: costo mínimo, cero migración.
+- Datos (experimento del 1.4, docs/experimentos/t2-regimen.md): la objeción
+  "Type 2 = Sue de Coq" quedó refutada empíricamente — los 114 canónicos
+  cosechados sobre corpus+te2+te3 (33 T1, 81 T2) son 100 % régimen R1
+  (exactamente una Z no restringida) y el 100 % se cubre con un ALS-XZ
+  simple de un solo RCC; cero necesitaron estructura doblemente enlazada.
+  La respuesta documentada para el help ya existe; lo que queda de esta
+  entrada es solo la decisión de presentación (mantener/configurar/omitir
+  la etiqueta) + volcar la explicación al help.
 - Criterio de cierre: decisión explícita del dueño (mantener / configurar
   / omitir) + help actualizado.
 
