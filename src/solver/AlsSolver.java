@@ -370,6 +370,10 @@ public class AlsSolver extends AbstractSolver {
 	private SolutionStep getAlsXZInt(boolean onlyOne) {
 		globalStep.reset();
 		for (int i = 0; i < restrictedCommons.size(); i++) {
+			// modern fork (milestone 1.8, A4): cooperative cancel for find-all-steps
+			if (Thread.currentThread().isInterrupted()) {
+				return null;
+			}
 			RestrictedCommon rc = restrictedCommons.get(i);
 			// only forward check necessary
 			if (rc.getAls1() > rc.getAls2()) {
@@ -427,6 +431,10 @@ public class AlsSolver extends AbstractSolver {
 	private SolutionStep getAlsXYWingInt(boolean onlyOne) {
 		globalStep.reset();
 		for (int i = 0; i < restrictedCommons.size(); i++) {
+			// modern fork (milestone 1.8, A4): cooperative cancel for find-all-steps
+			if (Thread.currentThread().isInterrupted()) {
+				return null;
+			}
 			RestrictedCommon rc1 = restrictedCommons.get(i);
 			for (int j = i + 1; j < restrictedCommons.size(); j++) {
 				RestrictedCommon rc2 = restrictedCommons.get(j);
@@ -554,6 +562,10 @@ public class AlsSolver extends AbstractSolver {
 //            if (i != 8) {
 //                continue;
 //            }
+			// modern fork (milestone 1.8, A4): cooperative cancel for find-all-steps
+			if (Thread.currentThread().isInterrupted()) {
+				return;
+			}
 			startAls = alses.get(i);
 			chainIndex = 0;
 			if (alsInChain == null || alsInChain.length < alses.size()) {
@@ -782,6 +794,10 @@ public class AlsSolver extends AbstractSolver {
 		globalStep.reset();
 		globalStep.setType(SolutionType.DEATH_BLOSSOM);
 		for (int i = 0; i < Sudoku2.LENGTH; i++) {
+			// modern fork (milestone 1.8, A4): cooperative cancel for find-all-steps
+			if (Thread.currentThread().isInterrupted()) {
+				return null;
+			}
 			if (sudoku.getValue(i) != 0) {
 				// cell already set -> ignore
 				continue;

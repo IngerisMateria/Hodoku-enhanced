@@ -923,6 +923,14 @@ public class FishSolver extends AbstractSolver {
 		int aktBaseIndex = 0;
 		BaseStackEntry bEntry = null;
 		while (true) {
+			// modern fork (milestone 1.8, A4): cooperative cancel for
+			// find-all-steps — the search runs in the FindAllSteps worker
+			// thread; when the user cancels, the thread is interrupted and the
+			// enumeration aborts with whatever was found so far. isInterrupted()
+			// leaves the flag set for the outer FindAllSteps loop.
+			if (Thread.currentThread().isInterrupted()) {
+				return steps.size() > 0 ? steps.get(0) : null;
+			}
 			// fall back if no unit is available (only one level because baseUnitsIncluded
 			// must be treated correctly
 //            System.out.println("while: " + baseStack[baseLevel].aktIndex + " >= " + (numberOfBaseUnits - minSize + baseLevel));

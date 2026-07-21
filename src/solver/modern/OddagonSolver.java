@@ -263,6 +263,12 @@ public class OddagonSolver extends AbstractSolver {
 		for (int li = 0; li < CYCLE_LENGTHS.length; li++) {
 			int length = CYCLE_LENGTHS[li];
 			for (int start = 0; start < Sudoku2.LENGTH; start++) {
+				// modern fork (milestone 1.8, A4): cooperative cancel for
+				// find-all-steps (the enumeration also runs per candidate step
+				// in the progress rating)
+				if (Thread.currentThread().isInterrupted()) {
+					return;
+				}
 				if (!isEligible(start)) {
 					continue;
 				}

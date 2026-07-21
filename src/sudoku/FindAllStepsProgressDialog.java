@@ -155,14 +155,16 @@ public class FindAllStepsProgressDialog extends javax.swing.JDialog {
 	}// GEN-LAST:event_formWindowClosing
 
 	private void abbrechenButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_abbrechenButtonActionPerformed
+		// modern fork (milestone 1.8, A4): cooperative cancel. The legacy
+		// handler joined the worker on the EDT: with a long-running search the
+		// interrupt was only honored between search phases, so the UI froze
+		// (and closing the window leaked a zombie thread). Now the finders
+		// poll the interrupt flag and the worker hides the dialog itself when
+		// it exits; here we only signal and give feedback.
 		thread.interrupt();
-		try {
-			thread.join();
-		} catch (InterruptedException ex) {
-			Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Interrupted while waiting for AllSteps-thread",
-					ex);
-		}
-		setVisible(false);
+		abbrechenButton.setEnabled(false);
+		progressLabel.setText(java.util.ResourceBundle.getBundle("intl/FindAllStepsProgressDialog")
+				.getString("FindAllStepsProgressDialog.cancelling"));
 	}// GEN-LAST:event_abbrechenButtonActionPerformed
 
 	private void formWindowOpened(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowOpened

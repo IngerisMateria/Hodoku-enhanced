@@ -314,6 +314,13 @@ public class SudokuSolver {
 		long nanos = System.nanoTime();
 		Sudoku2 workingSudoku = tmpSudoku.clone();
 		for (int i = 0; i < stepsTocheck.size(); i++) {
+			// modern fork (milestone 1.8, A4): cooperative cancel — the rating
+			// runs in the FindAllSteps worker thread; when the user cancels,
+			// abort between candidate steps (isInterrupted() leaves the flag
+			// set for the FindAllSteps loop)
+			if (Thread.currentThread().isInterrupted()) {
+				break;
+			}
 			SolutionStep step = stepsTocheck.get(i);
 			workingSudoku.set(tmpSudoku);
 			getProgressScore(workingSudoku, step);
@@ -371,6 +378,11 @@ public class SudokuSolver {
 		// now solve as far as possible
 		SolutionStep step = null;
 		do {
+			// modern fork (milestone 1.8, A4): cooperative cancel inside the
+			// re-solve loop as well (a single rating can take many steps)
+			if (Thread.currentThread().isInterrupted()) {
+				break;
+			}
 			// jetzt eine Methode nach der anderen, aber immer nur einmal; wenn etwas
 			// gefunden wurde continue
 			step = getHint(false, Options.getInstance().solverStepsProgress, false);

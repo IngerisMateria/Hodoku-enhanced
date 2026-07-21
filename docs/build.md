@@ -92,6 +92,20 @@ violates its general contract!`, p. ej. al ordenar listas grandes de pasos ALS e
 sort, correr la JVM con `-Djava.util.Arrays.useLegacyMergeSort=true`. No afecta el uso
 normal de GUI/tests.
 
+## Quirk: cancel de find-all-steps (milestone 1.8, A4)
+
+El cancel del diálogo "Searching..." es **cooperativo**: interrumpe el thread de
+`FindAllSteps` y los finders (fish/kraken, ALS, oddagons, rating de progress)
+pollean `Thread.currentThread().isInterrupted()` y abortan devolviendo lo
+encontrado hasta ahí. El botón ya NO hace `join()` en el EDT (eso congelaba la
+UI y dejaba threads zombie si el worker estaba dentro de una fase larga); el
+worker esconde el diálogo solo al terminar. Excepción documentada:
+`TablingSolver` (chains/nets) no tiene checks internos — regla "no tocar hasta
+Fase 5" — así que un cancel durante una búsqueda de forcing chains/nets puede
+demorar lo que dure esa llamada individual. Al agregar un finder nuevo con
+bucles largos, poner el check en su bucle exterior (patrón en `FishSolver`,
+`AlsSolver`, `OddagonSolver`).
+
 ## CI
 
 `.github/workflows/build.yml` compila con JDK 21 en cada push/PR (`./gradlew build`) y
