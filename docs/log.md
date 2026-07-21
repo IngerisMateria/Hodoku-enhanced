@@ -1,5 +1,81 @@
 # Log de milestones
 
+## 1.3 — Bent subsets n=5..9 + backlog de pulido — 2026-07-21
+
+Hecho, en cuatro commits lógicos:
+
+1. **Backlog de pulido** (mecanismo nuevo) — `docs/pulido.md` con P-001 (subtipos del
+   WXYZ canónico) y P-002 (separar Kraken T1/T2), regla nueva en CLAUDE.md y el ítem
+   5.0 en el roadmap. Prompt del milestone archivado en `docs/milestones/1.3.md`.
+2. **Las cinco técnicas** — `VWXYZ_WING`(0805)/`UVWXYZ_WING`(0806)/`TUVWXYZ_WING`
+   (0807)/`STUVWXYZ_WING`(0808)/`RSTUVWXYZ_WING`(0809) (codes = huecos siguientes de
+   los wings 08xx, verificados libres); registro en `TYPE_BY_SIZE` del motor y UN
+   formateador bent compartido en `ModernStep` (misma instancia para n=4..9).
+   Options: índices 5655/5660/5665/5670/5675 (entre Bent Quad 5650 y ALS-XZ 5700),
+   scores 280/320/360/400/440 — +40 por celda extra desde 280 (n=5 apenas debajo de
+   ALS-XZ 300: se divisa como un ALS-XZ fácil), intercalando con la familia ALS
+   (320/340/360) y con techo 440 < 470, el score "solo computadora" de los fish
+   grandes. Defaults estilo fish: n=5 enabled; n=6..9 off con `allSteps=true`
+   (existen, desglosadas, apagadas — find-all-steps las lista si se habilitan).
+   El código de producción nuevo son ~30 líneas: el motor paramétrico del 1.2 hizo
+   todo el trabajo.
+3. **Fixtures** — 5 archivos nuevos en `test/fixtures/libs/` (23 casos): vwxyz-wing
+   4 positivos (todos pasos de PATH DEFAULT de te2/te3, diversos: fila/columna, celda
+   de intersección, eliminación simple/múltiple) + 3 negativos near-miss de puzzles
+   distintos (unión 6 / dos no-restringidos / naked quint); u/t/s/rstuvwxyz-wing 4
+   positivos cada uno (corpus + te2 + te3, estados tempranos y profundos). Registrados
+   en `LIB_FILES`.
+4. **Custodia + cierre** — te2#23 (1 VWXYZ default) y te2#52 (2 VWXYZ default) sumados
+   al corpus de snapshots (33→35).
+
+Métricas (all-steps sobre los estados de los solve paths default, metodología 1.1/1.2):
+
+- corpus (33 puzzles, 2.046 estados, 3,2 s): n5=18.188 n6=12.297 n7=4.945 n8=1.283
+  n9=221. te2-100 (8.802 estados, 39,5 s): n5=57.624 n6=34.799 n7=13.036 n8=2.824
+  n9=153. te3-200 (15.395 estados, 56,9 s): n5=71.493 n6=39.094 n7=14.794 n8=3.468
+  n9=538. Sanity de performance OK: la pasada completa (incluye replay + brute force
+  por puzzle) tarda ~100 s; los tamaños grandes no explotan (regiones de ≤15 celdas
+  acotan la combinatoria).
+- Revalidación soundness de TODO lo cosechado: **444.432 pasos bent (n=4..9) contra
+  brute force, 0 violaciones**.
+- Paths default: VWXYZ aparece en 7 puzzles te2 (8 pasos: #23, #32, #35, #52×2, #53,
+  #69, #90) y 7 puzzles te3; n=6..9 en ninguno (apagadas, como corresponde). En el
+  corpus de 33 previo: 0 → por eso la custodia nueva.
+- Custodia: snapshot diff = exactamente 2 líneas nuevas (te2#23: 1×VWXYZ_WING;
+  te2#52: 2×VWXYZ_WING), 0 líneas modificadas. Antes de agregarlas se verificó que
+  habilitar VWXYZ NO cambió ningún path de los 33 (suite verde sin regenerar).
+- GUI verificada sobre la ventana real (config fresca, te2#32 estado 8 donde VWXYZ es
+  el próximo paso default): hint `VWXYZ-Wing: 1/4/6/8/9 in r1c89,r3c89,r4c8 (Z=9) =>
+  r2c8<>9`, candidatos del set en verde, Z=9 del patrón en azul, eliminación en rojo;
+  captura revisada.
+
+Desvíos / hallazgos:
+
+- **La rareza esperada de n=6..9 no existe en all-steps**: hasta 538 RSTUVWXYZ en
+  te3 y cientos en el corpus fácil (estados tempranos con máscaras gordas). NO hubo
+  que construir ningún positivo a mano (el prompt lo preveía por tamaño sin caso
+  natural). La rareza real es otra: con sus scores/orden casi nunca ganan un path
+  default, y n≥6 son de valor humano dudoso — de ahí los defaults apagados.
+- Matiz de la regla de custodia (CLAUDE.md + plantilla): custodia por snapshots solo
+  para técnicas enabled por default; para las apagadas, la custodia son sus fixtures
+  de librería (el runner usa `getStep(tipo)` directo, que no mira el enable — por eso
+  los fixtures de n=6..9 corren igual).
+
+Cierre: pusheado y Actions en verde.
+
+### Resumen para el dueño del proyecto
+
+La familia del WXYZ quedó completa: el programa ahora conoce las versiones de 5, 6,
+7, 8 y 9 celdas como jugadas separadas, cada una con su nombre de la literatura y su
+puntaje. La de 5 quedó activa (aparece de verdad en los puzzles duros: la vimos en
+pantalla con su explicación y colores); las de 6 a 9 existen pero vienen apagadas,
+igual que los peces gigantes, porque son jugadas que solo una computadora encontraría
+— el que quiera puede prenderlas en las opciones. Verificamos 444 mil apariciones
+contra la solución real sin un solo error, y dos puzzles de guardia nuevos vigilan la
+de 5. Además estrenamos el cuaderno de pulido: las objeciones de diseño que no frenan
+el trabajo quedan anotadas ahí (arrancó con dos) para resolverlas todas juntas al
+final del proyecto.
+
 ## 1.2 — Desglose canónico/general del WXYZ + motor paramétrico — 2026-07-21
 
 Hecho, en cuatro commits lógicos:

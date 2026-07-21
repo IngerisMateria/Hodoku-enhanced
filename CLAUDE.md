@@ -60,9 +60,9 @@ del upstream 2.2.0 de hobiwan).
 - [x] 1.1 WXYZ-Wing (bent naked subset n=4; establece la plantilla de técnica nueva)
 - [x] 1.2 Desglose canónico/general del WXYZ: renombre a Bent Quad, WXYZ-Wing canónico
       (bisagra + 3 alas) como entrada separada, motor bent-subset con n paramétrico
-- [ ] 1.3 Bent subsets n=5..9 (VWXYZ-Wing .. RSTUVWXYZ-Wing, entradas separadas con
-      scores escalonados; defaults: 5 on, 6-9 off, estilo fish) ← PRÓXIMO
-- [ ] 1.4 M-Wing / S-Wing / L-Wing / H-Wing
+- [x] 1.3 Bent subsets n=5..9 (VWXYZ-Wing .. RSTUVWXYZ-Wing, entradas separadas con
+      scores escalonados; defaults: 5 on, 6-9 off, estilo fish)
+- [ ] 1.4 M-Wing / S-Wing / L-Wing / H-Wing ← PRÓXIMO
 - [ ] 1.5 Broken Wing (guardianes, 1 dígito — establece el framework oddagon)
 - [ ] 1.6 Bivalue Oddagon
 - [ ] 1.7 Tridagon* (fixtures: subset T&E(3) del 0.3)
