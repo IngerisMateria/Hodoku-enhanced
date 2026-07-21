@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import solver.modern.WxyzWingSolver;
 import sudoku.FindAllStepsProgressDialog;
 import sudoku.SolutionStep;
 import sudoku.SolutionType;
@@ -54,6 +55,8 @@ public class SudokuStepFinder {
 	private UniquenessSolver uniquenessSolver;
 	/** The specialized solver for Wings. */
 	private WingSolver wingSolver;
+	/** The specialized solver for WXYZ-Wings (modern fork). */
+	private WxyzWingSolver wxyzWingSolver;
 	/** The specialized solver for Coloring. */
 	private ColoringSolver coloringSolver;
 	/** The specialized solver for simple chains. */
@@ -228,6 +231,7 @@ public class SudokuStepFinder {
 			singleDigitPatternSolver = new SingleDigitPatternSolver(this);
 			uniquenessSolver = new UniquenessSolver(this);
 			wingSolver = new WingSolver(this);
+			wxyzWingSolver = new WxyzWingSolver(this);
 			coloringSolver = new ColoringSolver(this);
 			chainSolver = new ChainSolver(this);
 			alsSolver = new AlsSolver(this);
@@ -238,8 +242,8 @@ public class SudokuStepFinder {
 			incompleteSolver = new IncompleteSolver(this);
 			giveUpSolver = new GiveUpSolver(this);
 			solvers = new AbstractSolver[] { simpleSolver, fishSolver, singleDigitPatternSolver, uniquenessSolver,
-					wingSolver, coloringSolver, chainSolver, alsSolver, miscellaneousSolver, tablingSolver,
-					templateSolver, bruteForceSolver, incompleteSolver, giveUpSolver };
+					wingSolver, wxyzWingSolver, coloringSolver, chainSolver, alsSolver, miscellaneousSolver,
+					tablingSolver, templateSolver, bruteForceSolver, incompleteSolver, giveUpSolver };
 		} else {
 			solvers = new AbstractSolver[] { simpleSolver };
 		}
@@ -608,6 +612,9 @@ public class SudokuStepFinder {
 		Sudoku2 oldSudoku = getSudoku();
 		setSudoku(newSudoku);
 		List<SolutionStep> steps = wingSolver.getAllWings();
+		// WXYZ-Wings are wings too: callers (FindAllSteps, RegressionTester)
+		// filter by enabled step types themselves
+		steps.addAll(wxyzWingSolver.getAllWxyzWings());
 		setSudoku(oldSudoku);
 		return steps;
 	}

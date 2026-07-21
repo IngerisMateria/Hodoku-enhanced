@@ -36,19 +36,30 @@ import org.junit.jupiter.api.TestFactory;
  */
 public class LibraryCaseRunnerTest {
 
+	/**
+	 * Every lib file under test/fixtures/libs/. Phase 1 technique milestones
+	 * register their fixture files here (see docs/plantilla-tecnica.md).
+	 */
+	private static final String[] LIB_FILES = {
+			"phase1-examples.txt",
+			"wxyz-wing.txt", // milestone 1.1
+	};
+
 	@TestFactory
-	public Stream<DynamicTest> phase1ExampleCasesHold() {
-		List<String> cases = Fixtures.lines("/fixtures/libs/phase1-examples.txt");
-		assertTrue(cases.size() >= 4, "expected the 4 example cases, got " + cases.size());
-		return cases.stream().map(line -> dynamicTest(caseName(line), () -> {
-			LibraryCaseRunner.Result result = LibraryCaseRunner.run(line);
-			if (result.failCase) {
-				assertFalse(result.found, "technique must NOT be found for fail case: " + line
-						+ "\nbut found: " + result.step);
-			} else {
-				assertTrue(result.found, "technique not found for case: " + line);
-			}
-		}));
+	public Stream<DynamicTest> libraryCasesHold() {
+		return java.util.Arrays.stream(LIB_FILES).flatMap(file -> {
+			List<String> cases = Fixtures.lines("/fixtures/libs/" + file);
+			assertTrue(cases.size() >= 4, "expected at least 4 cases in " + file + ", got " + cases.size());
+			return cases.stream().map(line -> dynamicTest(file + " " + caseName(line), () -> {
+				LibraryCaseRunner.Result result = LibraryCaseRunner.run(line);
+				if (result.failCase) {
+					assertFalse(result.found, "technique must NOT be found for fail case: " + line
+							+ "\nbut found: " + result.step);
+				} else {
+					assertTrue(result.found, "technique not found for case: " + line);
+				}
+			}));
+		});
 	}
 
 	@Test

@@ -205,7 +205,11 @@ public enum SolutionType {
 	SIMPLE_COLORS_WRAP(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Simple_Colors_Wrap"), "0501",
 			"sc2"),
 	MULTI_COLORS_1(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Multi_Colors_1"), "0502", "mc1"),
-	MULTI_COLORS_2(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Multi_Colors_2"), "0503", "mc2");
+	MULTI_COLORS_2(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Multi_Colors_2"), "0503", "mc2"),
+	// Techniques of the modern fork start here. Append only: existing ordinals must stay stable.
+	// Library code 0802 was never used upstream (wings: 0800 XY, 0801 XYZ, 0803 W); verified free
+	// against every code in this enum.
+	WXYZ_WING(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("WXYZ-Wing"), "0802", "wxyz");
 	private String stepName;
 	private String libraryType;
 	private String argName;
