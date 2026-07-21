@@ -306,7 +306,14 @@ public final class Options {
 			// family 120-150); order 5370 = after coloring, before the X-Chain (5400)
 			// and the chain/forcing engines that subsume its deductions.
 			new StepConfig(5370, SolutionType.BROKEN_WING, DifficultyType.UNFAIR.ordinal(),
-					SolutionCategory.SINGLE_DIGIT_PATTERNS, 240, 0, true, true, 5370, false, false) };
+					SolutionCategory.SINGLE_DIGIT_PATTERNS, 240, 0, true, true, 5370, false, false),
+			// Bivalue Oddagon: high-UNFAIR score 440 next to RSTUVWXYZ-Wing 440 and the
+			// mutant fish 450, below the EXTREME plateau 470; order 5690 = right before
+			// the ALS family (5700) and far before the forcing chains/nets that subsume
+			// it. No classic category fits an oddagon over a digit pair; MISCELLANEOUS
+			// (Sue de Coq's bucket) is the canonical STEPS tab drawer for it.
+			new StepConfig(5690, SolutionType.BIVALUE_ODDAGON, DifficultyType.UNFAIR.ordinal(),
+					SolutionCategory.MISCELLANEOUS, 440, 0, true, true, 5690, false, false) };
 	// nicht sortierte steps mit allen Änderungen -> wird so in *.cfg-File
 	// geschrieben
 	private StepConfig[] orgSolverSteps = null;

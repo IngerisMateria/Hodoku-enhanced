@@ -50,6 +50,7 @@ public class LibraryCaseRunnerTest {
 			"stuvwxyz-wing.txt",
 			"rstuvwxyz-wing.txt",
 			"broken-wing.txt", // milestone 1.6 (oddagons I)
+			"bivalue-oddagon.txt",
 	};
 
 	@TestFactory

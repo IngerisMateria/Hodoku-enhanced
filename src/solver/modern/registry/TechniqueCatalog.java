@@ -219,6 +219,14 @@ final class TechniqueCatalog {
 						+ "guardian is placed; several same-digit guardians eliminate the digit from cells seeing them all.")
 				.aliases("Guardians", "Single-Digit Oddagon")
 				.refs("docs/sudoku_mapa_relacional.md §2.d").build());
+		rows.add(t(BIVALUE_ODDAGON, Family.ODDAGON, "OddagonSolver",
+				"An odd loop (length 5 or 7) of cells all holding the pair {a,b}: without extra candidates the loop "
+						+ "would need a 2-coloring an odd cycle cannot have. The extra candidates inside the loop are the "
+						+ "guardians: a single one strips {a,b} from its cell; several of one digit eliminate that digit "
+						+ "from cells seeing them all. Mixed-digit guardian sets give no direct elimination (chain territory).")
+				.aliases("Bi-Value Oddagon")
+				.refs("docs/sudoku_mapa_relacional.md §2.d").build());
+
 		// --- coloring (ColoringSolver) ---
 		rows.add(t(SIMPLE_COLORS, Family.COLORING, "ColoringSolver",
 				"Two-coloring of the conjugate-link cluster of one digit: candidates seeing both colors (trap) or a "
