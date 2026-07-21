@@ -1,0 +1,41 @@
+# WXYZ-Wing canonico (milestone 1.2) — casos en formato LIBRARY (codigo 0804),
+# cosechados con el propio finder corriendo all-steps sobre estados de solve paths
+# reales del corpus 0.2 (corpus.txt) y del subset T&E(2) (te2-eleven-100.txt). Todos
+# los estados fueron revalidados contra la solucion brute-force (0 violaciones).
+#
+# Positivos: el paso debe encontrarse en el estado dado.
+
+# corpus#15: Tipo 1 (Z en la bisagra), alas repartidas en la columna 6
+# WXYZ-Wing Type 1: 2/5/8/7 in r1c56,r47c6 (Z=7) => r3c6<>7
+:0804:2578:+16.3...+4927.+4+1+9.+6+34+93.6.....+4+613.+92.73+9254+186.1+2.96.+3.+3+2.+94.6.8+9+5+4+6+8+1+3726....3.9.::736::
+
+# corpus#16: Tipo 1, bisagra en fila 1 con alas en fila y caja
+# WXYZ-Wing Type 1: 2/4/6/3 in r1c157,r3c4 (Z=3) => r1c6<>3
+:0804:2346:.+9.1...8+5.1.7.5..6..2.9.7+14..9.....31.......27.....4..9.8.5.6..6..8.9.4..7...4...::316::
+
+# te2#39: Tipo 1 sobre un T&E(2), estado profundo con muchos candidatos ya borrados
+# WXYZ-Wing Type 1: 6/7/8/2 in r89c6,r9c18 (Z=2) => r9c5<>2
+:0804:2678:1+2..5...9...1..2....6...+1...+318.+5+94.7+4+5.9+3..19...+14..53..5.1.+9..7+9.3..1..+1.9..+5.3:413 813 614 716 617 817 318 718 521 822 423 823 628 828 531 832 234 434 838 649 264 767 867 868 675 477 877 779 481 681 881 686 489 491 891 698 898:295::
+
+# corpus#9: Tipo 2 (Z fuera de la bisagra), eliminacion multiple (2 celdas)
+# WXYZ-Wing Type 2: 1/4/5/6 in r5c3,r6c189 (Z=6) => r5c89<>6
+:0804:1456:...+7+526.......+65976+5+738+9..+2..396+58.+1...+2.+8....+89.372.....+891+7+54874+5+2+3.....56+7+4.+2.:121 421 122 422 123:658 659::
+
+# te2#47: Tipo 2, proximo paso del path default (usado en la verificacion GUI del 1.2)
+# WXYZ-Wing Type 2: 3/7/8/6 in r13c6,r2c35 (Z=6) => r2c4<>6
+:0804:3678:..3.5.7..4+5...9....8.2.......5.6+13..+39+48+2+5+6+7+1.....4.2.5....71....1.....6....1..37:219 223 829 335 272 281 282 886 291 292 494 297:624::
+
+# Negativos near-miss (sufijo -x): NINGUN WXYZ-Wing canonico existe en el estado, pero
+# hay una estructura "casi": la asercion de ausencia del runner los custodia.
+
+# te2#4: un Bent Quad que NO es canonico (el caso del screenshot del 1.1:
+# Bent Quad 3/4/7/5 in r156c7,r2c8, Z=5 — ninguna bisagra con 3 alas bivalue lo genera)
+:0804-x:x:1...+56.8...71+8.2...8..7+2.......4.9..3...+9...8....+35.61.4.7.......9+52....8....3..5:428 928 242 243 846 176 378 379 186 694::
+
+# corpus#1: el degenerado excluido — bisagra + 3 alas bivalue cuyas 4 celdas se ven
+# todas entre si (naked quad clasico), con eliminaciones posibles; no es canonico
+:0804-x:x:1+2+57..+6..+7+432+691+85+968...+2...+3....+5784+819573+6257....+9...+9....45.3+574+918+2+6.+1...8+7+39:::
+
+# corpus#4: estructura canonica completa (bisagra + alas, no degenerada) pero sin
+# ninguna eliminacion posible (ninguna celda externa ve a todos los portadores de Z)
+:0804-x:x:7345....6.....4....5.62....67..4...9..19764..4...1..63....92.7....4.....5....8192:::

@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import solver.modern.BentSubsetSolver;
+import solver.modern.WxyzWingSolver;
 import sudoku.FindAllStepsProgressDialog;
 import sudoku.SolutionStep;
 import sudoku.SolutionType;
@@ -57,6 +58,8 @@ public class SudokuStepFinder {
 	private WingSolver wingSolver;
 	/** The specialized solver for bent naked subsets (modern fork). */
 	private BentSubsetSolver bentSubsetSolver;
+	/** The specialized solver for canonical WXYZ-Wings (modern fork). */
+	private WxyzWingSolver wxyzWingSolver;
 	/** The specialized solver for Coloring. */
 	private ColoringSolver coloringSolver;
 	/** The specialized solver for simple chains. */
@@ -232,6 +235,7 @@ public class SudokuStepFinder {
 			uniquenessSolver = new UniquenessSolver(this);
 			wingSolver = new WingSolver(this);
 			bentSubsetSolver = new BentSubsetSolver(this);
+			wxyzWingSolver = new WxyzWingSolver(this);
 			coloringSolver = new ColoringSolver(this);
 			chainSolver = new ChainSolver(this);
 			alsSolver = new AlsSolver(this);
@@ -242,7 +246,7 @@ public class SudokuStepFinder {
 			incompleteSolver = new IncompleteSolver(this);
 			giveUpSolver = new GiveUpSolver(this);
 			solvers = new AbstractSolver[] { simpleSolver, fishSolver, singleDigitPatternSolver, uniquenessSolver,
-					wingSolver, bentSubsetSolver, coloringSolver, chainSolver, alsSolver, miscellaneousSolver,
+					wingSolver, wxyzWingSolver, bentSubsetSolver, coloringSolver, chainSolver, alsSolver, miscellaneousSolver,
 					tablingSolver, templateSolver, bruteForceSolver, incompleteSolver, giveUpSolver };
 		} else {
 			solvers = new AbstractSolver[] { simpleSolver };
@@ -612,8 +616,9 @@ public class SudokuStepFinder {
 		Sudoku2 oldSudoku = getSudoku();
 		setSudoku(newSudoku);
 		List<SolutionStep> steps = wingSolver.getAllWings();
-		// bent subsets are wings too: callers (FindAllSteps, RegressionTester)
+		// modern-fork wings too: callers (FindAllSteps, RegressionTester)
 		// filter by enabled step types themselves
+		steps.addAll(wxyzWingSolver.getAllWxyzWings());
 		steps.addAll(bentSubsetSolver.getAllBentSubsets());
 		setSudoku(oldSudoku);
 		return steps;
