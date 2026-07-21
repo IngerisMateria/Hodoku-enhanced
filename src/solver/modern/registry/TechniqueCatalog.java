@@ -208,6 +208,17 @@ final class TechniqueCatalog {
 		// --- bent subsets n=4..9 (BentSubsetSolver) ---
 		addBentRows(rows);
 
+		// --- oddagons (OddagonSolver, milestone 1.6) ---
+		// The contradiction+guardians branch of the owner's map ("rank -1 /
+		// dark logic", §2.d): its own taxonomy root, no subsumption parents
+		// among the registered techniques (chains re-derive the eliminations
+		// but are a different framework).
+		rows.add(t(BROKEN_WING, Family.ODDAGON, "OddagonSolver",
+				"An odd loop (length 5 or 7) of one digit's candidates that would be an impossible ring of conjugate "
+						+ "links: some guardian (another candidate of the digit in a link house) must be true. A single "
+						+ "guardian is placed; several same-digit guardians eliminate the digit from cells seeing them all.")
+				.aliases("Guardians", "Single-Digit Oddagon")
+				.refs("docs/sudoku_mapa_relacional.md §2.d").build());
 		// --- coloring (ColoringSolver) ---
 		rows.add(t(SIMPLE_COLORS, Family.COLORING, "ColoringSolver",
 				"Two-coloring of the conjugate-link cluster of one digit: candidates seeing both colors (trap) or a "

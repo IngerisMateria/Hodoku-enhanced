@@ -38,6 +38,12 @@ public enum Family {
 	WINGS,
 	/** Bent naked subsets n=4..9 (the parametric bent engine, regime R1). */
 	BENT_SUBSETS,
+	/**
+	 * Guardian logic over impossible odd cycles (the "rank -1 / dark logic"
+	 * branch of the owner's map, docs/sudoku_mapa_relacional.md §2.d):
+	 * Broken Wing, Bivalue Oddagon, later Tridagon (milestone 1.7).
+	 */
+	ODDAGON,
 	COLORING,
 	/** Simple chains: X-Chain, XY-Chain, Remote Pair, Nice Loops / AICs. */
 	CHAINS,

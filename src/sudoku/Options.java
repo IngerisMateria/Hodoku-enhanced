@@ -299,7 +299,14 @@ public final class Options {
 			new StepConfig(3120, SolutionType.TURBOT_FISH, DifficultyType.HARD.ordinal(),
 					SolutionCategory.SINGLE_DIGIT_PATTERNS, 120, 0, true, true, 3120, false, false),
 			new StepConfig(1210, SolutionType.LOCKED_CANDIDATES_2, DifficultyType.MEDIUM.ordinal(),
-					SolutionCategory.INTERSECTIONS, 50, 0, true, true, 1210, true, false) };
+					SolutionCategory.INTERSECTIONS, 50, 0, true, true, 1210, true, false),
+			// modern fork (milestone 1.6): the oddagon pair, both enabled by default.
+			// Broken Wing: early-UNFAIR score 240 next to Sashimi Swordfish 240 / Sue de
+			// Coq 250 (it is a single-digit pattern, but clearly above the HARD turbot
+			// family 120-150); order 5370 = after coloring, before the X-Chain (5400)
+			// and the chain/forcing engines that subsume its deductions.
+			new StepConfig(5370, SolutionType.BROKEN_WING, DifficultyType.UNFAIR.ordinal(),
+					SolutionCategory.SINGLE_DIGIT_PATTERNS, 240, 0, true, true, 5370, false, false) };
 	// nicht sortierte steps mit allen Änderungen -> wird so in *.cfg-File
 	// geschrieben
 	private StepConfig[] orgSolverSteps = null;
