@@ -88,6 +88,9 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		doc.addDocumentListener(new MyDocumentListener());
 		scoreTextField.setDocument(doc);
 
+		// modern fork (milestone 1.5): technique aside v2
+		initAside();
+
 		// Alle Werte aus den Default-Optionen setzen
 		initAll(false);
 
@@ -154,30 +157,10 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 
 		scoreTextField.setEnabled(false);
 
-		javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-		jPanel3.setLayout(jPanel3Layout);
-		jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel3Layout.createSequentialGroup()
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(levelLabel).addComponent(scoreLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(scoreTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 224,
-										Short.MAX_VALUE)
-								.addComponent(levelComboBox, 0, 224, Short.MAX_VALUE))
-						.addContainerGap()));
-		jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(jPanel3Layout.createSequentialGroup()
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(levelLabel)
-								.addComponent(levelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-								.addComponent(scoreLabel).addComponent(scoreTextField,
-										javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		// modern fork (milestone 1.5): jPanel3 is the technique aside now; its
+		// content (level/score plus description, aliases, display name and the
+		// owned options) is built in initAside()
+		jPanel3.setLayout(new java.awt.BorderLayout());
 
 		upButton.setMnemonic(java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel")
 				.getString("ConfigSolverPanel.upButton.mnemonic").charAt(0));
@@ -224,9 +207,10 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 
 		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-						.addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 301, Short.MAX_VALUE)
+						// modern fork (milestone 1.5): the aside takes the available height
+						.addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(upButton).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
 								.addComponent(downButton).addComponent(resetButton))));
@@ -371,6 +355,8 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 			StepConfig conf = stepList.getSelectedValue();
 			levelComboBox.setSelectedIndex(conf.getLevel() - 1);
 			scoreTextField.setText(Integer.toString(conf.getBaseScore()));
+			// modern fork (milestone 1.5): refresh the technique aside
+			updateAside(conf);
 			// "Nach oben" und "Nach unten" Buttons anpassen
 			upButton.setEnabled(true);
 			downButton.setEnabled(true);
@@ -447,6 +433,14 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		// Alle Werte übernehmen
 		Options.getInstance().solverSteps = Options.getInstance().copyStepConfigs(steps, false, true);
 		Options.getInstance().adjustOrgSolverSteps();
+		// modern fork (milestone 1.5): apply the buffered display-name choices
+		// (setPreferredDisplayName removes the preference when the default name
+		// was chosen)
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		for (java.util.Map.Entry<SolutionType, String> entry : pendingDisplayNames.entrySet()) {
+			registry.setPreferredDisplayName(entry.getKey(), entry.getValue());
+		}
+		pendingDisplayNames.clear();
 	}
 
 	private void initAll(boolean setDefault) {
@@ -467,6 +461,7 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		stepList.repaint();
 		levelComboBox.setSelectedIndex(-1);
 		scoreTextField.setText("");
+		clearAside();
 
 		// Baum neu laden
 		buildTree();
@@ -492,7 +487,8 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 						steps[i].getCategory());
 				root.add(act);
 			}
-			act.add(new CheckNode(steps[i].getType().getStepName(), false,
+			// modern fork (milestone 1.5): render the preferred display name
+			act.add(new CheckNode(steps[i].toString(), false,
 					steps[i].isEnabled() ? CheckNode.FULL : CheckNode.NONE, steps[i], false, false, false, null));
 			if (act.getSelectionState() == CheckNode.FULL && !steps[i].isEnabled()) {
 				act.setSelectionState(CheckNode.HALF);
@@ -600,6 +596,427 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 			}
 		}
 
+	}
+
+	// ------------------------------------------------------------------
+	// modern fork (milestone 1.5): technique aside v2.
+	//
+	// The aside is a MIRROR: every option keeps its canonical classic tab
+	// (ConfigStepPanel), the aside editors share the Swing models of the
+	// classic controls (ButtonModel / ComboBoxModel / Document), so both
+	// views stay in sync and the value is written to Options exactly once,
+	// in ConfigStepPanel.okPressed(). Display-name choices are buffered in
+	// pendingDisplayNames and applied in okPressed() (dialog semantics).
+	// ------------------------------------------------------------------
+
+	/** the classic Steps tab, wired by ConfigDialog (null when standalone) */
+	private ConfigStepPanel classicStepPanel;
+	private javax.swing.JPanel asideContent;
+	private javax.swing.JTextArea descriptionArea;
+	private javax.swing.JLabel aliasesCaption;
+	private javax.swing.JTextArea aliasesArea;
+	private javax.swing.JLabel displayNameCaption;
+	private javax.swing.JComboBox<String> displayNameComboBox;
+	private javax.swing.JLabel optionsCaption;
+	private javax.swing.JPanel optionsPanel;
+	/** display-name choices buffered until okPressed() */
+	private final java.util.Map<SolutionType, String> pendingDisplayNames = new java.util.HashMap<SolutionType, String>();
+	/** one mirror per option key, created lazily, models shared with the classic tab */
+	private final java.util.Map<String, javax.swing.JComponent> optionMirrors = new java.util.HashMap<String, javax.swing.JComponent>();
+	/** guards against combo events fired while the aside is being populated */
+	private boolean updatingAside = false;
+
+	/** Wired by ConfigDialog so the aside can mirror the classic Steps tab. */
+	public void setClassicStepPanel(ConfigStepPanel panel) {
+		classicStepPanel = panel;
+	}
+
+	/** Builds the aside content inside jPanel3 (called once from the constructor). */
+	private void initAside() {
+		java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel");
+
+		descriptionArea = makeWrappedArea();
+		aliasesCaption = new javax.swing.JLabel(bundle.getString("ConfigSolverPanel.aliasesCaption.text"));
+		aliasesArea = makeWrappedArea();
+		displayNameCaption = new javax.swing.JLabel(bundle.getString("ConfigSolverPanel.displayNameCaption.text"));
+		displayNameComboBox = new javax.swing.JComboBox<String>();
+		displayNameComboBox.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				displayNameChosen();
+			}
+		});
+		optionsCaption = new javax.swing.JLabel(bundle.getString("ConfigSolverPanel.optionsCaption.text"));
+		optionsPanel = new javax.swing.JPanel();
+		optionsPanel.setLayout(new javax.swing.BoxLayout(optionsPanel, javax.swing.BoxLayout.Y_AXIS));
+		optionsPanel.setOpaque(false);
+
+		asideContent = new ScrollablePanel();
+		asideContent.setLayout(new java.awt.GridBagLayout());
+		asideContent.setOpaque(false);
+		java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+		gbc.insets = new java.awt.Insets(2, 4, 2, 4);
+		gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
+		gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+
+		gbc.gridy = 0;
+		gbc.gridx = 0;
+		gbc.weightx = 0;
+		asideContent.add(levelLabel, gbc);
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		asideContent.add(levelComboBox, gbc);
+		gbc.gridy++;
+		gbc.gridx = 0;
+		gbc.weightx = 0;
+		asideContent.add(scoreLabel, gbc);
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		asideContent.add(scoreTextField, gbc);
+
+		gbc.gridy++;
+		gbc.gridx = 0;
+		gbc.gridwidth = 2;
+		gbc.weightx = 1;
+		asideContent.add(descriptionArea, gbc);
+		gbc.gridy++;
+		asideContent.add(aliasesCaption, gbc);
+		gbc.gridy++;
+		asideContent.add(aliasesArea, gbc);
+		gbc.gridy++;
+		gbc.gridwidth = 1;
+		gbc.weightx = 0;
+		asideContent.add(displayNameCaption, gbc);
+		gbc.gridx = 1;
+		gbc.weightx = 1;
+		asideContent.add(displayNameComboBox, gbc);
+		gbc.gridy++;
+		gbc.gridx = 0;
+		gbc.gridwidth = 2;
+		asideContent.add(optionsCaption, gbc);
+		gbc.gridy++;
+		asideContent.add(optionsPanel, gbc);
+		// filler that soaks up the remaining height
+		gbc.gridy++;
+		gbc.weighty = 1;
+		gbc.fill = java.awt.GridBagConstraints.BOTH;
+		javax.swing.JPanel filler = new javax.swing.JPanel();
+		filler.setOpaque(false);
+		asideContent.add(filler, gbc);
+
+		javax.swing.JScrollPane asideScrollPane = new javax.swing.JScrollPane(asideContent,
+				javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		asideScrollPane.setBorder(null);
+		asideScrollPane.getViewport().setOpaque(false);
+		asideScrollPane.setOpaque(false);
+		jPanel3.add(asideScrollPane, java.awt.BorderLayout.CENTER);
+	}
+
+	/** Shows technique data of the selected step in the aside. */
+	private void updateAside(StepConfig conf) {
+		if (descriptionArea == null) {
+			return;
+		}
+		updatingAside = true;
+		try {
+			SolutionType type = conf.getType();
+			solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+			solver.modern.registry.TechniqueInfo info = registry.get(type);
+			setAsideDetailVisible(info != null);
+			if (info != null) {
+				java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel");
+				descriptionArea.setText(info.getDescription());
+				aliasesArea.setText(info.getAliases().isEmpty() ? bundle.getString("ConfigSolverPanel.noAliases.text")
+						: String.join(", ", info.getAliases()));
+				displayNameComboBox.removeAllItems();
+				displayNameComboBox.addItem(info.getDisplayNameDefault());
+				for (String alias : info.getAliases()) {
+					displayNameComboBox.addItem(alias);
+				}
+				String current = pendingDisplayNames.containsKey(type) ? pendingDisplayNames.get(type)
+						: registry.getDisplayName(type);
+				boolean present = false;
+				for (int i = 0; i < displayNameComboBox.getItemCount(); i++) {
+					if (displayNameComboBox.getItemAt(i).equals(current)) {
+						present = true;
+						break;
+					}
+				}
+				if (!present) {
+					// a custom persisted name that is not an alias: keep it choosable
+					displayNameComboBox.addItem(current);
+				}
+				displayNameComboBox.setSelectedItem(current);
+			}
+			rebuildOptionRows(type);
+		} finally {
+			updatingAside = false;
+		}
+	}
+
+	/** Clears the aside (no selection). */
+	private void clearAside() {
+		if (descriptionArea == null) {
+			return;
+		}
+		updatingAside = true;
+		try {
+			descriptionArea.setText("");
+			aliasesArea.setText("");
+			displayNameComboBox.removeAllItems();
+			optionsPanel.removeAll();
+			setAsideDetailVisible(false);
+			optionsPanel.revalidate();
+			optionsPanel.repaint();
+		} finally {
+			updatingAside = false;
+		}
+	}
+
+	private void setAsideDetailVisible(boolean visible) {
+		descriptionArea.setVisible(visible);
+		aliasesCaption.setVisible(visible);
+		aliasesArea.setVisible(visible);
+		displayNameCaption.setVisible(visible);
+		displayNameComboBox.setVisible(visible);
+		optionsCaption.setVisible(visible);
+		optionsPanel.setVisible(visible);
+	}
+
+	/** The user chose a display name in the aside: buffer it until OK. */
+	private void displayNameChosen() {
+		if (updatingAside) {
+			return;
+		}
+		StepConfig conf = stepList.getSelectedValue();
+		String name = (String) displayNameComboBox.getSelectedItem();
+		if (conf == null || name == null) {
+			return;
+		}
+		pendingDisplayNames.put(conf.getType(), name);
+	}
+
+	/** Rebuilds the option rows of the aside for one technique. */
+	private void rebuildOptionRows(SolutionType type) {
+		optionsPanel.removeAll();
+		int rows = 0;
+		if (classicStepPanel != null) {
+			solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+			for (solver.modern.registry.OptionInfo option : registry.optionsOwnedBy(type)) {
+				if (addOptionRow(option, type, true)) {
+					rows++;
+				}
+			}
+			// affected-but-not-owned options (grayed editor, click navigates to
+			// the owner) are structurally supported; the relation has no
+			// instances today — if the registry ever grows one, list it here
+			for (solver.modern.registry.OptionInfo option : affectedNotOwnedOptions(type)) {
+				if (addOptionRow(option, type, false)) {
+					rows++;
+				}
+			}
+		}
+		optionsCaption.setVisible(rows > 0);
+		optionsPanel.setVisible(rows > 0);
+		optionsPanel.revalidate();
+		optionsPanel.repaint();
+		asideContent.revalidate();
+		asideContent.repaint();
+	}
+
+	/**
+	 * Options that affect the given technique without being owned by it.
+	 * Empty today (see rebuildOptionRows); the grayed+navigate rendering is
+	 * already implemented for when the relation gets its first instance.
+	 */
+	private java.util.List<solver.modern.registry.OptionInfo> affectedNotOwnedOptions(SolutionType type) {
+		return java.util.Collections.emptyList();
+	}
+
+	/**
+	 * Adds one option row to the aside.
+	 *
+	 * @param option the registry row of the option
+	 * @param selected the selected technique
+	 * @param owned false renders the structural affected-but-not-owned case:
+	 *            editor grayed, click navigates to the first owner
+	 * @return true if the row was added (the option has a classic editor)
+	 */
+	private boolean addOptionRow(solver.modern.registry.OptionInfo option, SolutionType selected, boolean owned) {
+		javax.swing.JComponent editor = mirrorFor(option.getKey());
+		if (editor == null) {
+			return false;
+		}
+		java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel");
+		String tooltip = "<html><body style='width:280px'>" + option.getDescription() + "</body></html>";
+		editor.setToolTipText(tooltip);
+		editor.setEnabled(owned);
+
+		javax.swing.JPanel row = new javax.swing.JPanel(new java.awt.GridBagLayout());
+		row.setOpaque(false);
+		row.setAlignmentX(0f);
+		java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+		gbc.insets = new java.awt.Insets(1, 0, 1, 4);
+		gbc.anchor = java.awt.GridBagConstraints.WEST;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		String labelText = classicStepPanel.getOptionLabelText(option.getKey());
+		if (labelText != null) {
+			javax.swing.JLabel label = new javax.swing.JLabel(labelText);
+			label.setToolTipText(tooltip);
+			label.setEnabled(owned);
+			row.add(label, gbc);
+			gbc.gridx = 1;
+			gbc.weightx = 1;
+			gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			row.add(editor, gbc);
+		} else {
+			gbc.gridwidth = 2;
+			gbc.weightx = 1;
+			gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			row.add(editor, gbc);
+		}
+
+		// scope label when the option affects other techniques as well
+		java.util.List<String> others = new java.util.ArrayList<String>();
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		for (SolutionType owner : option.getOwners()) {
+			if (owner != selected) {
+				others.add(registry.getDisplayName(owner));
+			}
+		}
+		if (!others.isEmpty()) {
+			java.util.Collections.sort(others);
+			StringBuilder scope = new StringBuilder(bundle.getString("ConfigSolverPanel.alsoAffects.text"));
+			int shown = Math.min(others.size(), 3);
+			for (int i = 0; i < shown; i++) {
+				scope.append(i == 0 ? " " : ", ").append(others.get(i));
+			}
+			if (others.size() > shown) {
+				scope.append(", +").append(java.text.MessageFormat
+						.format(bundle.getString("ConfigSolverPanel.moreOwners.text"), others.size() - shown));
+			}
+			javax.swing.JLabel scopeLabel = new javax.swing.JLabel(scope.toString());
+			scopeLabel.setFont(scopeLabel.getFont()
+					.deriveFont(java.awt.Font.ITALIC, scopeLabel.getFont().getSize2D() - 1f));
+			scopeLabel.setForeground(javax.swing.UIManager.getColor("Label.disabledForeground"));
+			scopeLabel.setToolTipText("<html><body style='width:280px'>" + String.join(", ", others) + "</body></html>");
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			gbc.gridwidth = 2;
+			gbc.weightx = 1;
+			gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			row.add(scopeLabel, gbc);
+		}
+
+		if (!owned && !option.getOwners().isEmpty()) {
+			// structural affected-but-not-owned case: click navigates to the owner
+			final SolutionType owner = option.getOwners().iterator().next();
+			row.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+			row.setToolTipText(java.text.MessageFormat.format(bundle.getString("ConfigSolverPanel.goToOwner.text"),
+					registry.getDisplayName(owner)));
+			row.addMouseListener(new java.awt.event.MouseAdapter() {
+				@Override
+				public void mouseClicked(java.awt.event.MouseEvent evt) {
+					navigateToTechnique(owner);
+				}
+			});
+		}
+
+		optionsPanel.add(row);
+		return true;
+	}
+
+	/** Selects a technique in the step list (used by not-owned option rows). */
+	private void navigateToTechnique(SolutionType type) {
+		for (int i = 0; i < model.getSize(); i++) {
+			if (model.get(i).getType() == type) {
+				stepList.setSelectedIndex(i);
+				stepList.ensureIndexIsVisible(i);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * The aside mirror of one classic option editor: created once per option
+	 * key, its Swing model shared with the classic control so both views stay
+	 * in sync without extra plumbing.
+	 */
+	@SuppressWarnings("unchecked")
+	private javax.swing.JComponent mirrorFor(String optionKey) {
+		javax.swing.JComponent mirror = optionMirrors.get(optionKey);
+		if (mirror != null) {
+			return mirror;
+		}
+		javax.swing.JComponent classic = classicStepPanel.getOptionEditor(optionKey);
+		if (classic instanceof javax.swing.JCheckBox) {
+			javax.swing.JCheckBox classicBox = (javax.swing.JCheckBox) classic;
+			javax.swing.JCheckBox box = new javax.swing.JCheckBox(classicBox.getText());
+			box.setModel(classicBox.getModel());
+			box.setOpaque(false);
+			mirror = box;
+		} else if (classic instanceof javax.swing.JComboBox) {
+			javax.swing.JComboBox<String> combo = new javax.swing.JComboBox<String>();
+			combo.setModel(((javax.swing.JComboBox<String>) classic).getModel());
+			mirror = combo;
+		} else if (classic instanceof javax.swing.JTextField) {
+			javax.swing.JTextField field = new javax.swing.JTextField();
+			field.setDocument(((javax.swing.JTextField) classic).getDocument());
+			field.setColumns(5);
+			mirror = field;
+		}
+		if (mirror != null) {
+			optionMirrors.put(optionKey, mirror);
+		}
+		return mirror;
+	}
+
+	/** Read-only wrapping text area styled like a label. */
+	private static javax.swing.JTextArea makeWrappedArea() {
+		javax.swing.JTextArea area = new javax.swing.JTextArea();
+		area.setEditable(false);
+		area.setFocusable(false);
+		area.setLineWrap(true);
+		area.setWrapStyleWord(true);
+		area.setOpaque(false);
+		area.setBorder(null);
+		java.awt.Font font = javax.swing.UIManager.getFont("Label.font");
+		if (font != null) {
+			area.setFont(font);
+		}
+		return area;
+	}
+
+	/** JPanel that tracks the viewport width so wrapped text areas re-wrap. */
+	private static class ScrollablePanel extends javax.swing.JPanel implements javax.swing.Scrollable {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public java.awt.Dimension getPreferredScrollableViewportSize() {
+			return getPreferredSize();
+		}
+
+		@Override
+		public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
+			return 16;
+		}
+
+		@Override
+		public int getScrollableBlockIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
+			return 64;
+		}
+
+		@Override
+		public boolean getScrollableTracksViewportWidth() {
+			return true;
+		}
+
+		@Override
+		public boolean getScrollableTracksViewportHeight() {
+			return false;
+		}
 	}
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables

@@ -83,6 +83,9 @@ public class ConfigDialog extends javax.swing.JDialog {
 
 		myConfigStepPanel = new ConfigStepPanel();
 		stepConfigPanel.add(myConfigStepPanel, BorderLayout.CENTER);
+		// modern fork (milestone 1.5): the solver aside mirrors the classic
+		// Steps tab (shared Swing models)
+		myConfigSolverPanel.setClassicStepPanel(myConfigStepPanel);
 
 		myConfigColorPanel = new ConfigColorPanel();
 		colorPanel.add(myConfigColorPanel, BorderLayout.CENTER);

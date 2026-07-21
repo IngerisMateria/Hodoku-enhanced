@@ -58,7 +58,10 @@ public final class StepConfig implements Cloneable, Comparable<StepConfig> {
 
 	@Override
 	public String toString() {
-		return type.getStepName();
+		// modern fork (milestone 1.5): config lists render the user's preferred
+		// display name; pure presentation indirection, enum and persistence
+		// stay on the legacy names
+		return solver.modern.registry.TechniqueRegistry.getInstance().getDisplayName(type);
 	}
 
 	public SolutionType getType() {

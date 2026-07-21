@@ -639,6 +639,97 @@ public class ConfigStepPanel extends javax.swing.JPanel {
 		}
 	}
 
+	/**
+	 * Modern fork (milestone 1.5): the technique aside of ConfigSolverPanel
+	 * mirrors option editors of this panel by SHARING the Swing models of the
+	 * classic controls (ButtonModel / ComboBoxModel / Document). Both views
+	 * stay in sync automatically and the value is applied to Options exactly
+	 * once, here in {@link #okPressed()}. Keys are the Options bean property
+	 * names of the registry ({@link solver.modern.registry.OptionInfo#getKey()}).
+	 *
+	 * @param optionKey the Options bean property name
+	 * @return the classic editor component, or null for unknown keys
+	 */
+	javax.swing.JComponent getOptionEditor(String optionKey) {
+		switch (optionKey) {
+		case "maxFins":
+			return maxFinsComboBox;
+		case "maxEndoFins":
+			return maxEndoFinsComboBox;
+		case "checkTemplates":
+			return checkTemplatesCheckBox;
+		case "onlyOneFishPerStep":
+			return onlyOneFishCheckBox;
+		case "fishDisplayMode":
+			return fishDisplayTypeComboBox;
+		case "restrictChainLength":
+			return restrictChainSizeComboBox;
+		case "restrictChainSize":
+			return restrictChainSizeCheckBox;
+		case "maxTableEntryLength":
+			return maxTableEntryLengthTextField;
+		case "anzTableLookAhead":
+			return lookAheadTextField;
+		case "onlyOneChainPerStep":
+			return onlyOneChainCheckBox;
+		case "allowAlsInTablingChains":
+			return allowAlsInTablingCheckBox;
+		case "useZeroInsteadOfDot":
+			return useZeroInsteadOfDotCheckBox;
+		case "allowErsWithOnlyTwoCandidates":
+			return erWithTwoCandidatesCheckBox;
+		case "allowDualsAndSiamese":
+			return allowDualsAndSiameseCheckBox;
+		case "allowUniquenessMissingCandidates":
+			return allowMissingCandidatesCheckBox;
+		case "krakenMaxFishType":
+			return krakenFishTypeComboBox;
+		case "krakenMaxFishSize":
+			return krakenFishMaxSizeComboBox;
+		case "maxKrakenFins":
+			return krakenFishMaxFinsComboBox;
+		case "maxKrakenEndoFins":
+			return krakenFishMaxEndoFinsComboBox;
+		case "allowAlsOverlap":
+			return allowAlsOverlapCheckBox;
+		case "onlyOneAlsPerStep":
+			return onlyOneAlsStepCheckBox;
+		default:
+			return null;
+		}
+	}
+
+	/**
+	 * The label text of the classic editor of one option (checkboxes carry
+	 * their own text and return null here).
+	 */
+	String getOptionLabelText(String optionKey) {
+		switch (optionKey) {
+		case "maxFins":
+			return maxFinsLabel.getText();
+		case "maxEndoFins":
+			return maxEndoFinsLabel.getText();
+		case "fishDisplayMode":
+			return fishDisplayTypeLabel.getText();
+		case "restrictChainLength":
+			return restrictChainSizeLabel.getText();
+		case "maxTableEntryLength":
+			return maxTableEntryLengthLabel.getText();
+		case "anzTableLookAhead":
+			return lookAheadLabel.getText();
+		case "krakenMaxFishType":
+			return krakenFishTypeLabel.getText();
+		case "krakenMaxFishSize":
+			return krakenFishMaxSizeLabel.getText();
+		case "maxKrakenFins":
+			return krakenFishMaxFinsLabel.getText();
+		case "maxKrakenEndoFins":
+			return krakenFishMaxEndoFinsLabel.getText();
+		default:
+			return null;
+		}
+	}
+
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JCheckBox allowAlsInTablingCheckBox;
 	private javax.swing.JCheckBox allowAlsOverlapCheckBox;
