@@ -32,6 +32,11 @@ import java.awt.event.ComponentEvent;
  * Popup position memory (milestone 1.9, P-003): every dialog reopens at the
  * last on-screen location the user left it at, instead of the generic spot.
  *
+ * <p>Since milestone 1.10 (task D) the same listener also gives every dialog a
+ * minimum size, see {@link sudoku.ui.DialogMinimumSize}. Position and floor are
+ * two things to do the first time a popup is shown, and this is the one place
+ * that already sees all of them.</p>
+ *
  * <p>A single global {@link AWTEventListener}, installed once at startup before
  * any dialog can be shown, covers every {@link Dialog} without touching the
  * individual dialog classes: on show it restores the stored location (if still
@@ -79,6 +84,9 @@ public final class DialogPositionMemory {
 				String key = w.getClass().getName();
 				switch (event.getID()) {
 				case ComponentEvent.COMPONENT_SHOWN:
+					// milestone 1.10 (task D): the same hook gives every popup a
+					// floor, so it cannot be dragged smaller than its content
+					sudoku.ui.DialogMinimumSize.apply(w);
 					Point stored = Options.getInstance().getDialogLocation(key);
 					if (stored != null && isReachable(stored)) {
 						w.setLocation(stored);
