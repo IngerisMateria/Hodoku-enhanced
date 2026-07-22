@@ -512,6 +512,35 @@ public final class Options {
 		}
 		dialogLocations = sb.toString();
 	}
+
+	// Configurable toolbars (milestone 1.10, P-009 Part 1/2): which buttons each
+	// toolbar shows and in which order. Format "id=1,id=0,..." (1 = shown,
+	// 0 = available but hidden), parsed by sudoku.ui.ToolBarLayout against the
+	// catalogue in sudoku.ui.ToolBarItems. Empty = the shipped defaults, which is
+	// also what an options file written before this milestone yields, so no
+	// migration step is needed: unknown ids are dropped and unmentioned ones are
+	// appended as shown.
+	public static final String TOOL_BAR_MAIN_ITEMS = "";
+	public static final String TOOL_BAR_ALL_STEPS_ITEMS = "";
+	private String toolBarMainItems = TOOL_BAR_MAIN_ITEMS;
+	private String toolBarAllStepsItems = TOOL_BAR_ALL_STEPS_ITEMS;
+
+	public String getToolBarMainItems() {
+		return toolBarMainItems;
+	}
+
+	public void setToolBarMainItems(String toolBarMainItems) {
+		this.toolBarMainItems = toolBarMainItems == null ? "" : toolBarMainItems;
+	}
+
+	public String getToolBarAllStepsItems() {
+		return toolBarAllStepsItems;
+	}
+
+	public void setToolBarAllStepsItems(String toolBarAllStepsItems) {
+		this.toolBarAllStepsItems = toolBarAllStepsItems == null ? "" : toolBarAllStepsItems;
+	}
+
 	// FishSolver
 	public static final int MAX_FINS = 5; // Maximale Anzahl Fins
 	public static final int MAX_ENDO_FINS = 2; // Maximale Anzahl Endo-Fins

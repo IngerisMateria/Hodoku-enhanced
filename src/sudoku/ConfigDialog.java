@@ -46,6 +46,7 @@ public class ConfigDialog extends javax.swing.JDialog {
 	private ConfigTrainigPanel myConfigTrainingPanel;
 	private ConfigGeneratorPanel myConfigGeneratorPanel;
 	private ConfigColorkuPanel myConfigColorkuPanel;
+	private ConfigToolBarPanel myConfigToolBarPanel;
 
 	/**
 	 * Creates new form ConfigDialog
@@ -107,6 +108,10 @@ public class ConfigDialog extends javax.swing.JDialog {
 		myConfigColorkuPanel = new ConfigColorkuPanel(parent);
 		colorKuPanel.add(myConfigColorkuPanel, BorderLayout.CENTER);
 
+		// modern fork (milestone 1.10, P-009 Part 1/2)
+		myConfigToolBarPanel = new ConfigToolBarPanel();
+		toolBarPanel.add(myConfigToolBarPanel, BorderLayout.CENTER);
+
 		if (tabIndex != -1) {
 			tabbedPane.setSelectedIndex(tabIndex);
 		}
@@ -160,6 +165,8 @@ public class ConfigDialog extends javax.swing.JDialog {
 			myConfigGeneratorPanel.okPressed();
 		} else if (tab == colorKuPanel) {
 			myConfigColorkuPanel.okPressed();
+		} else if (tab == toolBarPanel) {
+			myConfigToolBarPanel.okPressed();
 		}
 	}
 
@@ -185,6 +192,8 @@ public class ConfigDialog extends javax.swing.JDialog {
 			myConfigGeneratorPanel.tabEntered();
 		} else if (tab == colorKuPanel) {
 			myConfigColorkuPanel.tabEntered();
+		} else if (tab == toolBarPanel) {
+			myConfigToolBarPanel.tabEntered();
 		}
 	}
 
@@ -208,6 +217,7 @@ public class ConfigDialog extends javax.swing.JDialog {
 		colorPanel = new javax.swing.JPanel();
 		generatorPanel = new javax.swing.JPanel();
 		colorKuPanel = new javax.swing.JPanel();
+		toolBarPanel = new javax.swing.JPanel();
 		okButton = new javax.swing.JButton();
 		cancelButton = new javax.swing.JButton();
 
@@ -250,6 +260,10 @@ public class ConfigDialog extends javax.swing.JDialog {
 
 		colorKuPanel.setLayout(new java.awt.BorderLayout());
 		tabbedPane.addTab(bundle.getString("ConfigDialog.colorKuPanel.TabConstraints.tabTitle"), colorKuPanel); // NOI18N
+
+		// modern fork (milestone 1.10, P-009 Part 1/2)
+		toolBarPanel.setLayout(new java.awt.BorderLayout());
+		tabbedPane.addTab(bundle.getString("ConfigDialog.toolBarPanel.TabConstraints.tabTitle"), toolBarPanel);
 
 		okButton.setMnemonic(java.util.ResourceBundle.getBundle("intl/ConfigDialog")
 				.getString("ConfigDialog.okButton.mnemonic").charAt(0));
@@ -306,6 +320,7 @@ public class ConfigDialog extends javax.swing.JDialog {
 		myConfigTrainingPanel.okPressed();
 		myConfigGeneratorPanel.okPressed();
 		myConfigColorkuPanel.okPressed();
+		myConfigToolBarPanel.okPressed();
 		try {
 			Options.getInstance().writeOptions();
 		} catch (FileNotFoundException ex) {
@@ -373,6 +388,7 @@ public class ConfigDialog extends javax.swing.JDialog {
 	private javax.swing.JPanel solverPanel;
 	private javax.swing.JPanel stepConfigPanel;
 	private javax.swing.JTabbedPane tabbedPane;
+	private javax.swing.JPanel toolBarPanel;
 	private javax.swing.JPanel trainingPanel;
 	// End of variables declaration//GEN-END:variables
 

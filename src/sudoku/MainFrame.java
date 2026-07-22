@@ -96,6 +96,8 @@ import javax.swing.filechooser.FileFilter;
 import solver.SudokuSolver;
 import solver.SudokuSolverFactory;
 import sudoku.FileDrop;
+import sudoku.ui.ToolBarItems;
+import sudoku.ui.ToolBarLayout;
 
 /**
  * @author hobiwan
@@ -122,6 +124,11 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 	// private DifficultyLevel level =
 	// Options.getInstance().getDifficultyLevels()[DifficultyType.EASY.ordinal()];
 	private JToggleButton[] toggleButtons = new JToggleButton[10];
+	/**
+	 * The configurable buttons of the toolbar, keyed by their persistent id
+	 * (milestone 1.10, P-009). Insertion order is the shipped default order.
+	 */
+	private java.util.Map<String, java.awt.Component> toolBarItems = new java.util.LinkedHashMap<String, java.awt.Component>();
 	/** Icons for the filter toggle buttons in the toolbar (original version) */
 	private Icon[] toggleButtonIconsOrg = new Icon[10];
 	/** Icons for the filter toggle buttons in the toolbar (original version) */
@@ -594,6 +601,11 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 		
 		setToggleButton(null, false);
 		prepareToggleButtonIcons(Options.getInstance().isShowColorKu());
+
+		// modern fork (milestone 1.10, P-009): the filter block of the toolbar is
+		// arranged by the user, not hard-coded
+		initToolBarItems();
+		applyToolBarLayout();
 
 		// initialize colorKuMeniItem
 		showColorKuMenuItem.setSelected(Options.getInstance().isShowColorKu());
@@ -2159,7 +2171,10 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 		
 		new ConfigDialog(this, true, -1).setVisible(true);
 		sudokuPanel.resetActiveColor();
-		
+		// modern fork (milestone 1.10, P-009): the toolbar tab may have been edited
+		applyToolBarLayout();
+		allStepsPanel.applyToolBarLayout();
+
 		if (cellZoomPanel.isColoring()) {
 			statusPanelColorResult.setBackground(sudokuPanel.getActiveColor());
 		}
@@ -4528,9 +4543,49 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 	}
 
 	/**
+	 * Registers the toolbar buttons the user is allowed to arrange (milestone
+	 * 1.10, P-009 Part 1/2). Only the filter block is configurable: undo/redo, the
+	 * new game button and the level chooser stay put, and so do the optional hint
+	 * buttons, which are appended after the block by
+	 * {@link #setShowHintButtonsInToolbar()}.
+	 */
+	private void initToolBarItems() {
+		toolBarItems.put(ToolBarItems.MAIN_FILTER_MODE, redGreenToggleButton);
+		for (int i = 0; i < ToolBarItems.MAIN_DIGITS.length; i++) {
+			toolBarItems.put(ToolBarItems.MAIN_DIGITS[i], toggleButtons[i]);
+		}
+		toolBarItems.put(ToolBarItems.MAIN_BIVALUE, fxyToggleButton);
+	}
+
+	/**
+	 * Rebuilds the configurable block of the toolbar from the stored preference
+	 * (milestone 1.10, P-009 Part 1/2). Hidden buttons are only taken out of the
+	 * container: the button objects stay alive, so the filter state they carry and
+	 * the code in {@link #check()} that reads them are unaffected.
+	 */
+	void applyToolBarLayout() {
+		ToolBarLayout layout = ToolBarLayout.parse(Options.getInstance().getToolBarMainItems(), ToolBarItems.MAIN);
+		for (java.awt.Component item : toolBarItems.values()) {
+			if (item.getParent() == jToolBar1) {
+				jToolBar1.remove(item);
+			}
+		}
+		// the block starts right after the separator that closes the fixed part
+		int index = jToolBar1.getComponentIndex(jSeparator11) + 1;
+		for (String id : layout.getShown()) {
+			java.awt.Component item = toolBarItems.get(id);
+			if (item != null) {
+				jToolBar1.add(item, index++);
+			}
+		}
+		jToolBar1.revalidate();
+		jToolBar1.repaint();
+	}
+
+	/**
 	 * Handles the display of the hint buttons in the toolbar. If they are made
 	 * visible the first time, they have to be created.
-	 * 
+	 *
 	 */
 	private void setShowHintButtonsInToolbar() {
 		

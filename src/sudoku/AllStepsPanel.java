@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.SortedMap;
@@ -38,6 +40,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import sudoku.ui.ToolBarItems;
+import sudoku.ui.ToolBarLayout;
 
 /**
  *
@@ -51,6 +55,11 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 	private DefaultTreeModel model;
 	private List<SolutionStep> steps;
 	private JToggleButton[] toggleButtons = null;
+	/**
+	 * The configurable buttons of the panel toolbar, keyed by their persistent id
+	 * (milestone 1.10, P-009). Insertion order is the shipped default order.
+	 */
+	private final Map<String, java.awt.Component> toolBarItems = new LinkedHashMap<String, java.awt.Component>();
 
 	/**
 	 * Creates new form AllStepsPanel
@@ -66,6 +75,13 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 
 		toggleButtons = new JToggleButton[] { directSingleSortToggleButton, singleSortToggleButton,
 				cellSortToggleButton, eliminationSortToggleButton, typeSortToggleButton };
+
+		// modern fork (milestone 1.10, P-009): the toolbar is arranged by the user
+		toolBarItems.put(ToolBarItems.ALL_STEPS_CONFIGURE, configureButton);
+		for (int i = 0; i < ToolBarItems.ALL_STEPS_SORTS.length; i++) {
+			toolBarItems.put(ToolBarItems.ALL_STEPS_SORTS[i], toggleButtons[i]);
+		}
+		applyToolBarLayout();
 
 //        stepsTree.setCellRenderer(new ScalableRenderer());
 		stepsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -271,6 +287,9 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 
 	private void configureButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_configureButtonActionPerformed
 		new ConfigDialog(mainFrame, true, 3).setVisible(true);
+		// modern fork (milestone 1.10, P-009): the toolbar tab may have been edited
+		applyToolBarLayout();
+		mainFrame.applyToolBarLayout();
 	}// GEN-LAST:event_configureButtonActionPerformed
 
 	private void directSingleSortToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_directSingleSortToggleButtonActionPerformed
@@ -308,6 +327,35 @@ public final class AllStepsPanel extends javax.swing.JPanel implements TreeSelec
 		stepsTree.setModel(model);
 		adjustToggleButtons();
 		createTreeNodes(Options.getInstance().getAllStepsSortMode());
+	}
+
+	/**
+	 * Rebuilds the panel toolbar from the stored preference (milestone 1.10, P-009
+	 * Part 1/2). The separator is not an item the user arranges: it is derived
+	 * from the groups of {@link ToolBarItems#groupOf(String)}, so it keeps
+	 * separating what belongs apart no matter how the buttons were reordered.
+	 * Hidden buttons only leave the container; the objects stay alive, so the sort
+	 * mode they display keeps working.
+	 */
+	void applyToolBarLayout() {
+		ToolBarLayout layout = ToolBarLayout.parse(Options.getInstance().getToolBarAllStepsItems(),
+				ToolBarItems.ALL_STEPS);
+		jToolBar1.removeAll();
+		String lastGroup = null;
+		for (String id : layout.getShown()) {
+			java.awt.Component item = toolBarItems.get(id);
+			if (item == null) {
+				continue;
+			}
+			String group = ToolBarItems.groupOf(id);
+			if (lastGroup != null && !lastGroup.equals(group)) {
+				jToolBar1.addSeparator();
+			}
+			jToolBar1.add(item);
+			lastGroup = group;
+		}
+		jToolBar1.revalidate();
+		jToolBar1.repaint();
 	}
 
 	private void adjustToggleButtons() {
