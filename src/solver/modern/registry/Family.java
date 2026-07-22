@@ -24,32 +24,47 @@ package solver.modern.registry;
  * family is a single pedagogical bucket per technique.
  */
 public enum Family {
-	SINGLES,
+	SINGLES("Singles"),
 	/** Locked Candidates (pointing/claiming). */
-	INTERSECTIONS,
+	INTERSECTIONS("Intersections"),
 	/** Naked/hidden/locked pairs, triples, quads. */
-	SUBSETS,
+	SUBSETS("Subsets"),
 	/** The base/cover fish matrix including kraken. */
-	FISH,
+	FISH("Fish"),
 	/** Single-digit patterns: Skyscraper, 2-String Kite, ER, Turbot Fish. */
-	SINGLE_DIGIT_PATTERNS,
-	UNIQUENESS,
+	SINGLE_DIGIT_PATTERNS("Single-Digit Patterns"),
+	UNIQUENESS("Uniqueness"),
 	/** Named wings of fixed shape: XY, XYZ, W, canonical WXYZ. */
-	WINGS,
+	WINGS("Wings"),
 	/** Bent naked subsets n=4..9 (the parametric bent engine, regime R1). */
-	BENT_SUBSETS,
+	BENT_SUBSETS("Bent Subsets"),
 	/**
 	 * Guardian logic over impossible odd cycles (the "rank -1 / dark logic"
 	 * branch of the owner's map, docs/sudoku_mapa_relacional.md §2.d):
 	 * Broken Wing, Bivalue Oddagon, later Tridagon (milestone 1.7).
 	 */
-	ODDAGON,
-	COLORING,
+	ODDAGON("Oddagons"),
+	COLORING("Coloring"),
 	/** Simple chains: X-Chain, XY-Chain, Remote Pair, Nice Loops / AICs. */
-	CHAINS,
+	CHAINS("Chains"),
 	/** ALS moves incl. Sue de Coq (doubly linked / R0 side of the algebra). */
-	ALS,
-	FORCING,
-	TEMPLATES,
-	LAST_RESORT
+	ALS("Almost Locked Sets"),
+	FORCING("Forcing Chains & Nets"),
+	TEMPLATES("Templates"),
+	LAST_RESORT("Last Resort");
+
+	private final String folderName;
+
+	Family(String folderName) {
+		this.folderName = folderName;
+	}
+
+	/**
+	 * The label of the visual folder that groups this family in the config
+	 * surfaces (milestone 1.9). English-only for now, like
+	 * {@link sudoku.SolutionCategory#getCategoryName()}.
+	 */
+	public String getFolderName() {
+		return folderName;
+	}
 }

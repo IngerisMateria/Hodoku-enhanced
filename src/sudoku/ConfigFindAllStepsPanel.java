@@ -735,21 +735,25 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 			if (steps[i].getType() == SolutionType.BRUTE_FORCE) {
 				continue;
 			}
+			// modern fork (milestone 1.9): group by the registry family (folder
+			// model), not the legacy SolutionCategory
+			solver.modern.registry.Family folder = solver.modern.registry.TechniqueFolders
+					.folderOf(steps[i].getType());
 			@SuppressWarnings("unchecked")
 			Enumeration<CheckNode> en = (Enumeration<CheckNode>) (Enumeration<?>) root.children();
 			CheckNode act = null;
 			while (en.hasMoreElements()) {
 				act = en.nextElement();
-				if (act.getCategory() == steps[i].getCategory()) {
+				if (act.getFamily() == folder) {
 					break;
 				}
 				act = null;
 			}
 			if (act == null) {
-				// neue Kategorie
-				act = new CheckNode(steps[i].getCategoryName(), true,
-						steps[i].isAllStepsEnabled() ? CheckNode.FULL : CheckNode.NONE, null, true, false, false,
-						steps[i].getCategory());
+				// new folder
+				act = new CheckNode(solver.modern.registry.TechniqueFolders.folderName(folder), true,
+						steps[i].isAllStepsEnabled() ? CheckNode.FULL : CheckNode.NONE, null, true, false, false, null);
+				act.setFamily(folder);
 				root.add(act);
 			}
 			// modern fork (milestone 1.5): render the preferred display name

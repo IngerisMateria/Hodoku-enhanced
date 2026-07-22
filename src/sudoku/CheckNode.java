@@ -35,6 +35,12 @@ public class CheckNode extends DefaultMutableTreeNode {
 	private StepConfig step;
 	private boolean allSteps;
 	private SolutionCategory category;
+	/**
+	 * The registry family this folder node groups (milestone 1.9): the grouping
+	 * key of the tree views is the family now, not the legacy
+	 * {@link SolutionCategory}. Null on leaf nodes and on the root.
+	 */
+	private solver.modern.registry.Family family;
 	private boolean heuristics;
 	private boolean training;
 
@@ -116,5 +122,15 @@ public class CheckNode extends DefaultMutableTreeNode {
 
 	public SolutionCategory getCategory() {
 		return category;
+	}
+
+	/** The registry family this folder node groups (milestone 1.9). */
+	public solver.modern.registry.Family getFamily() {
+		return family;
+	}
+
+	/** Sets the grouping family of a folder node (milestone 1.9). */
+	public void setFamily(solver.modern.registry.Family family) {
+		this.family = family;
 	}
 }

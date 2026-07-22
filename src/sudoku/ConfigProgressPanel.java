@@ -637,21 +637,24 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 	public void buildTree() {
 		CheckNode root = new CheckNode();
 		for (StepConfig step : progressSurfaceSteps(steps)) {
+			// modern fork (milestone 1.9): group by the registry family (folder
+			// model), not the legacy SolutionCategory
+			solver.modern.registry.Family folder = solver.modern.registry.TechniqueFolders.folderOf(step.getType());
 			@SuppressWarnings("unchecked")
 			Enumeration<CheckNode> en = (Enumeration<CheckNode>) (Enumeration<?>) root.children();
 			CheckNode act = null;
 			while (en.hasMoreElements()) {
 				act = en.nextElement();
-				if (act.getCategory() == step.getCategory()) {
+				if (act.getFamily() == folder) {
 					break;
 				}
 				act = null;
 			}
 			if (act == null) {
-				// neue Kategorie
-				act = new CheckNode(step.getCategoryName(), true,
-						step.isEnabledProgress() ? CheckNode.FULL : CheckNode.NONE, null, false, true, false,
-						step.getCategory());
+				// new folder
+				act = new CheckNode(solver.modern.registry.TechniqueFolders.folderName(folder), true,
+						step.isEnabledProgress() ? CheckNode.FULL : CheckNode.NONE, null, false, true, false, null);
+				act.setFamily(folder);
 				root.add(act);
 			}
 			// modern fork (milestone 1.5): render the preferred display name
