@@ -76,8 +76,13 @@ del upstream 2.2.0 de hobiwan).
       memoria de posición de popups (P-003), MUG renombrado a "Multivalue Universal
       Grave", título de ventana "Enhanced vX.X". Cero teoría/álgebra nueva; cero cambios
       de solve path (deducciones idénticas, solo cambian etiquetas).
-- [ ] 1.10 3D Medusa + GEM (+ hallazgo B: coloring→generador) ← PRÓXIMO
-- [ ] 1.11 Fireworks*
+- [ ] 1.10 Reestructuración de UI: toolbars configurables (P-009 Parte 1/2, las dos
+      toolbars: superior de MainFrame y la de all-steps), estándar visual compartido de
+      las pestañas de config (`sudoku.ui.UiMetrics`) y mínimo de tamaño de los popups.
+      Cero álgebra, cero funciones nuevas, cero cambios de solve path. La find-pattern
+      update que ocupaba este slot se difirió a P-010 (con P-007 plegada ahí).
+- [ ] 1.11 3D Medusa + GEM (+ hallazgo B: coloring→generador) ← PRÓXIMO
+- [ ] 1.12 Fireworks*
 - [ ] 2.x Arco multi-sector*: SK-Loop, MSLS, SET
 - [ ] 3.x Arco Exocet*: JE → Double → JE+ → SE
 - [ ] 4.x Cadenas: motor AIC v2 (acá vuelven M/S/L/H, Nishio, dynamic/nested)
