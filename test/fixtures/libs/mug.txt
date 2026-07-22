@@ -1,4 +1,6 @@
-# MUG - Minimal Unavoidable Grouping (milestone 1.8, Uniqueness Pack) - code 0624.
+# MUG - Multivalue Universal Grave (milestone 1.8, Uniqueness Pack) - code 0624.
+# Nota (1.9): nombre real corregido a "Multivalue Universal Grave"; el finder
+# emite ahora los subtipos MUG_TYPE_1/2 (getStep(MUG) busca ambos).
 # v1 por CATALOGO (formas t3210 ab/abc). NO cosechable de los corpora (0
 # instancias en 15.658 estados): las formas de catalogo se subsumen en ExtUR /
 # BUG-Lite en puzzles reales, por eso MUG queda enabled=false por default con

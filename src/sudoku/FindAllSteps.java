@@ -244,10 +244,14 @@ public class FindAllSteps implements Runnable {
 					steps.addAll(steps1);
 				}
 				// modern fork (milestone 1.8): Uniqueness Pack, same filtering
-				if (isAllStepsEnabled(SolutionType.UNIQUE_LOOP) || isAllStepsEnabled(SolutionType.EXTENDED_UR_TYPE_1)
+				if (isAllStepsEnabled(SolutionType.UNIQUE_LOOP_TYPE_1)
+						|| isAllStepsEnabled(SolutionType.UNIQUE_LOOP_TYPE_2)
+						|| isAllStepsEnabled(SolutionType.EXTENDED_UR_TYPE_1)
 						|| isAllStepsEnabled(SolutionType.EXTENDED_UR_TYPE_2)
-						|| isAllStepsEnabled(SolutionType.BUG_LITE) || isAllStepsEnabled(SolutionType.REVERSE_BUG)
-						|| isAllStepsEnabled(SolutionType.MUG)) {
+						|| isAllStepsEnabled(SolutionType.BUG_LITE_TYPE_1)
+						|| isAllStepsEnabled(SolutionType.BUG_LITE_TYPE_2)
+						|| isAllStepsEnabled(SolutionType.REVERSE_BUG) || isAllStepsEnabled(SolutionType.MUG_TYPE_1)
+						|| isAllStepsEnabled(SolutionType.MUG_TYPE_2)) {
 					steps1 = stepFinder.getAllUniquenessPack(sudoku);
 					filterSteps(steps1);
 					steps.addAll(steps1);
@@ -371,31 +375,36 @@ public class FindAllSteps implements Runnable {
 	}
 
 	public void setTestType(List<SolutionType> testStep) {
-		// modern fork (milestone 1.5, P-002): the generic KRAKEN_FISH test type
-		// (batch arg "kf") means "both kraken types"
-		if (testStep != null && testStep.contains(SolutionType.KRAKEN_FISH)) {
-			testStep = new java.util.ArrayList<SolutionType>(testStep);
-			testStep.remove(SolutionType.KRAKEN_FISH);
-			if (!testStep.contains(SolutionType.KRAKEN_FISH_TYPE_1)) {
-				testStep.add(SolutionType.KRAKEN_FISH_TYPE_1);
-			}
-			if (!testStep.contains(SolutionType.KRAKEN_FISH_TYPE_2)) {
-				testStep.add(SolutionType.KRAKEN_FISH_TYPE_2);
-			}
-		}
-		// modern fork (milestone 1.9): the generic EXTENDED_UR test type (batch arg
-		// "xur") means "both Extended UR subtypes"
-		if (testStep != null && testStep.contains(SolutionType.EXTENDED_UR)) {
-			testStep = new java.util.ArrayList<SolutionType>(testStep);
-			testStep.remove(SolutionType.EXTENDED_UR);
-			if (!testStep.contains(SolutionType.EXTENDED_UR_TYPE_1)) {
-				testStep.add(SolutionType.EXTENDED_UR_TYPE_1);
-			}
-			if (!testStep.contains(SolutionType.EXTENDED_UR_TYPE_2)) {
-				testStep.add(SolutionType.EXTENDED_UR_TYPE_2);
-			}
-		}
+		// A generic (anchor) test type means "both subtypes": Kraken Fish (batch
+		// arg "kf", P-002 milestone 1.5) and the whole Uniqueness Pack desglose
+		// (milestone 1.9). Reverse BUG has no subtypes.
+		testStep = expandSplit(testStep, SolutionType.KRAKEN_FISH, SolutionType.KRAKEN_FISH_TYPE_1,
+				SolutionType.KRAKEN_FISH_TYPE_2);
+		testStep = expandSplit(testStep, SolutionType.UNIQUE_LOOP, SolutionType.UNIQUE_LOOP_TYPE_1,
+				SolutionType.UNIQUE_LOOP_TYPE_2);
+		testStep = expandSplit(testStep, SolutionType.EXTENDED_UR, SolutionType.EXTENDED_UR_TYPE_1,
+				SolutionType.EXTENDED_UR_TYPE_2);
+		testStep = expandSplit(testStep, SolutionType.BUG_LITE, SolutionType.BUG_LITE_TYPE_1,
+				SolutionType.BUG_LITE_TYPE_2);
+		testStep = expandSplit(testStep, SolutionType.MUG, SolutionType.MUG_TYPE_1, SolutionType.MUG_TYPE_2);
 		this.testTypes = testStep;
+	}
+
+	/** Replaces a generic (anchor) test type with its two configured subtypes. */
+	private static List<SolutionType> expandSplit(List<SolutionType> testStep, SolutionType generic, SolutionType type1,
+			SolutionType type2) {
+		if (testStep == null || !testStep.contains(generic)) {
+			return testStep;
+		}
+		List<SolutionType> out = new java.util.ArrayList<SolutionType>(testStep);
+		out.remove(generic);
+		if (!out.contains(type1)) {
+			out.add(type1);
+		}
+		if (!out.contains(type2)) {
+			out.add(type2);
+		}
+		return out;
 	}
 
 	public Sudoku2 getSudoku() {

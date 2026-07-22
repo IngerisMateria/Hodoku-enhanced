@@ -81,9 +81,12 @@ public class TechniqueFoldersTest {
 				SolutionType.AVOIDABLE_RECTANGLE_2, SolutionType.BUG_PLUS_1 }) {
 			assertTrue(uniqueness.contains(legacy), "legacy UR type missing from the Uniqueness folder: " + legacy);
 		}
-		// the pack, with Extended UR split into its two configured subtypes
-		for (SolutionType pack : new SolutionType[] { SolutionType.UNIQUE_LOOP, SolutionType.EXTENDED_UR_TYPE_1,
-				SolutionType.EXTENDED_UR_TYPE_2, SolutionType.BUG_LITE, SolutionType.REVERSE_BUG, SolutionType.MUG }) {
+		// the pack, with every guardian technique split into its two configured
+		// subtypes (Reverse BUG stays single)
+		for (SolutionType pack : new SolutionType[] { SolutionType.UNIQUE_LOOP_TYPE_1, SolutionType.UNIQUE_LOOP_TYPE_2,
+				SolutionType.EXTENDED_UR_TYPE_1, SolutionType.EXTENDED_UR_TYPE_2, SolutionType.BUG_LITE_TYPE_1,
+				SolutionType.BUG_LITE_TYPE_2, SolutionType.REVERSE_BUG, SolutionType.MUG_TYPE_1,
+				SolutionType.MUG_TYPE_2 }) {
 			assertTrue(uniqueness.contains(pack), "pack technique missing from the Uniqueness folder: " + pack);
 		}
 		assertEquals("Uniqueness", TechniqueFolders.folderName(Family.UNIQUENESS));

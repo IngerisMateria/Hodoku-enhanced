@@ -189,14 +189,30 @@ final class TechniqueCatalog {
 		// rows carry the arrow at pattern level (the v1 guardian ladder covers
 		// the Type 1/2 deductions; the UR Type 3-6 deductions remain UR-only,
 		// documented out of scope of the pack v1).
+		//
+		// Milestone 1.9 desglose: every guardian technique (Unique Loop, Extended
+		// UR, BUG-Lite, MUG) splits into Type 1 (all guardians in one cell) and
+		// Type 2 (uniform guardian digit); the generic enum constants keep their
+		// library codes but lose their StepConfig, staying as taxonomy anchors
+		// (documented exception in TechniqueRegistryTest, like KRAKEN_FISH). Each
+		// subtype is subsumed by its anchor. Reverse BUG has no guardian ladder,
+		// hence no subtypes.
 		rows.add(t(UNIQUE_LOOP, Family.UNIQUENESS, "UniquenessPackSolver",
 				"A closed loop of 6-12 cells all holding one pair {a,b}, consecutive cells sharing a house and every "
 						+ "house holding 0 or 2 loop cells: stripped bare, the pair could swap around the loop, so the "
-						+ "extra candidates (guardians) cannot all be false. One guardian cell strips the pair there "
-						+ "(Type 1); uniform-digit guardians eliminate that digit from cells seeing them all (Type 2). "
-						+ "The UR is the 4-cell case (own legacy entries); every emitted loop is mechanically verified "
-						+ "deadly. Lengths 14+ out of scope v1.")
+						+ "extra candidates (guardians) cannot all be false. Split into Type 1 and Type 2 config entries "
+						+ "(milestone 1.9); this generic entry remains the common taxonomy parent of both.")
 				.aliases("UL").subsumedBy(BUG_LITE)
+				.refs("docs/specs/uniqueness-pack.md §1").build());
+		rows.add(t(UNIQUE_LOOP_TYPE_1, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A Unique Loop whose extra candidates (guardians) all sit in a single cell: that cell's solution is "
+						+ "neither pair digit, so the pair is stripped from it.")
+				.aliases("Unique Loop Type 1", "UL Type 1").subsumedBy(UNIQUE_LOOP)
+				.refs("docs/specs/uniqueness-pack.md §1").build());
+		rows.add(t(UNIQUE_LOOP_TYPE_2, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A Unique Loop whose guardians are all the same digit over several cells: some guardian is true, so "
+						+ "that digit is eliminated from every external cell seeing them all.")
+				.aliases("Unique Loop Type 2", "UL Type 2").subsumedBy(UNIQUE_LOOP)
 				.refs("docs/specs/uniqueness-pack.md §1").build());
 		// Extended UR desglose (milestone 1.9): the generic EXTENDED_UR keeps its
 		// enum constant and library code (0621) as the taxonomy anchor but lost its
@@ -224,9 +240,19 @@ final class TechniqueCatalog {
 				"A connected set of 6, 8 or 9 cells with a nominal pair each where every digit appears exactly 0 or 2 "
 						+ "times in every house of the pattern — the general bivalue deadly pattern (UR and BUG are "
 						+ "special cases). Every candidate set is mechanically verified deadly (exchange check) before "
-						+ "a step is emitted; guardians follow the standard ladder. Sizes 10+ and the 2-digit shapes "
-						+ "(those are URs/Unique Loops) are excluded.")
+						+ "a step is emitted. Split into Type 1 and Type 2 config entries (milestone 1.9); this generic "
+						+ "entry remains the common taxonomy parent of both.")
 				.aliases("BUG Lite")
+				.refs("docs/specs/uniqueness-pack.md §3").build());
+		rows.add(t(BUG_LITE_TYPE_1, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A BUG-Lite whose extra candidates (guardians) all sit in a single cell: that cell's solution is none "
+						+ "of its nominal pair digits, so the pair is stripped from it.")
+				.aliases("BUG Lite Type 1").subsumedBy(BUG_LITE)
+				.refs("docs/specs/uniqueness-pack.md §3").build());
+		rows.add(t(BUG_LITE_TYPE_2, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A BUG-Lite whose guardians are all the same digit over several cells: some guardian is true, so that "
+						+ "digit is eliminated from every external cell seeing them all.")
+				.aliases("BUG Lite Type 2").subsumedBy(BUG_LITE)
 				.refs("docs/specs/uniqueness-pack.md §3").build());
 		rows.add(t(REVERSE_BUG, Family.UNIQUENESS, "UniquenessPackSolver",
 				"If placing a candidate of a digit pair would leave the solved cells of that pair (none of them givens) "
@@ -236,12 +262,23 @@ final class TechniqueCatalog {
 				.aliases("RBUG")
 				.refs("docs/specs/uniqueness-pack.md §4").build());
 		rows.add(t(MUG, Family.UNIQUENESS, "UniquenessPackSolver",
-				"Minimal Unavoidable Grouping, v1 by catalog: the t3210 ab/abc block forms (two parallel lines with "
+				"Multivalue Universal Grave, v1 by catalog: the t3210 ab/abc block forms (two parallel lines with "
 						+ "column contents ab|abc|bc and their isomorphs), each instance mechanically verified deadly "
 						+ "before use. Guardians are the extras over the catalog content of each cell; the general "
-						+ "(non-catalog) MUG search is documented out of scope.")
-				.aliases("Minimal Unavoidable Grouping")
+						+ "(non-catalog) MUG search is documented out of scope. Split into Type 1 and Type 2 config "
+						+ "entries (milestone 1.9); this generic entry remains the common taxonomy parent of both.")
+				.aliases("MUG")
 				.refs("docs/specs/uniqueness-pack.md §5", "forum.enjoysudoku.com t3210").build());
+		rows.add(t(MUG_TYPE_1, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A Multivalue Universal Grave whose extra candidates (guardians) all sit in a single cell: that cell's "
+						+ "solution is none of its catalog digits, so they are stripped from it.")
+				.aliases("Multivalue Universal Grave Type 1", "MUG Type 1").subsumedBy(MUG)
+				.refs("docs/specs/uniqueness-pack.md §5").build());
+		rows.add(t(MUG_TYPE_2, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A Multivalue Universal Grave whose guardians are all the same digit over several cells: some guardian "
+						+ "is true, so that digit is eliminated from every external cell seeing them all.")
+				.aliases("Multivalue Universal Grave Type 2", "MUG Type 2").subsumedBy(MUG)
+				.refs("docs/specs/uniqueness-pack.md §5").build());
 		rows.add(t(BUG_PLUS_1, Family.UNIQUENESS, "UniquenessSolver",
 				"Bivalue Universal Grave + 1: if placing anything but the triple candidate left every unsolved cell bivalue, "
 						+ "the puzzle would have multiple solutions; the extra candidate is placed.")

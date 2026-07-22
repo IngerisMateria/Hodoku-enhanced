@@ -60,7 +60,7 @@ class UniquenessPackFormatter implements ModernStep.HintFormatter {
 						.append(java.util.ResourceBundle.getBundle("intl/SolutionStep").getString("SolutionStep.in"))
 						.append(' ');
 				List<Integer> indices = step.getIndices();
-				if (step.getType() == SolutionType.UNIQUE_LOOP) {
+				if (isUniqueLoop(step.getType())) {
 					// loop order matters: print as-is, no compact grouping
 					for (int i = 0; i < indices.size(); i++) {
 						if (i > 0) {
@@ -79,14 +79,15 @@ class UniquenessPackFormatter implements ModernStep.HintFormatter {
 		return tmp.toString();
 	}
 
-	/** " Type 1" (one guardian cell) / " Type 2" (uniform digit); not for Reverse BUG. */
+	/**
+	 * " Type 1" (one guardian cell) / " Type 2" (uniform digit). Not appended for
+	 * Reverse BUG, nor for the split subtypes — since the milestone 1.9 desglose
+	 * the guardian techniques always emit a subtype whose display name already
+	 * carries "Type 1/2" (so appending here would duplicate it). Kept as a
+	 * defensive derivation for any generic-anchor step.
+	 */
 	private static void appendSubtype(StringBuilder tmp, ModernStep step) {
-		if (step.getType() == SolutionType.REVERSE_BUG || step.getFins().isEmpty()) {
-			return;
-		}
-		if (step.getType() == SolutionType.EXTENDED_UR_TYPE_1 || step.getType() == SolutionType.EXTENDED_UR_TYPE_2) {
-			// the desglose (milestone 1.9) carries the subtype in the display name
-			// already ("Extended Unique Rectangle Type 1/2") — don't repeat it
+		if (step.getType() == SolutionType.REVERSE_BUG || step.getFins().isEmpty() || isSplitSubtype(step.getType())) {
 			return;
 		}
 		List<Candidate> fins = step.getFins();
@@ -99,6 +100,29 @@ class UniquenessPackFormatter implements ModernStep.HintFormatter {
 			}
 		}
 		tmp.append(oneCell ? " Type 1" : " Type 2");
+	}
+
+	/** True for the Type 1 / Type 2 subtype labels of the guardian techniques. */
+	private static boolean isSplitSubtype(SolutionType t) {
+		switch (t) {
+		case UNIQUE_LOOP_TYPE_1:
+		case UNIQUE_LOOP_TYPE_2:
+		case EXTENDED_UR_TYPE_1:
+		case EXTENDED_UR_TYPE_2:
+		case BUG_LITE_TYPE_1:
+		case BUG_LITE_TYPE_2:
+		case MUG_TYPE_1:
+		case MUG_TYPE_2:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	/** True for Unique Loop and its two subtypes (loop-order cell printing). */
+	private static boolean isUniqueLoop(SolutionType t) {
+		return t == SolutionType.UNIQUE_LOOP || t == SolutionType.UNIQUE_LOOP_TYPE_1
+				|| t == SolutionType.UNIQUE_LOOP_TYPE_2;
 	}
 
 	/** Names the guardians: " (guardian: 3 in r4c5)" / " (guardians: 3 in r2c7,r5c8)". */
@@ -122,6 +146,8 @@ class UniquenessPackFormatter implements ModernStep.HintFormatter {
 	private static void appendJustification(StringBuilder tmp, ModernStep step) {
 		switch (step.getType()) {
 		case UNIQUE_LOOP:
+		case UNIQUE_LOOP_TYPE_1:
+		case UNIQUE_LOOP_TYPE_2:
 			tmp.append(" (without a true guardian the loop cells could swap the pair - two solutions)");
 			break;
 		case EXTENDED_UR:
@@ -130,12 +156,16 @@ class UniquenessPackFormatter implements ModernStep.HintFormatter {
 			tmp.append(" (without a true guardian the six cells could permute the triple - two solutions)");
 			break;
 		case BUG_LITE:
+		case BUG_LITE_TYPE_1:
+		case BUG_LITE_TYPE_2:
 			tmp.append(" (without a true guardian the pattern admits a second valid arrangement - two solutions)");
 			break;
 		case REVERSE_BUG:
 			tmp.append(" (placing it would leave the solved pair cells as an unavoidable set - the puzzle would not be unique)");
 			break;
 		case MUG:
+		case MUG_TYPE_1:
+		case MUG_TYPE_2:
 			tmp.append(" (without a true guardian the catalog pattern admits a second valid arrangement - two solutions)");
 			break;
 		default:

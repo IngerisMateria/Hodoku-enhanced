@@ -93,7 +93,7 @@ Estado: cerrada por el PM, 2026-07-21, desde fuentes. Fuentes leídas hoy:
 - Reverse BUG-Lite (dos líneas parcialmente llenas formando inevitable):
   documentar como extensión futura, NO implementar en v1.
 
-## 5. MUG (MUG) — v1 por catálogo
+## 5. MUG (Multivalue Universal Grave) — v1 por catálogo
 
 - Def general (forum): patrones mortales con celdas de >2 candidatos;
   "la mayoría son composites de BUG-Lites". El caso general NO es

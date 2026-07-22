@@ -71,12 +71,13 @@ public class TechniqueRegistryTest {
 
 	/**
 	 * Registry rows that intentionally have no StepConfig: pure taxonomy
-	 * anchors. KRAKEN_FISH lost its config in the P-002 split (milestone
-	 * 1.5) and EXTENDED_UR in the milestone 1.9 desglose, but each remains the
-	 * common parent of its two configured subtypes.
+	 * anchors. KRAKEN_FISH lost its config in the P-002 split (milestone 1.5);
+	 * the whole guardian Uniqueness Pack (UNIQUE_LOOP, EXTENDED_UR, BUG_LITE,
+	 * MUG) lost theirs in the milestone 1.9 desglose, each remaining the common
+	 * parent of its two configured subtypes.
 	 */
 	private static final Set<SolutionType> CONFIGLESS_ROWS = EnumSet.of(SolutionType.KRAKEN_FISH,
-			SolutionType.EXTENDED_UR);
+			SolutionType.UNIQUE_LOOP, SolutionType.EXTENDED_UR, SolutionType.BUG_LITE, SolutionType.MUG);
 
 	@BeforeAll
 	public static void resetOptions() {
@@ -131,17 +132,27 @@ public class TechniqueRegistryTest {
 	}
 
 	@Test
-	public void extendedUrSplitRowsExist() {
-		// milestone 1.9 desglose: the two configured Extended UR subtypes must be
-		// registered; the generic row stays as their taxonomy parent (which is
-		// itself a case of MUG)
+	public void uniquenessPackSplitRowsExist() {
+		// milestone 1.9 desglose: every guardian technique's two configured
+		// subtypes must be registered and subsumed by their generic anchor, which
+		// stays as a (configless) taxonomy row
 		TechniqueRegistry registry = TechniqueRegistry.getInstance();
-		assertNotNull(registry.get(SolutionType.EXTENDED_UR_TYPE_1), "EXTENDED_UR_TYPE_1 must have a registry row");
-		assertNotNull(registry.get(SolutionType.EXTENDED_UR_TYPE_2), "EXTENDED_UR_TYPE_2 must have a registry row");
-		assertNotNull(registry.get(SolutionType.EXTENDED_UR), "the generic EXTENDED_UR taxonomy anchor must stay");
-		assertTrue(registry.get(SolutionType.EXTENDED_UR_TYPE_1).getSubsumedBy().contains(SolutionType.EXTENDED_UR));
-		assertTrue(registry.get(SolutionType.EXTENDED_UR_TYPE_2).getSubsumedBy().contains(SolutionType.EXTENDED_UR));
-		assertTrue(registry.get(SolutionType.EXTENDED_UR).getSubsumedBy().contains(SolutionType.MUG));
+		SolutionType[][] splits = {
+				{ SolutionType.UNIQUE_LOOP, SolutionType.UNIQUE_LOOP_TYPE_1, SolutionType.UNIQUE_LOOP_TYPE_2 },
+				{ SolutionType.EXTENDED_UR, SolutionType.EXTENDED_UR_TYPE_1, SolutionType.EXTENDED_UR_TYPE_2 },
+				{ SolutionType.BUG_LITE, SolutionType.BUG_LITE_TYPE_1, SolutionType.BUG_LITE_TYPE_2 },
+				{ SolutionType.MUG, SolutionType.MUG_TYPE_1, SolutionType.MUG_TYPE_2 } };
+		for (SolutionType[] split : splits) {
+			assertNotNull(registry.get(split[0]), "the generic taxonomy anchor must stay: " + split[0]);
+			assertNotNull(registry.get(split[1]), split[1] + " must have a registry row");
+			assertNotNull(registry.get(split[2]), split[2] + " must have a registry row");
+			assertTrue(registry.get(split[1]).getSubsumedBy().contains(split[0]),
+					split[1] + " must be subsumed by " + split[0]);
+			assertTrue(registry.get(split[2]).getSubsumedBy().contains(split[0]),
+					split[2] + " must be subsumed by " + split[0]);
+		}
+		// Reverse BUG stays a single entry (no guardian ladder, no subtypes)
+		assertNotNull(registry.get(SolutionType.REVERSE_BUG));
 	}
 
 	@Test

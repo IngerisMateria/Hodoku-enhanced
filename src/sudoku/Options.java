@@ -337,29 +337,37 @@ public final class Options {
 			// ExtUR 110, Reverse BUG 110 (an AR-style non-given argument),
 			// BUG-Lite 130 (harder to spot), MUG 150 (catalog forms). All HARD /
 			// UNIQUENESS like the whole family; enabledProgress=true (regla A2).
-			new StepConfig(4040, SolutionType.UNIQUE_LOOP, DifficultyType.HARD.ordinal(),
+			// Uniqueness Pack desglose (milestone 1.9): every guardian technique
+			// splits into Type 1 (all guardians in one cell) and Type 2 (uniform
+			// guardian digit), like the legacy UR types and the Kraken split
+			// (P-002). Both subtypes inherit the old single entry's defaults; Type 1
+			// keeps the old index, Type 2 goes right after it (offset +5, stays
+			// inside the family gaps). The generic entries lose their StepConfig and
+			// remain taxonomy anchors; old hcfg files are migrated in readOptions().
+			// Reverse BUG has no guardian ladder, hence no subtypes.
+			new StepConfig(4040, SolutionType.UNIQUE_LOOP_TYPE_1, DifficultyType.HARD.ordinal(),
 					SolutionCategory.UNIQUENESS, 100, 0, true, true, 4040, true, false),
-			// Extended UR desglose (milestone 1.9): the single EXTENDED_UR entry
-			// (old index 4050) is split into Type 1 and Type 2, like the legacy UR
-			// types and the Kraken split (P-002). Both inherit the old defaults
-			// (HARD/UNIQUENESS, score 110, enabled everywhere); Type 1 keeps the old
-			// index 4050, Type 2 goes right after it (4055 < 4060 Reverse BUG). Old
-			// hcfg files are migrated in readOptions().
+			new StepConfig(4045, SolutionType.UNIQUE_LOOP_TYPE_2, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 100, 0, true, true, 4045, true, false),
 			new StepConfig(4050, SolutionType.EXTENDED_UR_TYPE_1, DifficultyType.HARD.ordinal(),
 					SolutionCategory.UNIQUENESS, 110, 0, true, true, 4050, true, false),
 			new StepConfig(4055, SolutionType.EXTENDED_UR_TYPE_2, DifficultyType.HARD.ordinal(),
 					SolutionCategory.UNIQUENESS, 110, 0, true, true, 4055, true, false),
 			new StepConfig(4060, SolutionType.REVERSE_BUG, DifficultyType.HARD.ordinal(),
 					SolutionCategory.UNIQUENESS, 110, 0, true, true, 4060, true, false),
-			new StepConfig(4070, SolutionType.BUG_LITE, DifficultyType.HARD.ordinal(),
+			new StepConfig(4070, SolutionType.BUG_LITE_TYPE_1, DifficultyType.HARD.ordinal(),
 					SolutionCategory.UNIQUENESS, 130, 0, true, true, 4070, true, false),
+			new StepConfig(4075, SolutionType.BUG_LITE_TYPE_2, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 130, 0, true, true, 4075, true, false),
 			// MUG enabled=false (spec §5): the catalog forms are not harvestable
 			// from the corpora — in real puzzles they collapse into ExtUR/BUG-Lite —
-			// so MUG ships off by default with fixture custody (docs/log.md). It
-			// keeps allSteps=true so find-all-steps can still surface it, and
-			// enabledProgress=true like the rest of the pack.
-			new StepConfig(4080, SolutionType.MUG, DifficultyType.HARD.ordinal(),
-					SolutionCategory.UNIQUENESS, 150, 0, false, true, 4080, true, false) };
+			// so MUG ships off by default with fixture custody (docs/log.md). Both
+			// subtypes keep allSteps=true so find-all-steps can still surface them,
+			// and enabledProgress=true like the rest of the pack.
+			new StepConfig(4080, SolutionType.MUG_TYPE_1, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 150, 0, false, true, 4080, true, false),
+			new StepConfig(4085, SolutionType.MUG_TYPE_2, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 150, 0, false, true, 4085, true, false) };
 	// modern fork (milestone 1.8, A2): the modern techniques of this fork — the
 	// entries whose finders live in solver.modern. Used by the progress-flag
 	// migration below and guarded against the registry by test
@@ -369,9 +377,10 @@ public final class Options {
 			SolutionType.WXYZ_WING, SolutionType.BENT_QUAD, SolutionType.VWXYZ_WING, SolutionType.UVWXYZ_WING,
 			SolutionType.TUVWXYZ_WING, SolutionType.STUVWXYZ_WING, SolutionType.RSTUVWXYZ_WING,
 			SolutionType.BROKEN_WING, SolutionType.BIVALUE_ODDAGON, SolutionType.TRIDAGON,
-			SolutionType.UNIQUE_LOOP, SolutionType.EXTENDED_UR_TYPE_1, SolutionType.EXTENDED_UR_TYPE_2,
-			SolutionType.BUG_LITE, SolutionType.REVERSE_BUG,
-			SolutionType.MUG);
+			SolutionType.UNIQUE_LOOP_TYPE_1, SolutionType.UNIQUE_LOOP_TYPE_2,
+			SolutionType.EXTENDED_UR_TYPE_1, SolutionType.EXTENDED_UR_TYPE_2,
+			SolutionType.BUG_LITE_TYPE_1, SolutionType.BUG_LITE_TYPE_2, SolutionType.REVERSE_BUG,
+			SolutionType.MUG_TYPE_1, SolutionType.MUG_TYPE_2);
 
 	// nicht sortierte steps mit allen Änderungen -> wird so in *.cfg-File
 	// geschrieben
@@ -1129,16 +1138,22 @@ public final class Options {
 	}
 
 	/**
-	 * Migration for the Extended UR split (milestone 1.9): configs written before
-	 * the desglose hold one generic EXTENDED_UR StepConfig and lack the
-	 * EXTENDED_UR_TYPE_1/2 entries. The generic entry is removed and replaced by
-	 * the two new ones, both preserving everything the user could have changed
-	 * (enabled, scores, level, category, all-steps/progress/training flags);
-	 * Type 1 keeps the old index, Type 2 goes right after it. Idempotent: configs
-	 * written after the split (no generic entry) are left untouched. Mirrors
+	 * Generic migration of a "one entry split into Type 1 / Type 2" config
+	 * (milestone 1.9): if the generic StepConfig is still present and the two
+	 * subtypes are absent, the generic entry is removed and replaced by the two
+	 * subtypes, both preserving everything the user could have changed (enabled,
+	 * scores, level, category, all-steps/progress/training flags); Type 1 keeps
+	 * the old index, Type 2 goes right after it (offset). Idempotent: configs
+	 * written after the split (no generic entry) are left untouched. Shared by
+	 * the whole Uniqueness Pack desglose; mirrors
 	 * {@link #migrateKrakenFishStepConfig()}.
+	 *
+	 * @param generic the generic (anchor) type
+	 * @param type1 the Type 1 subtype
+	 * @param type2 the Type 2 subtype
+	 * @param indexOffset the index/index-progress offset for the Type 2 entry
 	 */
-	public void migrateExtendedUrStepConfig() {
+	private void migrateSplitStepConfig(SolutionType generic, SolutionType type1, SolutionType type2, int indexOffset) {
 		if (orgSolverSteps == null) {
 			return;
 		}
@@ -1146,9 +1161,9 @@ public final class Options {
 		boolean hasSplit = false;
 		for (int i = 0; i < orgSolverSteps.length; i++) {
 			SolutionType type = orgSolverSteps[i].getType();
-			if (type == SolutionType.EXTENDED_UR) {
+			if (type == generic) {
 				genericIndex = i;
-			} else if (type == SolutionType.EXTENDED_UR_TYPE_1 || type == SolutionType.EXTENDED_UR_TYPE_2) {
+			} else if (type == type1 || type == type2) {
 				hasSplit = true;
 			}
 		}
@@ -1158,17 +1173,31 @@ public final class Options {
 		List<StepConfig> migrated = new ArrayList<StepConfig>(Arrays.asList(orgSolverSteps));
 		StepConfig old = migrated.remove(genericIndex);
 		if (!hasSplit) {
-			StepConfig type1 = new StepConfig(old.getIndex(), SolutionType.EXTENDED_UR_TYPE_1, old.getLevel(),
-					old.getCategory(), old.getBaseScore(), old.getAdminScore(), old.isEnabled(),
-					old.isAllStepsEnabled(), old.getIndexProgress(), old.isEnabledProgress(), old.isEnabledTraining());
-			StepConfig type2 = new StepConfig(old.getIndex() + 5, SolutionType.EXTENDED_UR_TYPE_2, old.getLevel(),
-					old.getCategory(), old.getBaseScore(), old.getAdminScore(), old.isEnabled(),
-					old.isAllStepsEnabled(), old.getIndexProgress() + 5, old.isEnabledProgress(),
-					old.isEnabledTraining());
-			migrated.add(genericIndex, type1);
-			migrated.add(genericIndex + 1, type2);
+			StepConfig c1 = new StepConfig(old.getIndex(), type1, old.getLevel(), old.getCategory(), old.getBaseScore(),
+					old.getAdminScore(), old.isEnabled(), old.isAllStepsEnabled(), old.getIndexProgress(),
+					old.isEnabledProgress(), old.isEnabledTraining());
+			StepConfig c2 = new StepConfig(old.getIndex() + indexOffset, type2, old.getLevel(), old.getCategory(),
+					old.getBaseScore(), old.getAdminScore(), old.isEnabled(), old.isAllStepsEnabled(),
+					old.getIndexProgress() + indexOffset, old.isEnabledProgress(), old.isEnabledTraining());
+			migrated.add(genericIndex, c1);
+			migrated.add(genericIndex + 1, c2);
 		}
 		orgSolverSteps = migrated.toArray(new StepConfig[0]);
+	}
+
+	/**
+	 * Migrates pre-desglose hcfg files for the whole Uniqueness Pack (milestone
+	 * 1.9): the single Unique Loop / Extended UR / BUG-Lite / MUG entries are
+	 * each replaced by their Type 1 / Type 2 subtypes. Reverse BUG has no
+	 * subtypes. Idempotent.
+	 */
+	public void migrateUniquenessPackStepConfigs() {
+		migrateSplitStepConfig(SolutionType.UNIQUE_LOOP, SolutionType.UNIQUE_LOOP_TYPE_1,
+				SolutionType.UNIQUE_LOOP_TYPE_2, 5);
+		migrateSplitStepConfig(SolutionType.EXTENDED_UR, SolutionType.EXTENDED_UR_TYPE_1,
+				SolutionType.EXTENDED_UR_TYPE_2, 5);
+		migrateSplitStepConfig(SolutionType.BUG_LITE, SolutionType.BUG_LITE_TYPE_1, SolutionType.BUG_LITE_TYPE_2, 5);
+		migrateSplitStepConfig(SolutionType.MUG, SolutionType.MUG_TYPE_1, SolutionType.MUG_TYPE_2, 5);
 	}
 
 	// modern fork (milestone 1.8, A2): pre-1.8 configs carry
@@ -1367,8 +1396,9 @@ public final class Options {
 		// Kraken Fish Type 1/2 split
 		instance.migrateKrakenFishStepConfig();
 		// modern fork (milestone 1.9): migrate configs written before the
-		// Extended UR Type 1/2 split
-		instance.migrateExtendedUrStepConfig();
+		// Uniqueness Pack desglose (Unique Loop / Extended UR / BUG-Lite / MUG
+		// each into Type 1 / Type 2)
+		instance.migrateUniquenessPackStepConfigs();
 		// modern fork (milestone 1.8, A2): force the progress flags of modern
 		// techniques to the new defaults, once per config file
 		instance.migrateModernProgressFlags();

@@ -156,13 +156,13 @@ public class UniquenessPackSolver extends AbstractSolver {
 	private SolutionStep result;
 
 	/**
-	 * Extended UR desglose (milestone 1.9): restricts the emitted Extended UR
-	 * subtype to {@link SolutionType#EXTENDED_UR_TYPE_1},
-	 * {@link SolutionType#EXTENDED_UR_TYPE_2} or {@code null} for both (the
-	 * generic {@link SolutionType#EXTENDED_UR} anchor and all-steps). Same
+	 * Uniqueness Pack desglose (milestone 1.9): restricts the emitted subtype of
+	 * the guardian technique currently being searched to its Type 1 / Type 2
+	 * SolutionType, or {@code null} for both (the generic anchor and all-steps).
+	 * The guardian ladder consults it before emitting either branch. Same
 	 * pushdown-filter pattern as {@code FishSolver}'s kraken type filter (P-002).
 	 */
-	private SolutionType extUrTypeFilter;
+	private SolutionType typeFilter;
 
 	// --- guardian-ladder feasibility prune (shared by the UL/BUG-Lite DFS) ---
 	// The ladder only ever deduces when all guardians sit in one cell (Type 1)
@@ -237,22 +237,37 @@ public class UniquenessPackSolver extends AbstractSolver {
 	protected SolutionStep getStep(SolutionType type) {
 		sudoku = finder.getSudoku();
 		switch (type) {
+		// desglose (milestone 1.9): the generic anchors search both subtypes; a
+		// specific subtype restricts the guardian ladder to that branch
 		case UNIQUE_LOOP:
+			typeFilter = null;
+			return findUniqueLoops(true);
+		case UNIQUE_LOOP_TYPE_1:
+		case UNIQUE_LOOP_TYPE_2:
+			typeFilter = type;
 			return findUniqueLoops(true);
 		case EXTENDED_UR:
-			// the generic anchor (library code 0621): both subtypes
-			extUrTypeFilter = null;
+			typeFilter = null;
 			return findExtendedUrs(true);
 		case EXTENDED_UR_TYPE_1:
 		case EXTENDED_UR_TYPE_2:
-			// desglose (milestone 1.9): the solver asks for one subtype
-			extUrTypeFilter = type;
+			typeFilter = type;
 			return findExtendedUrs(true);
 		case BUG_LITE:
+			typeFilter = null;
+			return findBugLites(true);
+		case BUG_LITE_TYPE_1:
+		case BUG_LITE_TYPE_2:
+			typeFilter = type;
 			return findBugLites(true);
 		case REVERSE_BUG:
 			return findReverseBugs(true);
 		case MUG:
+			typeFilter = null;
+			return findMugs(true);
+		case MUG_TYPE_1:
+		case MUG_TYPE_2:
+			typeFilter = type;
 			return findMugs(true);
 		default:
 			return null;
@@ -264,12 +279,18 @@ public class UniquenessPackSolver extends AbstractSolver {
 		sudoku = finder.getSudoku();
 		switch (step.getType()) {
 		case UNIQUE_LOOP:
+		case UNIQUE_LOOP_TYPE_1:
+		case UNIQUE_LOOP_TYPE_2:
 		case EXTENDED_UR:
 		case EXTENDED_UR_TYPE_1:
 		case EXTENDED_UR_TYPE_2:
 		case BUG_LITE:
+		case BUG_LITE_TYPE_1:
+		case BUG_LITE_TYPE_2:
 		case REVERSE_BUG:
 		case MUG:
+		case MUG_TYPE_1:
+		case MUG_TYPE_2:
 			for (Candidate cand : step.getCandidatesToDelete()) {
 				sudoku.delCandidate(cand.getIndex(), cand.getValue());
 			}
@@ -291,9 +312,10 @@ public class UniquenessPackSolver extends AbstractSolver {
 		List<SolutionStep> oldSteps = steps;
 		steps = newSteps;
 		stepKeys.clear();
-		// all-steps emits both Extended UR subtypes; FindAllSteps filters by the
-		// per-type all-steps-enabled flag afterwards (desglose, milestone 1.9)
-		extUrTypeFilter = null;
+		// all-steps emits both subtypes of every guardian technique; FindAllSteps
+		// filters by the per-type all-steps-enabled flag afterwards (desglose,
+		// milestone 1.9)
+		typeFilter = null;
 		findUniqueLoops(false);
 		findExtendedUrs(false);
 		findReverseBugs(false);
@@ -416,28 +438,12 @@ public class UniquenessPackSolver extends AbstractSolver {
 	}
 
 	/**
-	 * Applies the guardian ladder to the current pattern and emits a step if a
-	 * deduction exists. Single-label techniques emit both ladder branches under
-	 * the same type.
-	 *
-	 * @param type the technique
-	 * @param n number of pattern cells
-	 * @param cells the pattern cells
-	 * @param nominals the nominal mask per cell
-	 * @param withChain add a display chain tracing the cells as a closed loop
-	 */
-	private void applyGuardianLadder(SolutionType type, int n, int[] cells, short[] nominals, boolean withChain) {
-		applyGuardianLadder(type, type, type, n, cells, nominals, withChain);
-	}
-
-	/**
-	 * The desglose-aware guardian ladder (milestone 1.9): the two ladder
-	 * branches can carry distinct labels so Extended UR emits
-	 * {@link SolutionType#EXTENDED_UR_TYPE_1} for the one-cell (Type 1)
-	 * deduction and {@link SolutionType#EXTENDED_UR_TYPE_2} for the uniform-digit
-	 * (Type 2) deduction; {@link #extUrTypeFilter} then selects which subtype is
-	 * allowed to emit. For every other technique {@code type1 == type2 ==
-	 * baseType} and no filter applies.
+	 * The desglose-aware guardian ladder (milestone 1.9): the two ladder branches
+	 * carry distinct labels so each guardian technique emits its {@code _TYPE_1}
+	 * label for the one-cell (Type 1) deduction and its {@code _TYPE_2} label for
+	 * the uniform-digit (Type 2) deduction; {@link #typeFilter} then selects which
+	 * subtype is allowed to emit (both when the generic anchor or all-steps drove
+	 * the search).
 	 *
 	 * @param type1 the label of the Type 1 branch (all guardians in one cell)
 	 * @param type2 the label of the Type 2 branch (uniform guardian digit)
@@ -501,15 +507,12 @@ public class UniquenessPackSolver extends AbstractSolver {
 	}
 
 	/**
-	 * Whether a ladder branch may emit under the current Extended UR type filter.
-	 * Non-Extended-UR labels always pass; the two subtypes pass only when the
-	 * filter is off or names that exact subtype (desglose, milestone 1.9).
+	 * Whether a ladder branch may emit under the current type filter: it passes
+	 * when no filter is set (generic anchor / all-steps) or when the filter names
+	 * this exact subtype (desglose, milestone 1.9).
 	 */
 	private boolean typeAllowed(SolutionType branchType) {
-		if (branchType != SolutionType.EXTENDED_UR_TYPE_1 && branchType != SolutionType.EXTENDED_UR_TYPE_2) {
-			return true;
-		}
-		return extUrTypeFilter == null || extUrTypeFilter == branchType;
+		return typeFilter == null || typeFilter == branchType;
 	}
 
 	/** Fills {@link #globalStep} with type, digits, cells, guardians. */
@@ -714,7 +717,9 @@ public class UniquenessPackSolver extends AbstractSolver {
 			return;
 		}
 		collectGuardians(n, loopCells, nominals);
-		applyGuardianLadder(SolutionType.UNIQUE_LOOP, n, loopCells, nominals, true);
+		// desglose (milestone 1.9): one-cell branch -> Type 1, uniform-digit -> Type 2
+		applyGuardianLadder(SolutionType.UNIQUE_LOOP_TYPE_1, SolutionType.UNIQUE_LOOP_TYPE_2, SolutionType.UNIQUE_LOOP,
+				n, loopCells, nominals, true);
 	}
 
 	// ==================================================================
@@ -994,7 +999,9 @@ public class UniquenessPackSolver extends AbstractSolver {
 		System.arraycopy(bugNominals, 0, nominals, 0, bugSize);
 		int[] cells = new int[bugSize];
 		System.arraycopy(bugCells, 0, cells, 0, bugSize);
-		applyGuardianLadder(SolutionType.BUG_LITE, bugSize, cells, nominals, false);
+		// desglose (milestone 1.9): one-cell branch -> Type 1, uniform-digit -> Type 2
+		applyGuardianLadder(SolutionType.BUG_LITE_TYPE_1, SolutionType.BUG_LITE_TYPE_2, SolutionType.BUG_LITE, bugSize,
+				cells, nominals, false);
 	}
 
 	// ==================================================================
@@ -1205,7 +1212,9 @@ public class UniquenessPackSolver extends AbstractSolver {
 								continue;
 							}
 							collectGuardians(6, cells, nominals);
-							applyGuardianLadder(SolutionType.MUG, 6, cells, nominals, false);
+							// desglose (milestone 1.9): one-cell branch -> Type 1, uniform-digit -> Type 2
+							applyGuardianLadder(SolutionType.MUG_TYPE_1, SolutionType.MUG_TYPE_2, SolutionType.MUG, 6,
+									cells, nominals, false);
 							if (onlyOne && result != null) {
 								return;
 							}

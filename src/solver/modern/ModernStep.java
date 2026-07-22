@@ -107,14 +107,21 @@ public class ModernStep extends SolutionStep {
 		registerFormatter(SolutionType.TRIDAGON, new TridagonFormatter());
 		// the Uniqueness Pack (milestone 1.8): one shared formatter
 		HintFormatter uniquenessPack = new UniquenessPackFormatter();
+		// Uniqueness Pack desglose (milestone 1.9): the finder emits the Type 1 /
+		// Type 2 subtypes; the generic anchors stay registered defensively
 		registerFormatter(SolutionType.UNIQUE_LOOP, uniquenessPack);
+		registerFormatter(SolutionType.UNIQUE_LOOP_TYPE_1, uniquenessPack);
+		registerFormatter(SolutionType.UNIQUE_LOOP_TYPE_2, uniquenessPack);
 		registerFormatter(SolutionType.EXTENDED_UR, uniquenessPack);
-		// Extended UR desglose (milestone 1.9): the finder emits the two subtypes
 		registerFormatter(SolutionType.EXTENDED_UR_TYPE_1, uniquenessPack);
 		registerFormatter(SolutionType.EXTENDED_UR_TYPE_2, uniquenessPack);
 		registerFormatter(SolutionType.BUG_LITE, uniquenessPack);
+		registerFormatter(SolutionType.BUG_LITE_TYPE_1, uniquenessPack);
+		registerFormatter(SolutionType.BUG_LITE_TYPE_2, uniquenessPack);
 		registerFormatter(SolutionType.REVERSE_BUG, uniquenessPack);
 		registerFormatter(SolutionType.MUG, uniquenessPack);
+		registerFormatter(SolutionType.MUG_TYPE_1, uniquenessPack);
+		registerFormatter(SolutionType.MUG_TYPE_2, uniquenessPack);
 	}
 
 	/**

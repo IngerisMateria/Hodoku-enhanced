@@ -258,7 +258,22 @@ public enum SolutionType {
 	EXTENDED_UR_TYPE_1(java.util.ResourceBundle.getBundle("intl/SolutionType")
 			.getString("Extended_Unique_Rectangle_Type_1"), "0625", "xur1"),
 	EXTENDED_UR_TYPE_2(java.util.ResourceBundle.getBundle("intl/SolutionType")
-			.getString("Extended_Unique_Rectangle_Type_2"), "0626", "xur2");
+			.getString("Extended_Unique_Rectangle_Type_2"), "0626", "xur2"),
+	// Uniqueness Pack desglose (milestone 1.9): like Extended UR, the guardian
+	// techniques Unique Loop, BUG-Lite and MUG each split into Type 1 (all
+	// guardians in one cell) and Type 2 (uniform guardian digit); the generic
+	// enum constants stay as taxonomy anchors without StepConfig. Library codes
+	// 0627-0632: the next free tail of the uniqueness family block 06xx (0620-0626
+	// taken by the pack + the ExtUR split; verified free against every code here).
+	// Reverse BUG has no guardian ladder, hence no subtypes.
+	UNIQUE_LOOP_TYPE_1(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Unique_Loop_Type_1"), "0627",
+			"ul1"),
+	UNIQUE_LOOP_TYPE_2(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Unique_Loop_Type_2"), "0628",
+			"ul2"),
+	BUG_LITE_TYPE_1(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("BUG_Lite_Type_1"), "0629", "bgl1"),
+	BUG_LITE_TYPE_2(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("BUG_Lite_Type_2"), "0630", "bgl2"),
+	MUG_TYPE_1(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("MUG_Type_1"), "0631", "mug1"),
+	MUG_TYPE_2(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("MUG_Type_2"), "0632", "mug2");
 	private String stepName;
 	private String libraryType;
 	private String argName;
