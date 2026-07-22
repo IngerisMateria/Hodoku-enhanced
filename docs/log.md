@@ -1,5 +1,195 @@
 # Log de milestones
 
+## 1.8 — Confiabilidad (Parte A) + Uniqueness Pack (Parte B) — 2026-07-21
+
+Milestone doble por decisión del dueño. Prompt archivado verbatim en
+`docs/milestones/1.8.md`; spec de la Parte B en `docs/specs/uniqueness-pack.md`
+(manda). Cuatro commits lógicos con A y B claramente separados
+(progress+pestaña / cancel / config UX / pack).
+
+### Capítulo A — Confiabilidad de find-all-steps y config
+
+**A1 (confirmado por traza antes de tocar).** El cuelgue de find-all-steps en
+estados con Tridagon era exactamente la hipótesis del PM. La fase final de
+find-all-steps (`FindAllSteps.run` case 27 → `SudokuSolver.getProgressScore`)
+RE-RESUELVE el puzzle tras cada paso candidato con `Options.solverStepsProgress`
+(lista separada, gobernada por `enabledProgress`). Como TODA técnica moderna
+tenía `enabledProgress=false`, esa re-resolución se hacía con el arsenal de
+2.2.0 SIN Tridagon (ni oddagons ni bent subsets): sobre un estado te3 real,
+43 pasos candidatos × una re-resolución que muele el monstruo con forcing
+nets/fishes = **22,4 s**. Con las modernas en la lista de progress, cada
+re-resolución corta apenas aparece un Tridagon: **16,4 s** el mismo caso, y en
+un puzzle normal es instantáneo (la traza headless quedó en
+`SudokuSolver.getProgressScore`/`FishSolver.searchCoverUnits`/
+`TablingSolver` durante los 22 s, confirmando la fase de progress como culpable).
+
+**A2.** `enabledProgress=true` + `indexProgress` = índice del solver para las 10
+técnicas modernas (7 bent subsets + 2 oddagons + Tridagon), y las 5 de la Parte
+B al crearlas. Set canónico `Options.MODERN_TECHNIQUES` (custodiado por test:
+sincronizado con el motor `solver.modern` del registro). Migración one-shot de
+hcfg pre-1.8 (`migrateModernProgressFlags`, flag `modernProgressFlagsMigrated`):
+el `false` viejo nunca fue elección del usuario porque la pestaña Progress los
+filtraba (A3), así que se fuerzan a los defaults una vez y las elecciones
+post-1.8 sobreviven. **Snapshots sin cambios por A2** (progress no afecta el
+solve path — verificado: el único diff de snapshots viene de la Parte B).
+
+**A3.** La pestaña Progress mostraba solo técnicas de nivel ≤ UNFAIR: el filtro
+`getLevel() > UNFAIR` de `ConfigProgressPanel` (lista, árbol y `okPressed`)
+escondía TODO lo EXTREME — kraken, forcing chains/nets, templates, brute force,
+Tridagon — no solo las modernas. Además `okPressed` comparaba
+`orgSteps[i].getLevel()` (índice equivocado) en vez de `[j]`. Se quitó el filtro
+en los tres lugares. Test de custodia nuevo `ProgressConfigTest` (mecánico):
+la lista Y el árbol de la pestaña cubren EXACTAMENTE las técnicas con StepConfig
+(pseudo-steps aparte); `MODERN_TECHNIQUES` sincronizado con el registro;
+defaults A2 correctos; migración idempotente que preserva elecciones. Extiende
+la completitud del registro a la superficie progress: ninguna técnica futura
+puede volver a saltearse.
+
+**A4 (cancel real, bug legacy histórico).** El botón Cancel hacía `thread.join()`
+en el EDT: con una búsqueda larga la UI se congelaba hasta que el worker llegaba
+a un punto de chequeo, y cerrar la ventana dejaba un thread zombie. Ahora es
+**cooperativo**: los finders pollean `Thread.currentThread().isInterrupted()` en
+sus bucles exteriores (`FishSolver.getFishes`, `AlsSolver` XZ/XY-Wing/chain/
+death-blossom, `OddagonSolver.enumerateCycles`, los 5 finders del pack) y el
+rating de progress chequea entre pasos candidatos y dentro del re-solve; el botón
+solo interrumpe y da feedback ("Cancelling…"), el worker esconde el diálogo al
+salir. Excepción documentada en `docs/build.md`: `TablingSolver` no se toca
+(regla fase 5), así que un cancel dentro de una búsqueda de forcing chains/nets
+espera a que esa llamada termine. Verificación headless: interrupt a mitad de la
+fase de progress sobre un estado te3 → el worker termina en **12 ms**.
+
+**A5.** `ConfigDialog` ahora (a) aplica los cambios de la pestaña que se abandona
+(`okPressed` del panel) y (b) reconstruye la pestaña a la que se entra
+(`tabEntered()` → `initAll(false)`) vía `ChangeListener`. Con eso las
+dependencias cruzadas quedan al día: solver→training (la lista de training
+muestra/oculta según los enables), solver→progress (la copia de progress se
+refresca desde `orgSolverSteps`), steps→aside del solver (modelos Swing
+compartidos). El hcfg se sigue escribiendo solo con OK; Cancel/Escape descarta lo
+no aplicado de la pestaña actual. Matriz mínima verificada con un probe
+programático sobre el `ConfigDialog` real (7/7 checks: los 3 casos testigo y sus
+vueltas).
+
+**A6.** Suite completa verde; los únicos cambios de solve path son los de la
+Parte B (técnicas nuevas enabled), no de A.
+
+### Capítulo B — Uniqueness Pack (5 técnicas)
+
+Finder común `solver.modern.UniquenessPackSolver` (marco §0 de la spec). Núcleo:
+**verificador mecánico de mortalidad** `isDeadly` — enumera cada asignación
+interna válida (un dígito nominal por celda, sin repetir dígito por casa) y
+agrupa por la firma de multiconjuntos por casa; el patrón es mortal ⟺ existe ≥1
+asignación y TODA clase de firma tiene ≥2 miembros (entonces, sean cuales sean
+los valores reales, hay una segunda asignación indistinguible para el resto del
+tablero). Se corre ANTES de emitir cualquier paso (spec §3/§5). Escalera
+Guardians del 1.6, tercer uso: |G| en una celda → strip nominal (UR Type 1);
+dígito uniforme → eliminar de la visión común (UR Type 2); mixto multi-celda →
+fuera de alcance v1.
+
+- **Unique Loop** (0620): lazo par 6–12, 0-o-2 por casa, DFS canónico propio
+  (la página del mirror de Sudopedia estaba caída al implementar — connection
+  refused — así que la condición textual la respalda el verificador de
+  mortalidad, que además captura la sutileza de paridad del intercambio a↔b).
+- **Extended UR** (0621): forma buscable 2×3 del patrón mortal 3×3 (SudokuWiki),
+  seis celdas del triple en dos líneas del mismo chute cruzando tres cajas.
+- **BUG-Lite** (0622): conjuntos conexos 6/8/9 con par nominal por celda y
+  "2-o-nada" por casa; DFS dirigido por requisitos (cada ocurrencia
+  (casa,dígito) impar debe emparejarse → conexo y mínimo). Excluye los de 2
+  dígitos (son UR/UL, dedup a más específico).
+- **Reverse BUG** (0623): teorema n/n/n de Sudopedia sobre las celdas RESUELTAS
+  del par; condición dura de no-givens espejando `AvoidableRectangle`. El matiz
+  "without the presence of hidden singles" del mirror es sabor definicional del
+  estado imposible, no condición de soundness de la eliminación (el argumento
+  del complemento se sostiene igual — anotado).
+- **MUG** (0624): catálogo t3210 ab/abc; dedup exacto contra la forma buscable
+  de ExtUR (mismo chute + cruces uno-por-stack + las tres del triple en cada
+  celda). **enabled=false** por default (spec §5, ver custodia).
+
+Plantilla completa: 5 SolutionTypes (library 0620–0624, hueco libre de la
+familia 06xx), registro familia UNIQUENESS con las subsunciones del §6
+(UR→BUG_LITE, UNIQUE_LOOP→BUG_LITE, EXTENDED_UR→MUG; las dos relaciones bien
+separadas), Options con scores en la escala UR legacy documentados y
+enabledProgress=true, hints con subtipos vía `UniquenessPackFormatter`, intl,
+integración en find-all-steps (case 19, patrón del bloque uniqueness).
+
+**Cosecha y soundness** (paths default, validación inline vs brute force):
+corpus-41 (2.525 estados), te2-100 (8.810), te3-60 (4.323) = **~15.658 estados,
+0 violaciones de soundness**. Instancias all-steps (corpus/te2/te3):
+UL 15/113/18, ExtUR 58/137/15, BUG-Lite 66/161/38, **Reverse BUG 0/0/0, MUG
+0/0/0**. Distribución de guardianes (Type1/Type2): UL 122/24, ExtUR 181/29,
+BUG-Lite 223/42. Tiempo pack all-steps: ~0,75 µs/estado promedio (tras
+agregar la poda de la escalera — ver abajo).
+
+**Poda decisiva (hallazgo).** La primera cosecha colgó: los DFS de UL y BUG-Lite
+sobre estados abiertos explotan. La escalera solo deduce con guardianes en UNA
+celda o de UN dígito; en cuanto un patrón parcial tiene ≥2 celdas guardianas con
+≥2 dígitos distintos, NINGUNA completación deduce → se poda la rama entera. Con
+eso el pack corre los 15.658 estados en ~1,9 s (corpus) / 6 s (te2) / 4 s (te3).
+
+**Custodia y decisiones documentadas.** ExtUR (2 instancias) y BUG-Lite (1) SÍ
+aparecen en paths default → custodiados por snapshots: BUG-Lite en un puzzle
+preexistente del corpus (su path pasó a usar un BUG-Lite score 130 en vez de un
+tramo AIC/W-Wing/Sue de Coq más caro), ExtUR en 2 puzzles de te2 agregados al
+corpus (39→41). **Diff de snapshots: 1 línea existente modificada (BUG-Lite) +
+2 líneas nuevas (ExtUR); 0 soundness.** UL, Reverse BUG y MUG NO son
+custodiables por snapshots y quedan custodiados por fixtures — **desvío
+documentado del dueño**:
+- **UL**: enabled=true (spec §6), pero su score 100, correctamente ordenado
+  DESPUÉS de la familia UR legacy que generaliza (UR = caso L=4, más
+  específico), pierde todo desempate en los paths default. 0 apariciones en los
+  300 puzzles T&E. Custodia por fixtures.
+- **Reverse BUG**: enabled=true (spec §6), pero la condición dura de no-givens
+  la hace estructuralmente ausente de puzzles reales (todo par tiene givens).
+  0 en 15.658 estados. Custodia por fixtures.
+- **MUG**: enabled=false (spec §5 lo autoriza explícitamente): las formas de
+  catálogo se subsumen en ExtUR/BUG-Lite en puzzles reales. Custodia por
+  fixtures.
+
+**Fixtures** (`libs/{unique-loop,extended-ur,bug-lite,reverse-bug,mug}.txt`,
+registrados en `LibraryCaseRunnerTest`). UL/ExtUR/BUG-Lite: positivos cosechados
+de corpus+te2 (diversos: Type 1 y Type 2, geometrías distintas), negativos
+construidos y verificados mecánicamente (`getStep==null`) incluyendo los reyes
+de la spec (casa con 3 celdas del lazo para UL; seis celdas en dos cajas para
+ExtUR; violación 2-o-nada para BUG-Lite). Reverse BUG y MUG: **artesanales**
+(no cosechables), construidos y verificados mecánicamente — Reverse BUG desde
+una solución real (rectángulo 2×2 en dos cajas, tres esquinas a/b/b resueltas
+no-given + objetivo con candidato a; rey = un given adentro); MUG con grid
+tallado (bloque 2×3 columnas ab|abc|bc, validado por el verificador de
+mortalidad; rey = geometría fuera de catálogo en dos stacks). Todo el método de
+construcción anotado en los propios fixtures. **Los fixtures de Reverse BUG y
+MUG son además la única prueba de que esos dos finders funcionan** (0 instancias
+en corpora): ambos verificados emitiendo pasos correctos.
+
+**Rendering (capturas revisadas una por una)**: SudokuPanel intacto (los pasos
+usan el layout de base + una display chain para el lazo de UL). UL — lazo de 6
+celdas verdes {a,b} con flechas rojas recorriéndolo, guardián con candidatos en
+azul y el par eliminado en rojo. ExtUR — seis celdas verdes del triple en dos
+filas × tres cajas, guardián azul, eliminación roja (Type 1). BUG-Lite — patrón
+verde, dos guardianes uniformes azules, eliminación roja en la visión común
+(Type 2). Reverse BUG — eliminación roja en la celda objetivo (técnica sin
+guardián/lazo: highlighting mínimo, coherente con su layout). MUG — patrón verde
+del catálogo, guardián azul, strip rojo (Type 1). Quirk anotado: el render del
+grid tallado de MUG es lento en `printAll` (estado degenerado, no productivo).
+
+**Fuera de alcance v1** (spec §7): Tipos 3-6 análogos (subset/strong-link) para
+UL/ExtUR/BUG-Lite; UL ≥14; BUG-Lite ≥10 celdas; Reverse BUG-Lite; MUG
+general/no-catálogo; variantes Hidden.
+
+**Resumen para el dueño**: (1) Arreglado el cuelgue de "buscar todos los pasos"
+en los sudokus más difíciles: el programa estaba re-resolviendo el tablero
+cientos de veces con su cerebro viejo (sin las técnicas nuevas), y encima el
+botón Cancelar no cancelaba de verdad y congelaba la ventana. Las dos cosas ya
+andan, y la pestaña que elige qué técnicas usar para medir dificultad ahora
+lista TODAS (antes escondía las más difíciles, hasta varias viejas). Los cambios
+de cada solapa de configuración se aplican al cambiar de solapa, no solo al
+apretar OK. (2) El programa aprendió cinco técnicas nuevas de la familia de
+"unicidad" (deducciones que salen de que un sudoku bien hecho tiene una sola
+solución): Unique Loop, Extended UR, BUG-Lite, Reverse BUG y MUG. Cada una trae
+sus ejemplos de prueba y un verificador que garantiza que nunca borran un número
+correcto (comprobado en más de quince mil posiciones, cero errores). Tres se ven
+solas en los tableros de prueba; las otras dos son tan raras que casi no
+aparecen en puzzles reales, así que quedan custodiadas por ejemplos hechos a
+mano y verificados por la máquina.
+
 ## 1.7 — Oddagons II: Tridagon — 2026-07-21
 
 Hecho, en cinco commits lógicos (spec+prompt / detector / integración /

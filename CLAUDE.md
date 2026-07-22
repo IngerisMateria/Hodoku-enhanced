@@ -66,8 +66,10 @@ del upstream 2.2.0 de hobiwan).
 - [x] 1.5 Aside v2 + buscador en config + split Kraken T1/T2 (P-002)
 - [x] 1.6 Oddagons I: Broken Wing + Bivalue Oddagon (framework guardianes)
 - [x] 1.7 Oddagons II: Tridagon* (fixtures: subset te3)
-- [ ] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG ← PRÓXIMO
-- [ ] 1.9 SDC extendido básico = régimen R0 del motor bent (locked n=4..9)
+- [x] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG
+      (+ Parte A: confiabilidad de find-all-steps y config). MUG enabled=false
+      (no cosechable, spec §5); UL/Reverse BUG custodiados por fixtures.
+- [ ] 1.9 SDC extendido básico = régimen R0 del motor bent (locked n=4..9) ← PRÓXIMO
 - [ ] 1.10 3D Medusa + GEM (+ hallazgo B: coloring→generador)
 - [ ] 1.11 Fireworks*
 - [ ] 2.x Arco multi-sector*: SK-Loop, MSLS, SET
