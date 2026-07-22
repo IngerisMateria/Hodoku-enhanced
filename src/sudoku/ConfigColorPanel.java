@@ -630,12 +630,17 @@ public class ConfigColorPanel extends javax.swing.JPanel {
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(backGroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(frameAndDigitsPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE))));
+								// UiMetrics (1.10): this bullet was pinned to its preferred width and
+								// dragged its linked sibling along, which is what left the hole in
+								// the middle of the tab. Both fill the left column now.
+								.addComponent(frameAndDigitsPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))));
 
-		jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
-				new java.awt.Component[] { backGroundPanel, frameAndDigitsPanel });
+		// UiMetrics (1.10): the two bullets of the left column used to be linked,
+		// and a GroupLayout link pins the linked components to a fixed size - which
+		// is why the column stopped short and left a hole in the middle of the tab.
+		// Being in the same parallel group already makes them equally wide, and now
+		// that width follows the column.
 
 		jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel1Layout.createSequentialGroup().addContainerGap()

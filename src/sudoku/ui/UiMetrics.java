@@ -53,6 +53,12 @@ public final class UiMetrics {
 	/**
 	 * Width of a toggle (combo box) that shows words, e.g. "Basic/Franken" or
 	 * "System default". Wide enough for the longest entry any of them holds today.
+	 * <p>
+	 * The rule is about the <em>kind</em> of choice, not about the widget class: a
+	 * toggle whose entries are short fixed tokens gets this width; a toggle whose
+	 * entries are open-ended text (the display-name chooser of the solver aside is
+	 * the one case) keeps filling its column, because capping it would only
+	 * truncate the names the user is choosing between.
 	 */
 	public static final int TOGGLE_WIDTH = 130;
 

@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import sudoku.ui.UiMetrics;
 
 /**
  *
@@ -290,26 +291,27 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 								.addGroup(fishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 										.addComponent(fishTypeLabel).addComponent(fishFromLabel)
 										.addComponent(fishMaxFinsLabel).addComponent(fishMaxEndoFinsLabel))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-								.addGroup(fishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								// UiMetrics (1.10): the gap after the labels takes the slack, so the
+								// toggles keep the standard width anchored to the right of the bullet
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addGroup(fishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
 										.addGroup(fishPanelLayout.createSequentialGroup()
-												.addGroup(fishPanelLayout
-														.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(fishFromComboBox, 0,
-																javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(fishMaxFinsComboBox,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(fishMaxEndoFinsComboBox,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE))
+												.addComponent(fishFromComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+														UiMetrics.TOGGLE_WIDTH_COMPACT,
+														javax.swing.GroupLayout.PREFERRED_SIZE)
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 												.addComponent(fishToLabel)
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(fishToComboBox, 0, 96, Short.MAX_VALUE))
-										.addComponent(fishTypeComboBox, 0, 180, Short.MAX_VALUE)))
+												.addComponent(fishToComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+														UiMetrics.TOGGLE_WIDTH_COMPACT,
+														javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addComponent(fishMaxFinsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(fishMaxEndoFinsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(fishTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)))
 						.addGroup(fishPanelLayout.createSequentialGroup().addGap(10, 10, 10).addComponent(fishCheckBox))
 						.addGroup(fishPanelLayout.createSequentialGroup().addContainerGap().addGroup(fishPanelLayout
 								.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -420,27 +422,30 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 										.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 										.addComponent(krakenFishTypeLabel).addComponent(krakenFishFromLabel)
 										.addComponent(krakenFishMaxFinsLabel).addComponent(krakenFishMaxEndoFinsLabel))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								// UiMetrics (1.10): same anchoring as the Fish bullet above
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addGroup(krakenFishPanelLayout
-										.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+										.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
 										.addGroup(krakenFishPanelLayout.createSequentialGroup()
-												.addGroup(krakenFishPanelLayout
-														.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(krakenFishFromComboBox, 0,
-																javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(krakenFishMaxFinsComboBox,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(krakenFishMaxEndoFinsComboBox,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE))
+												.addComponent(krakenFishFromComboBox,
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														UiMetrics.TOGGLE_WIDTH_COMPACT,
+														javax.swing.GroupLayout.PREFERRED_SIZE)
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 												.addComponent(krakenFishToLabel)
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(krakenFishToComboBox, 0, 96, Short.MAX_VALUE))
-										.addComponent(krakenFishTypeComboBox, 0, 180, Short.MAX_VALUE)))
+												.addComponent(krakenFishToComboBox,
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														UiMetrics.TOGGLE_WIDTH_COMPACT,
+														javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addComponent(krakenFishMaxFinsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(krakenFishMaxEndoFinsComboBox,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(krakenFishTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)))
 						.addGroup(krakenFishPanelLayout.createSequentialGroup().addComponent(krakenFishCandidatesLabel)
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(krakenFishCandidatesResultLabel)
@@ -512,7 +517,7 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 				.addGroup(alsPanelLayout.createSequentialGroup().addContainerGap().addComponent(alsChainLengthLabel)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(alsChainLengthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+								UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addGap(18, 18, 18).addComponent(alsBiDirCheckBox)
 						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 		alsPanelLayout.setVerticalGroup(alsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -532,10 +537,12 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 								javax.swing.GroupLayout.PREFERRED_SIZE)
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addGroup(jPanel1Layout.createSequentialGroup()
-										.addComponent(alsPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addGap(10, 10, 10))
+								// UiMetrics (1.10): the ALS bullet used to carry a trailing 10px gap
+								// that made it narrower than its two siblings - the "viñeta de ALS
+								// ligeramente más corta" the owner reported. The three now share the
+								// same column width.
+								.addComponent(alsPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(krakenFishPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(fishPanel, javax.swing.GroupLayout.DEFAULT_SIZE,

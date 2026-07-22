@@ -40,6 +40,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import sudoku.ui.UiMetrics;
 
 /**
  *
@@ -741,20 +742,36 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
 		gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
 
+		// UiMetrics (1.10): level and score are the two fixed-shape controls of the
+		// aside, so they take the standard widths and are anchored to the right
+		// edge of their column - the slack goes to the gap after the label instead
+		// of stretching the control across the whole aside.
 		gbc.gridy = 0;
 		gbc.gridx = 0;
 		gbc.weightx = 0;
 		asideContent.add(levelLabel, gbc);
 		gbc.gridx = 1;
 		gbc.weightx = 1;
+		gbc.fill = java.awt.GridBagConstraints.NONE;
+		gbc.anchor = java.awt.GridBagConstraints.LINE_END;
+		levelComboBox.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.TOGGLE_WIDTH, levelComboBox.getPreferredSize().height));
 		asideContent.add(levelComboBox, gbc);
 		gbc.gridy++;
 		gbc.gridx = 0;
 		gbc.weightx = 0;
+		gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+		gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
 		asideContent.add(scoreLabel, gbc);
 		gbc.gridx = 1;
 		gbc.weightx = 1;
+		gbc.fill = java.awt.GridBagConstraints.NONE;
+		gbc.anchor = java.awt.GridBagConstraints.LINE_END;
+		scoreTextField.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.NUMERIC_INPUT_WIDTH, scoreTextField.getPreferredSize().height));
 		asideContent.add(scoreTextField, gbc);
+		gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+		gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
 
 		gbc.gridy++;
 		gbc.gridx = 0;

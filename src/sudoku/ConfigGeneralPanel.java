@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import sudoku.ui.UiMetrics;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -188,11 +189,16 @@ public class ConfigGeneralPanel extends javax.swing.JPanel {
 				.addGroup(jPanel2Layout.createSequentialGroup().addGap(10, 10, 10)
 						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(localLabel).addComponent(lookAndFeelLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						// UiMetrics (1.10): the toggles keep the standard width and the gap
+						// after the label takes the slack, so they stay anchored right
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(localComboBox, 0, 120, Short.MAX_VALUE)
-								.addComponent(lookAndFeelComboBox, 0, 120, Short.MAX_VALUE))
-						.addGap(10, 10, 10))
+								.addComponent(localComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.TOGGLE_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(lookAndFeelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.TOGGLE_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addGap(UiMetrics.BULLET_INSET, UiMetrics.BULLET_INSET, UiMetrics.BULLET_INSET))
 				.addGroup(jPanel2Layout.createSequentialGroup().addGroup(jPanel2Layout
 						.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 						.addGroup(jPanel2Layout.createSequentialGroup().addContainerGap()
@@ -204,7 +210,8 @@ public class ConfigGeneralPanel extends javax.swing.JPanel {
 										.addGroup(jPanel2Layout.createSequentialGroup().addComponent(fontSizeLabel)
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 												.addComponent(fontSizeTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
-														55, javax.swing.GroupLayout.PREFERRED_SIZE))
+														UiMetrics.NUMERIC_INPUT_WIDTH,
+														javax.swing.GroupLayout.PREFERRED_SIZE))
 										.addComponent(showColorKuCheckBox))))
 						.addContainerGap()));
 		jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -316,8 +323,8 @@ public class ConfigGeneralPanel extends javax.swing.JPanel {
 						.addComponent(shiftKeyCheckBox).addComponent(toggleFilterAndOrCheckBox)
 						.addComponent(deleteCursorAfterCheckBox)
 						.addGroup(jPanel4Layout.createSequentialGroup().addGap(21, 21, 21)
-								.addComponent(deleteCursorAfterMsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 51,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(deleteCursorAfterMsTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.NUMERIC_INPUT_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(jLabel1))
 						.addComponent(singleClickModeCheckBox).addComponent(onlySmallFiltersCheckBox)
@@ -384,7 +391,10 @@ public class ConfigGeneralPanel extends javax.swing.JPanel {
 								.addComponent(resetButton)))
 				.addContainerGap()));
 
-		layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] { jPanel2, jPanel4 });
+		// UiMetrics (1.10): the bullets are no longer forced to the same height.
+		// "Startup" has half the rows of "Appearance/Behaviour"; linking them left
+		// ~100px of dead space inside its border, which is the "viñeta demasiado
+		// extendida" the owner reported. Each bullet is now as tall as its content.
 	}
 
 	private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {

@@ -27,6 +27,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import sudoku.ui.UiMetrics;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
@@ -174,90 +175,120 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 
 		extremeTextField.setEditable(false);
 
-		easyFGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		easyFGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		easyFGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		easyFGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		easyFGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		easyFGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		easyFGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				easyFGButtonActionPerformed(evt);
 			}
 		});
 
-		mediumFGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		mediumFGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		mediumFGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		mediumFGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		mediumFGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		mediumFGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		mediumFGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				mediumFGButtonActionPerformed(evt);
 			}
 		});
 
-		hardFGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		hardFGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		hardFGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		hardFGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		hardFGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		hardFGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		hardFGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				hardFGButtonActionPerformed(evt);
 			}
 		});
 
-		unfairFGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		unfairFGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		unfairFGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		unfairFGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		unfairFGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		unfairFGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		unfairFGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				unfairFGButtonActionPerformed(evt);
 			}
 		});
 
-		extremeFGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		extremeFGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		extremeFGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		extremeFGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		extremeFGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		extremeFGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		extremeFGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				extremeFGButtonActionPerformed(evt);
 			}
 		});
 
-		easyBGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		easyBGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		easyBGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		easyBGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		easyBGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		easyBGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		easyBGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				easyBGButtonActionPerformed(evt);
 			}
 		});
 
-		mediumBGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		mediumBGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		mediumBGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		mediumBGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		mediumBGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		mediumBGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		mediumBGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				mediumBGButtonActionPerformed(evt);
 			}
 		});
 
-		hardBGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		hardBGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		hardBGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		hardBGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		hardBGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		hardBGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		hardBGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				hardBGButtonActionPerformed(evt);
 			}
 		});
 
-		unfairBGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		unfairBGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		unfairBGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		unfairBGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		unfairBGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		unfairBGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		unfairBGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				unfairBGButtonActionPerformed(evt);
 			}
 		});
 
-		extremeBGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		extremeBGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		extremeBGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		extremeBGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		extremeBGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		extremeBGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		extremeBGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				extremeBGButtonActionPerformed(evt);
@@ -266,9 +297,12 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 
 		incompleteLabel.setText("jLabel1"); // NOI18N
 
-		incompleteFGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		incompleteFGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		incompleteFGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		incompleteFGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		incompleteFGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		incompleteFGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		incompleteFGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				incompleteFGButtonActionPerformed(evt);
@@ -277,9 +311,12 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 
 		jTextField1.setEditable(false);
 
-		incompleteBGButton.setMaximumSize(new java.awt.Dimension(60, 20));
-		incompleteBGButton.setMinimumSize(new java.awt.Dimension(60, 20));
-		incompleteBGButton.setPreferredSize(new java.awt.Dimension(60, 20));
+		incompleteBGButton.setMaximumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		incompleteBGButton.setMinimumSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
+		incompleteBGButton.setPreferredSize(
+				new java.awt.Dimension(UiMetrics.COLOR_BUTTON_WIDTH, UiMetrics.COLOR_BUTTON_HEIGHT));
 		incompleteBGButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				incompleteBGButtonActionPerformed(evt);
@@ -293,32 +330,39 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(easyLabel).addComponent(mediumLabel).addComponent(hardLabel)
 								.addComponent(unfairLabel).addComponent(extremeLabel).addComponent(incompleteLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						// UiMetrics (1.10): the gap after the labels takes the slack, so the
+						// inputs and the swatches sit at the right edge of the bullet
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addGroup(jPanel1Layout.createSequentialGroup()
 										.addComponent(unfairTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(unfairFGButton, 0, 0, Short.MAX_VALUE))
+										.addComponent(unfairFGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))
 								.addGroup(jPanel1Layout.createSequentialGroup()
 										.addComponent(hardTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(hardFGButton, 0, 0, Short.MAX_VALUE))
+										.addComponent(hardFGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))
 								.addGroup(jPanel1Layout.createSequentialGroup()
 										.addComponent(mediumTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(mediumFGButton, 0, 0, Short.MAX_VALUE))
+										.addComponent(mediumFGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))
 								.addGroup(jPanel1Layout.createSequentialGroup()
-										.addComponent(easyTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 57,
+										.addComponent(easyTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.NUMERIC_INPUT_WIDTH,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(easyFGButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
-												Short.MAX_VALUE))
+										.addComponent(easyFGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))
 								.addGroup(jPanel1Layout.createSequentialGroup()
 										.addGroup(jPanel1Layout
 												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,19 +375,25 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 										.addGroup(jPanel1Layout
 												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(incompleteFGButton,
-														javax.swing.GroupLayout.PREFERRED_SIZE, 25, Short.MAX_VALUE)
-												.addComponent(extremeFGButton, 0, 0, Short.MAX_VALUE))))
+												.addComponent(incompleteFGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addComponent(extremeFGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))))
 						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(extremeBGButton, 0, 25, Short.MAX_VALUE)
-								.addComponent(unfairBGButton, 0, 25, Short.MAX_VALUE)
-								.addComponent(hardBGButton, 0, 25, Short.MAX_VALUE)
-								.addComponent(mediumBGButton, 0, 25, Short.MAX_VALUE)
-								.addComponent(easyBGButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, Short.MAX_VALUE)
-								.addComponent(incompleteBGButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
-										Short.MAX_VALUE))
-						.addGap(42, 42, 42)));
+								.addComponent(extremeBGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(unfairBGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(hardBGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(mediumBGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(easyBGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(incompleteBGButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+								UiMetrics.COLOR_BUTTON_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addContainerGap()));
 
 		jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] { easyTextField,
 				extremeTextField, hardTextField, jTextField1, mediumTextField, unfairTextField });
@@ -510,7 +560,8 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 										.addComponent(printSmallFontLabel).addComponent(printLargeFontLabel)
 										.addComponent(candidatesFontLabel).addComponent(valuesFontLabel))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 										.addComponent(valuesButton).addComponent(candidatesButton)
 										.addComponent(printLargeButton).addComponent(printSmallButton)))
@@ -518,9 +569,11 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 										.addComponent(valueFactorLabel).addComponent(candidatesFactorLabel)
 										.addComponent(hintFactorLabel).addComponent(boxFactorLabel))
-								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addComponent(boxFactorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 21,
+										.addComponent(boxFactorTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.NUMERIC_INPUT_WIDTH,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addComponent(hintFactorTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
@@ -528,9 +581,10 @@ public class ConfigLevelFontPanel extends javax.swing.JPanel {
 										.addComponent(candidateFactorTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addComponent(valueFactorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 60,
+										.addComponent(valueFactorTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.NUMERIC_INPUT_WIDTH,
 												javax.swing.GroupLayout.PREFERRED_SIZE))))
-						.addContainerGap(33, Short.MAX_VALUE)));
+						.addContainerGap()));
 
 		jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] { boxFactorTextField,
 				candidateFactorTextField, hintFactorTextField, valueFactorTextField });

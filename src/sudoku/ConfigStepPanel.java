@@ -19,6 +19,8 @@
 
 package sudoku;
 
+import sudoku.ui.UiMetrics;
+
 /**
  *
  * @author hobiwan
@@ -177,13 +179,20 @@ public class ConfigStepPanel extends javax.swing.JPanel {
 										.addGroup(tablingPanelLayout
 												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 												.addComponent(maxTableEntryLengthLabel).addComponent(lookAheadLabel))
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										// UiMetrics (1.10): these two were the "inputs muy largos" - they
+										// spanned the whole bullet. Standard numeric width, anchored right
+										// like the toggles of this tab, which are the reference.
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 										.addGroup(tablingPanelLayout
 												.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-												.addComponent(lookAheadTextField, javax.swing.GroupLayout.DEFAULT_SIZE,
-														158, Short.MAX_VALUE)
+												.addComponent(lookAheadTextField, javax.swing.GroupLayout.PREFERRED_SIZE,
+														UiMetrics.NUMERIC_INPUT_WIDTH,
+														javax.swing.GroupLayout.PREFERRED_SIZE)
 												.addComponent(maxTableEntryLengthTextField,
-														javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)))
+														javax.swing.GroupLayout.PREFERRED_SIZE,
+														UiMetrics.NUMERIC_INPUT_WIDTH,
+														javax.swing.GroupLayout.PREFERRED_SIZE)))
 								.addGroup(tablingPanelLayout.createSequentialGroup().addGap(10, 10, 10)
 										.addComponent(onlyOneChainCheckBox))
 								.addGroup(tablingPanelLayout.createSequentialGroup().addContainerGap()
