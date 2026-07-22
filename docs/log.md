@@ -9,20 +9,36 @@ M/L/H/S/T-Wings y ALS-W-Wing/Ext-SDC/AHS. Prompt archivado verbatim en
 `docs/milestones/1.9.md`. Cinco commits lógicos: desglose ExtUR / carpetas / buscador /
 toggle / popups.
 
-**1. Desglose Extended UR (T1/T2).** La entrada única `EXTENDED_UR` se desglosó en
-`EXTENDED_UR_TYPE_1` (guardianes en una sola celda → strip del triple) y `_TYPE_2`
-(guardián de dígito uniforme → eliminación en celdas que ven todos), cada uno con
-StepConfig propio (library codes 0625/0626, tail libre del bloque 06xx). El genérico
-`EXTENDED_UR` (code 0621) queda como ancla taxonómica SIN StepConfig — mismo patrón que
-`KRAKEN_FISH` en el 1.5. `getStep(EXTENDED_UR)` busca ambos subtipos (así las fixtures
-`:0621:` siguen andando); el solver filtra por tipo pedido vía `extUrTypeFilter` en
-`UniquenessPackSolver` (la ladder de guardianes ahora emite el subtipo por rama). Honrado
-por solver, all-steps (`FindAllSteps` chequea los dos subtipos y `filterSteps` filtra por
-tipo concreto), progress y training. Migración one-shot de hcfg viejos
-(`Options.migrateExtendedUrStepConfig`, espejo de la de kraken). Registro: filas para los
-dos subtipos (subsumidos por el ancla, que sigue subsumido por MUG); `MODERN_TECHNIQUES` y
-la ficha genérica actualizadas. Formatter: no repite " Type 1/2" (ya viene en el display
-name) y agrega la justificación de los subtipos.
+**1. Desglose de TODO el pack de unicidad (T1/T2).** Corrección post-cierre pedida por el
+dueño: no era solo Extended UR — todas las técnicas del pack que usan la escalera de
+guardianes se desglosan. Es decir **Unique Loop, Extended UR, BUG-Lite y MUG**, cada una en
+`_TYPE_1` (guardianes en una sola celda → strip del contenido nominal) y `_TYPE_2` (guardián
+de dígito uniforme → eliminación en las celdas que ven todos), con StepConfig propio (library
+codes 0625/0626 ExtUR, 0627/0628 UL, 0629/0630 BUG-Lite, 0631/0632 MUG — tail libre del
+bloque 06xx). **Reverse BUG NO se desglosa**: no pasa por la escalera de guardianes (emite
+directo por el teorema n/n/n), no tiene subtipos. Los genéricos (`UNIQUE_LOOP`, `EXTENDED_UR`,
+`BUG_LITE`, `MUG`) quedan como anclas taxonómicas SIN StepConfig — mismo patrón que
+`KRAKEN_FISH`. `getStep(anchor)` busca ambos subtipos (así las fixtures `:0620/0621/0622/0624:`
+siguen andando); el solver filtra por tipo pedido vía un `typeFilter` general en
+`UniquenessPackSolver` (la escalera recibe `type1/type2/baseType` y emite el subtipo por
+rama). Honrado por solver, all-steps (`FindAllSteps` chequea los subtipos y `filterSteps`
+filtra por tipo concreto), progress y training. Migración one-shot de hcfg viejos
+generalizada (`Options.migrateSplitStepConfig` + `migrateUniquenessPackStepConfigs`, espejo de
+kraken); `FindAllSteps.setTestType` expande cualquier ancla a sus dos subtipos con un helper
+`expandSplit`. Registro: filas para los 6 subtipos (subsumidos por su ancla), anclas en
+`CONFIGLESS_ROWS`, `MODERN_TECHNIQUES` con los subtipos. Formatter: `isSplitSubtype`/
+`isUniqueLoop` generalizan el manejo (no repite " Type 1/2", ya viene en el display name;
+justificación por familia). Snapshots: solo etiqueta — ExtUR (2 pasos, Type 1) y BUG-Lite
+(1 paso, Type 2); verificado byte a byte normalizando ambos lados. Tests parametrizados
+sobre las 4 (migración + filtro por fixtures).
+
+**MUG renombrado.** El nombre real de MUG es **"Multivalue Universal Grave"** (no "Minimal
+Unavoidable Grouping", que era erróneo): corregido en intl, registro (alias "MUG"),
+fixture y spec §5.
+
+**Título de ventana.** `MainFrame.VERSION` pasa a `Hodoku - v2.3.2 (Enhanced v1.9)` vía
+`MainFrame.ENHANCED_VERSION="1.9"` (base upstream 2.3.2 intacta). Regla nueva en CLAUDE.md:
+bumpear `ENHANCED_VERSION` al número del milestone en CADA cierre.
 
 **2. Modelo de carpetas por familia.** Las 4 vistas de árbol de config (solver, all-steps,
 progress, training) agrupan por la familia del registro en vez de la `SolutionCategory`
@@ -90,14 +106,17 @@ sin tocar.
 ### Resumen para el dueño del proyecto
 
 Este milestone fue de ordenar y pulir la interfaz, sin tocar nada del "cerebro" que resuelve
-sudokus. Cuatro cosas: (1) el "Extended UR" ahora aparece separado en Tipo 1 y Tipo 2, como
-ya pasa con los otros rectángulos, así podés prenderlos por separado. (2) Las técnicas se
-agrupan en carpetas por familia en las cuatro pantallas de configuración: creamos la carpeta
-"Oddagons" (Broken Wing, Bivalue Oddagon, Tridagon juntos) y una sola carpeta "Uniqueness"
-con todo lo de unicidad. (3) El buscador que ya estaba en la pantalla del solver ahora
-también funciona en Progress y en Training. (4) La pantalla de "todos los pasos posibles"
-ganó el botón para ver la lista plana o las carpetas, y recuerda cuál elegiste. Y de yapa:
-los diálogos ahora reaparecen donde los dejaste, no siempre en el mismo lugar. El editor de
+sudokus. (1) Todas las técnicas de unicidad del "pack" (Unique Loop, Extended UR, BUG-Lite y
+MUG) ahora aparecen separadas en Tipo 1 y Tipo 2, como ya pasa con los rectángulos clásicos,
+así podés prenderlas por separado (Reverse BUG no tiene esa división por su naturaleza). (2)
+Las técnicas se agrupan en carpetas por familia en las cuatro pantallas de configuración:
+creamos la carpeta "Oddagons" (Broken Wing, Bivalue Oddagon, Tridagon juntos) y una sola
+carpeta "Uniqueness" con todo lo de unicidad. (3) El buscador que ya estaba en la pantalla
+del solver ahora también funciona en Progress y en Training. (4) La pantalla de "todos los
+pasos posibles" ganó el botón para ver la lista plana o las carpetas, y recuerda cuál
+elegiste. Además: los diálogos ahora reaparecen donde los dejaste; le corregimos el nombre a
+MUG (ahora "Multivalue Universal Grave", su nombre real); y el título de la ventana ahora
+dice "Hodoku - v2.3.2 (Enhanced v1.9)" y se va a actualizar en cada milestone. El editor de
 colores por estrategia que charlamos queda anotado como próximo, para cuando quieras.
 
 ## 1.8 — Confiabilidad (Parte A) + Uniqueness Pack (Parte B) — 2026-07-21

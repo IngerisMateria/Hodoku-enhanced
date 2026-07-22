@@ -69,10 +69,13 @@ del upstream 2.2.0 de hobiwan).
 - [x] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG
       (+ Parte A: confiabilidad de find-all-steps y config). MUG enabled=false
       (no cosechable, spec §5); UL/Reverse BUG custodiados por fixtures.
-- [x] 1.9 Consolidación UI y taxonomía: desglose ExtUR T1/T2, modelo de carpetas por
-      familia (Oddagons, Uniqueness…) en las 4 superficies, buscador en Progress/Training,
-      toggle lista/carpeta en all-steps, memoria de posición de popups (P-003). Cero
-      teoría/álgebra nueva; cero cambios de solve path.
+- [x] 1.9 Consolidación UI y taxonomía: desglose T1/T2 de TODO el pack de unicidad con
+      escalera de guardianes (Unique Loop, Extended UR, BUG-Lite, MUG; Reverse BUG no
+      tiene subtipos), modelo de carpetas por familia (Oddagons, Uniqueness…) en las 4
+      superficies, buscador en Progress/Training, toggle lista/carpeta en all-steps,
+      memoria de posición de popups (P-003), MUG renombrado a "Multivalue Universal
+      Grave", título de ventana "Enhanced vX.X". Cero teoría/álgebra nueva; cero cambios
+      de solve path (deducciones idénticas, solo cambian etiquetas).
 - [ ] 1.10 3D Medusa + GEM (+ hallazgo B: coloring→generador) ← PRÓXIMO
 - [ ] 1.11 Fireworks*
 - [ ] 2.x Arco multi-sector*: SK-Loop, MSLS, SET
@@ -120,3 +123,7 @@ detalle de este roadmap).
 - Al cerrar un milestone: tildarlo acá y anotar desvíos o hallazgos en `docs/log.md`.
 - Todo cierre de milestone incluye, además del log técnico, un resumen de 3-5 líneas en
   lenguaje llano para el dueño del proyecto (sin jerga de build ni de Java).
+- Versión del título: EN CADA MILESTONE se bumpea `MainFrame.ENHANCED_VERSION` al número
+  del milestone (el título de la ventana, el About y el banner de consola muestran
+  `Hodoku - v2.3.2 (Enhanced vX.X)`; la base upstream 2.3.2 no cambia). Es parte del
+  criterio de cierre.
