@@ -29,6 +29,8 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -58,10 +60,77 @@ public class ConfigTrainigPanel extends javax.swing.JPanel {
 		stepTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		stepTree.putClientProperty("JTree.lineStyle", "Angled");
 
+		// modern fork (milestone 1.9): the shared config search field, over the
+		// same registry predicate as the solver (name + aliases + description).
+		// Training has no reordering, so nothing to block while filtered.
+		initSearchField();
+
 		// Alle Werte aus den Default-Optionen setzen
 		initAll(false);
 
 		checkButtons(false);
+	}
+
+	/** search field over the technique list/tree (modern fork, milestone 1.9) */
+	private javax.swing.JTextField searchField;
+
+	/** Builds the search field and adds it to the list/tree toolbar. */
+	private void initSearchField() {
+		searchField = new javax.swing.JTextField();
+		searchField.setToolTipText(java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel")
+				.getString("ConfigSolverPanel.searchField.tooltip"));
+		searchField.setMaximumSize(
+				new java.awt.Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
+		searchField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				applyFilter();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				applyFilter();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				applyFilter();
+			}
+		});
+		jToolBar1.addSeparator();
+		jToolBar1.add(searchField);
+	}
+
+	/**
+	 * Reloads the list with the enabled steps matching the search filter (name +
+	 * aliases + description via the registry) and keeps the tree in sync.
+	 * Selection survives if the selected technique still matches.
+	 */
+	private void applyFilter() {
+		if (model == null || steps == null) {
+			return;
+		}
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		String query = searchField != null ? searchField.getText() : null;
+		StepConfig selected = stepList.getSelectedValue();
+		model.removeAllElements();
+		for (int i = 0; i < steps.length; i++) {
+			if (!steps[i].isEnabled()) {
+				// only active steps (training needs an enabled technique)
+				continue;
+			}
+			if (registry.matches(steps[i].getType(), query)) {
+				model.addElement(steps[i]);
+			}
+		}
+		if (selected != null && model.contains(selected)) {
+			stepList.setSelectedValue(selected, true);
+		} else {
+			stepList.setSelectedIndex(-1);
+			stepList.ensureIndexIsVisible(0);
+		}
+		stepList.repaint();
+		buildTree();
 	}
 
 	/**
@@ -284,31 +353,25 @@ public class ConfigTrainigPanel extends javax.swing.JPanel {
 			steps = Options.getInstance().copyStepConfigs(Options.getInstance().solverSteps, true, false, false, false);
 		}
 
-		// Liste neu laden
-		model.removeAllElements();
-		for (int i = 0; i < steps.length; i++) {
-			if (!steps[i].isEnabled()) {
-				// only active steps!
-				continue;
-			}
-			model.addElement(steps[i]);
-		}
-		stepList.setSelectedIndex(-1);
-		stepList.ensureIndexIsVisible(0);
-		stepList.repaint();
-
-		// Baum neu laden
-		buildTree();
+		// Liste und Baum neu laden (modern fork, milestone 1.9: through the search
+		// filter)
+		applyFilter();
 
 		chosenTextArea.setText(Options.getInstance().getTrainingStepsString(steps, false));
 	}
 
 	public void buildTree() {
+		// modern fork (milestone 1.9): honor the search filter
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		String query = searchField != null ? searchField.getText() : null;
 		CheckNode root = new CheckNode();
 		for (int i = 0; i < steps.length; i++) {
 			if (!steps[i].isEnabled()) {
 				// allow only steps, that are enabled (or we would never
 				// find a suitable puzzle)
+				continue;
+			}
+			if (!registry.matches(steps[i].getType(), query)) {
 				continue;
 			}
 			// modern fork (milestone 1.9): group by the registry family (folder

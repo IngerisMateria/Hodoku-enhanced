@@ -39,6 +39,8 @@ import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -87,10 +89,49 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 		stepTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		stepTree.putClientProperty("JTree.lineStyle", "Angled");
 
+		// modern fork (milestone 1.9): the shared config search field, over the
+		// same registry predicate as the solver (name + aliases + description)
+		initSearchField();
+
 		// Alle Werte aus den Default-Optionen setzen
 		initAll(false);
 
 		checkButtons(true);
+	}
+
+	/** search field over the technique list/tree (modern fork, milestone 1.9) */
+	private javax.swing.JTextField searchField;
+
+	/** true while the search filter hides part of the technique list */
+	private boolean isFiltered() {
+		return searchField != null && !searchField.getText().trim().isEmpty();
+	}
+
+	/** Builds the search field and adds it to the list/tree toolbar. */
+	private void initSearchField() {
+		searchField = new javax.swing.JTextField();
+		searchField.setToolTipText(java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel")
+				.getString("ConfigSolverPanel.searchField.tooltip"));
+		searchField.setMaximumSize(
+				new java.awt.Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
+		searchField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				resetView();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				resetView();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				resetView();
+			}
+		});
+		jToolBar1.addSeparator();
+		jToolBar1.add(searchField);
 	}
 
 	/**
@@ -316,15 +357,12 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 			if (stepList.getSelectedValue() == null) {
 				return;
 			}
-			// "Nach oben" und "Nach unten" Buttons anpassen
-			upButton.setEnabled(true);
-			downButton.setEnabled(true);
-			if (stepList.getSelectedIndex() == 0) {
-				upButton.setEnabled(false);
-			}
-			if (stepList.getSelectedIndex() >= steps.length - 1) {
-				downButton.setEnabled(false);
-			}
+			// "Nach oben" und "Nach unten" Buttons anpassen (modern fork,
+			// milestone 1.9: no reordering while the search filter is active — the
+			// filtered indices do not match the progress order)
+			boolean canReorder = !isFiltered();
+			upButton.setEnabled(canReorder && stepList.getSelectedIndex() > 0);
+			downButton.setEnabled(canReorder && stepList.getSelectedIndex() < steps.length - 1);
 		}
 	}// GEN-LAST:event_stepListValueChanged
 
@@ -484,6 +522,11 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 
 	@Override
 	public void moveStep(int fromIndex, int toIndex) {
+		if (isFiltered()) {
+			// modern fork (milestone 1.9): while the search filter is active the
+			// model indices do not match the progress order — no reordering
+			return;
+		}
 		// System.out.println("moving: " + fromIndex + "/" + toIndex);
 		boolean up = fromIndex < toIndex ? true : false;
 		int anz = Math.abs(fromIndex - toIndex);
@@ -502,6 +545,11 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 
 	@Override
 	public void setDropLocation(int index, StepConfig object) {
+		if (isFiltered()) {
+			// modern fork (milestone 1.9): no drag reordering while filtered
+			dropIndex = -1;
+			return;
+		}
 		dropIndex = index;
 		if (index != -1) {
 			if (index <= stepList.getFirstVisibleIndex() + 1) {
@@ -621,13 +669,23 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 	 * Rebuilds the list and the tree
 	 */
 	private void resetView() {
-		// Liste neu laden
+		// Liste neu laden (modern fork, milestone 1.9: through the search filter,
+		// keeping the selection if the selected technique still matches)
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		String query = searchField != null ? searchField.getText() : null;
+		StepConfig selected = stepList.getSelectedValue();
 		model.removeAllElements();
 		for (StepConfig step : progressSurfaceSteps(steps)) {
-			model.addElement(step);
+			if (registry.matches(step.getType(), query)) {
+				model.addElement(step);
+			}
 		}
-		stepList.setSelectedIndex(-1);
-		stepList.ensureIndexIsVisible(0);
+		if (selected != null && model.contains(selected)) {
+			stepList.setSelectedValue(selected, true);
+		} else {
+			stepList.setSelectedIndex(-1);
+			stepList.ensureIndexIsVisible(0);
+		}
 		stepList.repaint();
 
 		// Baum neu laden
@@ -635,8 +693,14 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 	}
 
 	public void buildTree() {
+		// modern fork (milestone 1.9): honor the search filter
+		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		String query = searchField != null ? searchField.getText() : null;
 		CheckNode root = new CheckNode();
 		for (StepConfig step : progressSurfaceSteps(steps)) {
+			if (!registry.matches(step.getType(), query)) {
+				continue;
+			}
 			// modern fork (milestone 1.9): group by the registry family (folder
 			// model), not the legacy SolutionCategory
 			solver.modern.registry.Family folder = solver.modern.registry.TechniqueFolders.folderOf(step.getType());
