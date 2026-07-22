@@ -81,33 +81,75 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 			alsChainLengthComboBox.addItem(alsChainLengths[i]);
 		}
 
-		// modern fork (milestone 1.5): search field over the technique tree,
-		// same predicate as the solver list (name + aliases + description);
-		// mounted as the scroll pane's column header to keep the generated
-		// layout untouched
+		// modern fork (milestone 1.9): the All Possible Steps tab gains a flat
+		// list view and the list/folder toggle other tabs already have, plus the
+		// 1.5 search field. Both live in a toolbar mounted as the scroll pane's
+		// column header, so the generated GroupLayout stays untouched; the scroll
+		// pane's viewport switches between the list and the tree.
+		stepList = new javax.swing.JList<StepConfig>();
+		stepList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+		model = new javax.swing.DefaultListModel<StepConfig>();
+		stepList.setModel(model);
+		stepList.setCellRenderer(new CheckBoxRenderer());
+		stepList.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent evt) {
+				stepListMouseClicked(evt);
+			}
+		});
+
 		searchField = new javax.swing.JTextField();
 		searchField.setToolTipText(java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel")
 				.getString("ConfigSolverPanel.searchField.tooltip"));
+		searchField.setMaximumSize(
+				new java.awt.Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
 		searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
 			@Override
 			public void insertUpdate(javax.swing.event.DocumentEvent e) {
-				buildTree();
+				refreshViews();
 			}
 
 			@Override
 			public void removeUpdate(javax.swing.event.DocumentEvent e) {
-				buildTree();
+				refreshViews();
 			}
 
 			@Override
 			public void changedUpdate(javax.swing.event.DocumentEvent e) {
-				buildTree();
+				refreshViews();
 			}
 		});
-		jScrollPane1.setColumnHeaderView(searchField);
+
+		listButton = new javax.swing.JToggleButton(
+				new javax.swing.ImageIcon(getClass().getResource("/img/listview16b.png")));
+		listButton.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				checkButtons(true);
+			}
+		});
+		treeButton = new javax.swing.JToggleButton(
+				new javax.swing.ImageIcon(getClass().getResource("/img/treeview16b.png")));
+		treeButton.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				checkButtons(false);
+			}
+		});
+		javax.swing.JToolBar viewToolBar = new javax.swing.JToolBar();
+		viewToolBar.setFloatable(false);
+		viewToolBar.add(listButton);
+		viewToolBar.add(treeButton);
+		viewToolBar.addSeparator();
+		viewToolBar.add(searchField);
+		jScrollPane1.setColumnHeaderView(viewToolBar);
 
 		// Alle Werte aus den Default-Optionen setzen
 		initAll(false);
+
+		// restore the remembered view (folders by default)
+		listView = !Options.getInstance().isAllStepsShowList(); // force a switch in checkButtons
+		checkButtons(Options.getInstance().isAllStepsShowList());
 	}
 
 	/**
@@ -668,8 +710,8 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 		}
 		setCandidateLabels();
 
-		// Baum neu laden
-		buildTree();
+		// Liste und Baum neu laden (modern fork, milestone 1.9)
+		refreshViews();
 	}
 
 	private void setCandidateLabels() {
@@ -715,24 +757,12 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 	}
 
 	public void buildTree() {
-		// modern fork (milestone 1.5): honor the search filter
-		solver.modern.registry.TechniqueRegistry registry = solver.modern.registry.TechniqueRegistry.getInstance();
+		// modern fork (milestone 1.9): honor the search filter and the shared
+		// list/tree exclusions (fish are configured via the fish panels)
 		String query = searchField != null ? searchField.getText() : null;
 		CheckNode root = new CheckNode();
 		for (int i = 0; i < steps.length; i++) {
-			if (!registry.matches(steps[i].getType(), query)) {
-				continue;
-			}
-			// we dont show: all kinds of fish and Brute Force
-			if (steps[i].getCategory() == SolutionCategory.BASIC_FISH
-					|| steps[i].getCategory() == SolutionCategory.FINNED_BASIC_FISH
-					|| steps[i].getCategory() == SolutionCategory.FINNED_FRANKEN_FISH
-					|| steps[i].getCategory() == SolutionCategory.FINNED_MUTANT_FISH
-					|| steps[i].getCategory() == SolutionCategory.FRANKEN_FISH
-					|| steps[i].getCategory() == SolutionCategory.MUTANT_FISH) {
-				continue;
-			}
-			if (steps[i].getType() == SolutionType.BRUTE_FORCE) {
+			if (!isListedStep(steps[i], query)) {
 				continue;
 			}
 			// modern fork (milestone 1.9): group by the registry family (folder
@@ -774,8 +804,132 @@ public class ConfigFindAllStepsPanel extends javax.swing.JPanel {
 		stepTree.setRowHeight(-1);
 	}
 
-	/** search field over the technique tree (modern fork, milestone 1.5) */
+	// ------------------------------------------------------------------
+	// modern fork (milestone 1.9): flat list view + list/folder toggle
+	// ------------------------------------------------------------------
+
+	/** search field over the technique list/tree (modern fork, milestone 1.5) */
 	private javax.swing.JTextField searchField;
+	/** the flat list view (milestone 1.9) */
+	private javax.swing.JList<StepConfig> stepList;
+	private javax.swing.DefaultListModel<StepConfig> model;
+	private javax.swing.JToggleButton listButton;
+	private javax.swing.JToggleButton treeButton;
+	/** deliberately wrong initial value so the first checkButtons() switches */
+	private boolean listView;
+
+	/**
+	 * True if the step belongs in the list/tree of this tab: it matches the
+	 * search filter, is not a fish (those are configured via the fish panels)
+	 * and is not Brute Force.
+	 */
+	private boolean isListedStep(StepConfig sc, String query) {
+		if (!solver.modern.registry.TechniqueRegistry.getInstance().matches(sc.getType(), query)) {
+			return false;
+		}
+		SolutionCategory cat = sc.getCategory();
+		if (cat == SolutionCategory.BASIC_FISH || cat == SolutionCategory.FINNED_BASIC_FISH
+				|| cat == SolutionCategory.FINNED_FRANKEN_FISH || cat == SolutionCategory.FINNED_MUTANT_FISH
+				|| cat == SolutionCategory.FRANKEN_FISH || cat == SolutionCategory.MUTANT_FISH) {
+			return false;
+		}
+		return sc.getType() != SolutionType.BRUTE_FORCE;
+	}
+
+	/** Rebuilds both views from the current steps and search filter. */
+	private void refreshViews() {
+		reloadList();
+		buildTree();
+	}
+
+	/** Reloads the flat list with the steps matching the filter/exclusions. */
+	private void reloadList() {
+		if (model == null) {
+			return;
+		}
+		String query = searchField != null ? searchField.getText() : null;
+		StepConfig selected = stepList.getSelectedValue();
+		model.removeAllElements();
+		for (int i = 0; i < steps.length; i++) {
+			if (isListedStep(steps[i], query)) {
+				model.addElement(steps[i]);
+			}
+		}
+		if (selected != null && model.contains(selected)) {
+			stepList.setSelectedValue(selected, true);
+		} else {
+			stepList.setSelectedIndex(-1);
+		}
+		stepList.repaint();
+	}
+
+	/** A list click toggles the all-steps-enabled flag of the clicked step. */
+	private void stepListMouseClicked(java.awt.event.MouseEvent evt) {
+		int index = stepList.locationToIndex(evt.getPoint());
+		if (index >= 0 && index == stepList.getSelectedIndex()) {
+			StepConfig conf = stepList.getSelectedValue();
+			conf.setAllStepsEnabled(!conf.isAllStepsEnabled());
+			stepList.repaint();
+		}
+	}
+
+	/**
+	 * Switches between the flat list and the folder tree, mirroring the other
+	 * config tabs, and remembers the choice in {@link Options}.
+	 */
+	private void checkButtons(boolean setList) {
+		boolean changeView = listView != setList;
+		listView = setList;
+		Options.getInstance().setAllStepsShowList(setList);
+		if (listView) {
+			listButton.setSelected(true);
+			treeButton.setSelected(false);
+			if (changeView) {
+				reloadList();
+				jScrollPane1.setViewportView(stepList);
+			}
+			stepList.requestFocusInWindow();
+		} else {
+			listButton.setSelected(false);
+			treeButton.setSelected(true);
+			if (changeView) {
+				buildTree();
+				jScrollPane1.setViewportView(stepTree);
+			}
+			stepTree.requestFocusInWindow();
+		}
+	}
+
+	/** Checkbox renderer for the flat list (shows the all-steps-enabled flag). */
+	@SuppressWarnings("rawtypes")
+	private class CheckBoxRenderer extends javax.swing.JCheckBox implements javax.swing.ListCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public java.awt.Component getListCellRendererComponent(javax.swing.JList listBox, Object obj, int index,
+				boolean isSelected, boolean hasFocus) {
+			if (isSelected) {
+				java.awt.Color bg = javax.swing.UIManager.getColor("List.selectionBackground");
+				if (bg == null) {
+					bg = javax.swing.UIManager.getColor("List[Selected].textBackground");
+				}
+				java.awt.Color fg = javax.swing.UIManager.getColor("List.selectionForeground");
+				if (fg == null) {
+					fg = javax.swing.UIManager.getColor("List[Selected].textForeground");
+				}
+				setBackground(bg);
+				setForeground(fg);
+				setOpaque(true);
+			} else {
+				setBackground(javax.swing.UIManager.getColor("List.background"));
+				setForeground(javax.swing.UIManager.getColor("List.foreground"));
+				setOpaque(false);
+			}
+			setText(((StepConfig) obj).toString());
+			setSelected(((StepConfig) obj).isAllStepsEnabled());
+			return this;
+		}
+	}
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JCheckBox alsBiDirCheckBox;
