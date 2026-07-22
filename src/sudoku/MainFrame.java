@@ -111,7 +111,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 	 * milestone (see the work rules in CLAUDE.md); the base upstream version stays
 	 * 2.3.2. Change {@link #ENHANCED_VERSION} only.
 	 */
-	public static final String ENHANCED_VERSION = "1.9";
+	public static final String ENHANCED_VERSION = "1.10";
 	public static final String VERSION = "Hodoku - v2.3.2 (Enhanced v" + ENHANCED_VERSION + ")";
 
 	// public static final String BUILD = "Build 16";

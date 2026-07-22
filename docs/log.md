@@ -1,5 +1,135 @@
 # Log de milestones
 
+## 1.10 — Reestructuración de UI — 2026-07-22
+
+Milestone redefinido por el dueño (segunda vez seguida que el slot cambia de contenido): el
+1.10 iba a ser 3D Medusa + GEM, después pasó a ser el filtro de all-steps por celdas, y
+finalmente quedó como reestructuración de UI. El filtro se difirió a **P-010** con sus dos
+alternativas de interacción intactas, y **P-007** (agrupar el resultado del análisis por
+carpetas de familia) volvió a PENDIENTE remitida a P-010, porque viajaba plegada al filtro.
+Cero álgebra, cero funciones nuevas, cero cambios de solve path. Prompt archivado verbatim en
+`docs/milestones/1.10.md`. Cuatro commits lógicos: docs / toolbars / estándar visual / popups.
+
+**1. Toolbars configurables (P-009 Parte 1/2, extendida a las dos toolbars).** El dueño fijó
+el modelo: *"conjunto de botones disponibles; el usuario elige cuáles se muestran y en qué
+orden"*. Es un solo modelo que resuelve ocultar/reponer **y** reordenar — la misma lista leída
+de dos maneras, un botón quitado vuelve al pool. `sudoku.ui.ToolBarLayout` es data pura (sin
+Swing, testeable headless) con parse/format/mutación; `sudoku.ui.ToolBarItems` es el catálogo
+(ids estables = contrato de persistencia, grupo visual e icono por botón). Persistencia:
+`Options.toolBarMainItems` / `toolBarAllStepsItems`, formato `id=1,id=0,…`, vacío = defaults.
+**La migración es la propia semántica del parser**: ids desconocidos se descartan (botón que el
+fork sacó) e ids del catálogo que el string no menciona se agregan visibles (botón que el fork
+agregó), así que un hcfg viejo — que no tiene la clave — da exactamente la toolbar de siempre y
+no hace falta un paso de migración como el de kraken/uniqueness.
+
+- **Superior (`MainFrame`)**: se reconstruye el bloque de filtros (rojo/verde, 1-9, XY).
+  Se inserta a partir del índice de `jSeparator11`, no al final, porque los botones de hint
+  opcionales (`setShowHintButtonsInToolbar`) se agregan después del bloque y tienen que
+  seguir después. Los botones ocultos **solo salen del contenedor**: los objetos siguen vivos,
+  así que `check()`, los iconos ColorKu y el estado de filtro no se enteran de nada.
+- **All-steps (`AllStepsPanel`)**: `configureButton` + los 5 sort toggles. El separador **no**
+  es un ítem que el usuario ordene: se deriva del cambio de grupo (`ToolBarItems.groupOf`), así
+  que una toolbar reordenada no pierde el separador ni lo deja huérfano al final. Verificado:
+  con la config default el resultado es idéntico byte a byte a la toolbar hand-written.
+- **UI (`ConfigToolBarPanel`)**: pestaña **Toolbars** en preferences, dos listas
+  (disponibles | mostrados en orden) con Show/Hide y Move up/down, selector arriba para elegir
+  cuál de las dos toolbars se edita, Reset to Defaults. Muestra el **icono real** de cada
+  botón (escalado a 20px) porque son botones sin texto: una lista de nombres sola no diría cuál
+  es cuál. Honra el contrato A5 del 1.8 (apply-on-leave / refresh-on-enter).
+
+**2. Estándar visual de las pestañas (`sudoku.ui.UiMetrics`).** Un solo lugar donde el fork
+dice de qué tamaño es cada tipo de widget. Vocabulario del dueño, conservado tal cual en el
+código: **viñeta** = group box con `TitledBorder`; **toggle** = combo; **input** = campo de
+texto. La regla de anclaje es la que el dueño identificó como buena en la pestaña Steps: el
+control lleva ancho fijo y **el hueco que sigue a la etiqueta absorbe el sobrante**, así el
+control queda pegado al borde derecho de su viñeta y crece hacia la izquierda. En GroupLayout
+eso son dos cambios de argumento —
+`addPreferredGap(RELATED, DEFAULT_SIZE, Short.MAX_VALUE)` y
+`addComponent(c, PREFERRED_SIZE, <ancho>, PREFERRED_SIZE)` — y ningún cambio de estructura, que
+es lo más barato posible contra un layout frágil. Aplicado pestaña por pestaña con la suite
+corriendo entre cada una (como pidió el prompt) y captura de cada paso.
+
+Los tres hallazgos que valen la pena, porque explican bugs que se veían "raros" sin causa:
+
+- **Colors — el hueco del medio era un `linkSize`.** Un link de GroupLayout no solo iguala
+  tamaños: **fija** los componentes enlazados y les saca la capacidad de crecer. Las dos
+  viñetas de la columna izquierda estaban enlazadas, así que la columna se plantaba en su
+  ancho preferido y dejaba el agujero. Sin el link siguen igual de anchas entre sí (están en el
+  mismo parallel group) pero ahora siguen a la columna.
+- **All-steps — la viñeta de ALS** era 10px más corta porque arrastraba un `addGap(10,10,10)`
+  final que sus hermanas no tienen. Fuera.
+- **Level/Font — los 12 botones de color** tenían cada uno su propia constraint
+  (`0/0/MAX`, `0/25/MAX`, `PREFERRED/25/MAX`) más un `linkSize` que cubría solo 5 de ellos: de
+  ahí que cada fila tuviera un tamaño distinto. Todos a `COLOR_BUTTON_WIDTH/HEIGHT`.
+
+Resto: General (language/look-and-feel acotados y anclados; se saca el `linkSize` vertical que
+dejaba ~100px muertos dentro de "Startup"), Solver (level y score del aside con ancho estándar
+y anclados), All-steps (Type a `TOGGLE_WIDTH`, numéricos a `TOGGLE_WIDTH_COMPACT`, todos
+terminando en el mismo borde), Steps (**solo los inputs** — Entry size / Net depth iban de
+borde a borde; los toggles NO se tocan, son la referencia del estándar), Level/Font (scores y
+factores a `NUMERIC_INPUT_WIDTH`). Progress / Training / ColorKu sin cambios: no tienen toggles
+ni inputs que desalinear y el dueño pidió no forzar.
+
+**Excepción documentada**: el combo *"Show as"* del aside del solver queda ancho a propósito.
+Sus opciones son nombres de técnica de largo variable; acotarlo a 130px solo los truncaría. La
+regla quedó escrita en `UiMetrics`: el estándar aplica a toggles cuyas opciones son tokens
+cortos y fijos, no a los que eligen entre texto abierto.
+
+**3. Mínimo de los popups (`sudoku.ui.DialogMinimumSize`).** Un top-level de Swing no respeta
+el mínimo de lo que contiene: AWT deja arrastrar un diálogo hasta una franja y la UI interna,
+que sí tiene mínimo fijo, queda cortada en vez de reacomodarse. Decisión del dueño: no hacerlos
+responsive, frenar el achique donde el contenido deja de entrar. Se fija el mínimo de la
+ventana al mínimo del layout (`Window#getMinimumSize()` lo devuelve mientras nadie haya seteado
+uno), **acotado al tamaño empaquetado** para no agrandar ningún diálogo al abrirlo. Se aplica
+desde el listener global que ya existe de P-003 (1.9), que es el único lugar que ve todos los
+`java.awt.Dialog` de la app: cubre todos los popups sin editar clase por clase.
+
+Medido: ConfigDialog 556x643 contra 582x643 empaquetado — casi sin juego, por eso era el que
+peor se veía apretado; HistoryDialog 172x318, ExtendedPrintDialog 345x368, SetGivensDialog
+228x429, BackdoorSearchDialog 477x513, AboutDialog 333x336, ConfigTrainingDialog 355x424,
+RestoreSavePointDialog 172x244. Ninguno pide más de lo que ya ocupa. Quedan afuera a propósito
+los no redimensionables (no se pueden achicar) y los frames — misma excepción del 1.9.
+
+Verificación (capturas revisadas una por una):
+
+- (a) toolbar superior con XY adelante y los dígitos 5 y 7 fuera, **tras escribir y releer el
+  archivo de opciones** (o sea: tras cerrar y reabrir la app).
+- (b) toolbar de all-steps con el botón de config al final y "sort by cells" fuera, mismo
+  roundtrip. El separador se recolocó solo, delante del botón de config.
+- (c) Steps (referencia, intacta) + All-steps y Level/Font, que eran las feas, con viñeta,
+  toggle e input consistentes; más el aside del solver con una técnica seleccionada, para
+  confirmar que el cambio de GridBag no rompió la descripción ni el combo de nombres.
+- (d) ConfigDialog forzado a 320x240: sin piso queda cortado (se pierden la columna derecha y
+  los botones Ok/Cancel); con piso el mismo intento se planta en 556x643.
+- Matriz de config UX del 1.8: probe programático sobre el `ConfigDialog` real, **8/8** —
+  incluye los tres casos de la pestaña nueva (aplica al salir, reconstruye al entrar, toma un
+  cambio hecho desde afuera) y el testigo solver→training del 1.8.
+
+Tests: `ToolBarLayoutTest` (defaults, hide/show, bordes del reordenamiento, reset, roundtrip
+del formato, migración de ids, roundtrip por el hcfg) y `DialogMinimumSizeTest` (piso = mínimo
+del contenido, nunca mayor al empaquetado, respeta a los que ya declaran mínimo propio; se
+saltea headless, igual que la memoria de posición del 1.9). Suite completa verde local y en CI.
+`ENHANCED_VERSION` a **1.10**.
+
+Desvíos / hallazgos:
+
+- **Cero cambios de solve path, verificados por construcción**: no se tocó ningún finder,
+  `TablingSolver` ni el generador; los snapshots pasan sin regenerar.
+- El `jSeparator1` de `AllStepsPanel` sigue creándose en `initComponents` pero ya no se usa:
+  la reconstrucción crea el separador que corresponda. Se deja para no tocar código generado
+  más de lo necesario.
+- Al verificar toolbars con la GUI real se escribió el hcfg del entorno con una toolbar
+  personalizada; se restauró a defaults al terminar.
+
+**Resumen llano.** Ahora podés armarte las dos barras de botones a gusto: entrás a
+*Edit → Preferences → Toolbars*, elegís qué botones querés ver y en qué orden, y queda así
+aunque cierres el programa. Las pestañas de configuración quedaron parejas: los desplegables y
+los casilleros de números ya no se estiran de punta a punta ni tienen cada uno un tamaño
+distinto, los recuadros de categoría ocupan bien el espacio (se fue el hueco raro del medio en
+Colors) y los cuadraditos de color de los niveles de dificultad son todos iguales y chiquitos.
+Y las ventanitas emergentes ya no se pueden achicar hasta cortarse: frenan justo donde su
+contenido deja de entrar. Nada de esto cambia cómo resuelve el programa: es todo cómo se ve.
+
 ## 1.9 — Consolidación UI y taxonomía — 2026-07-22
 
 Milestone redefinido por el dueño: cero teoría/álgebra nueva, todo sobre la estructura ya

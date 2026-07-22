@@ -30,7 +30,7 @@ PENDIENTE (parte k/N).
 	  - [ ] Parte 2/3 — Rueda del mouse = undo/redo — PENDIENTE
 	  - [ ] Parte 3/3 — Colocación de dígitos/candidatos con el mouse — PENDIENTE
 - [ ] **P-009** — Toolbar configurable
-	  - [ ] Parte 1/2 — Toolbar personalizable (mostrar/ocultar/reordenar) — EN CURSO (milestone 1.10)
+	  - [x] Parte 1/2 — Toolbar personalizable (mostrar/ocultar/reordenar) — COMPLETADA (milestone 1.10)
 	  - [ ] Parte 2/2 — Visualizadores de grupos con color propio — PENDIENTE (remitida a P-005)
 - [ ] **P-010** — Find-pattern update (filtro de all-steps por celdas) — DIFERIDA (candidata Fable)
 
@@ -212,10 +212,10 @@ Criterio de cierre (global): las tres partes con su interacción esperada,
 sin regresiones en selección/colocación existentes.
 
 ## P-009 — Toolbar configurable
-Estado: dividida; parte 1 EN CURSO (milestone 1.10), parte 2 remitida a
+Estado: dividida; parte 1 COMPLETADA (milestone 1.10), parte 2 remitida a
 P-005.
 
-Parte 1/2 — Toolbar personalizable — EN CURSO (milestone 1.10):
+Parte 1/2 — Toolbar personalizable — COMPLETADA (milestone 1.10, 2026):
 Permitir mostrar/ocultar qué aparece en la toolbar y reordenarlo. El dueño
 la EXTENDIÓ a las DOS toolbars de la app y fijó el modelo:
 
@@ -236,6 +236,13 @@ eso es P-005 / P-009 Parte 2/2; acá solo se gestiona lo que ya existe.
 - B3 — UI de configuración dentro de `edit → preferences…`, como el resto de
   las opciones, para reordenar y mostrar/ocultar los botones de AMBAS
   toolbars. Persistencia y migración en `Options`.
+
+Ejecutada: `sudoku.ui.ToolBarLayout` (modelo, sin Swing) + `ToolBarItems`
+(catálogo con ids estables), `Options.toolBarMainItems` /
+`toolBarAllStepsItems` (vacío = defaults; la migración es la semántica del
+parser: ids desconocidos se descartan, ids nuevos se agregan visibles), y la
+pestaña **Toolbars** de preferences con las dos listas. Detalle en
+`docs/log.md`.
 
 Parte 2/2 — Visualizadores de grupos con color propio — PENDIENTE (remitida
 a P-005): "Visualizar tríos/cuartetos/…/grupos de 9 con color de highlight

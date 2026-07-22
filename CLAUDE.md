@@ -76,7 +76,7 @@ del upstream 2.2.0 de hobiwan).
       memoria de posición de popups (P-003), MUG renombrado a "Multivalue Universal
       Grave", título de ventana "Enhanced vX.X". Cero teoría/álgebra nueva; cero cambios
       de solve path (deducciones idénticas, solo cambian etiquetas).
-- [ ] 1.10 Reestructuración de UI: toolbars configurables (P-009 Parte 1/2, las dos
+- [x] 1.10 Reestructuración de UI: toolbars configurables (P-009 Parte 1/2, las dos
       toolbars: superior de MainFrame y la de all-steps), estándar visual compartido de
       las pestañas de config (`sudoku.ui.UiMetrics`) y mínimo de tamaño de los popups.
       Cero álgebra, cero funciones nuevas, cero cambios de solve path. La find-pattern
