@@ -103,7 +103,14 @@ import sudoku.FileDrop;
 public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
 	private static final long serialVersionUID = 1L;
-	public static final String VERSION = "Hodoku - v2.3.2";
+	/**
+	 * The fork's own version, shown in the window title, the About dialog and the
+	 * console banner. It MUST be bumped to the current milestone number in EVERY
+	 * milestone (see the work rules in CLAUDE.md); the base upstream version stays
+	 * 2.3.2. Change {@link #ENHANCED_VERSION} only.
+	 */
+	public static final String ENHANCED_VERSION = "1.9";
+	public static final String VERSION = "Hodoku - v2.3.2 (Enhanced v" + ENHANCED_VERSION + ")";
 
 	// public static final String BUILD = "Build 16";
 	public static final String BUILD;
