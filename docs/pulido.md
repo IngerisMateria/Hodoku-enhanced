@@ -75,14 +75,25 @@ reconstruirlo.
   tiempo razonable con T2 apagado.
 
 ## P-003 — Memoria de posición de popups
-- Fecha: 2026-07-21 · Origen: dueño (queja de uso) · Estado: diferido
-- Contexto: los diálogos/popups de la GUI (config, find-all-steps,
-  training, etc.) se abren siempre en su posición default; el usuario
-  los mueve y la posición se pierde al cerrar.
-- Cambio deseado: todos los popups recuerdan dónde los movió el usuario.
-  Si una implementación global es eficiente (interceptar en un ancestro
-  común / helper compartido que persista bounds por clase de diálogo en
-  Options), preferirla a tocar diálogo por diálogo.
+- Fecha: 2026-07-21 · Origen: dueño (queja de uso) ·
+  Estado: **CERRADA/EJECUTADA en el milestone 1.9 (2026-07-22)**. Cómo
+  quedó: un único `AWTEventListener` global (`sudoku.DialogPositionMemory`,
+  instalado una vez al arranque desde `Main` antes de que se muestre ningún
+  diálogo) cubre TODO `java.awt.Dialog` sin tocar clase por clase: al
+  mostrarse restaura la última posición guardada (si sigue en una pantalla
+  conectada, con margen para que la barra de título quede agarrable), al
+  moverse la guarda. Persistencia en `Options.dialogLocations` como string
+  codificado `clase=x,y;...` (getter/setter + `getDialogLocation`/
+  `setDialogLocation`; roundtrip por XMLEncoder testeado en
+  `DialogLocationMemoryTest`). Excepciones (documentadas): SOLO se rastrean
+  diálogos; los frames de nivel superior (MainFrame y las tool windows
+  KeyboardLayoutFrame / SudokuConsoleFrame / UIQuickBrowse / UIExportLine /
+  UIImportLine) conservan su propia ubicación y quedan fuera de alcance. Los
+  progress dialogs modales entran por el mismo mecanismo pero solo recuerdan
+  una posición si el usuario efectivamente los arrastró (costo nulo si no).
+- (Contexto original:) los diálogos/popups de la GUI (config,
+  find-all-steps, training, etc.) se abrían siempre en su posición default;
+  el usuario los movía y la posición se perdía al cerrar.
 - Nota: QoL puro, sin relación con el registro de técnicas
   (estrategia-taxonomia.md §5, "nueva queja 1").
 - Criterio de cierre: mover un diálogo, cerrarlo, reabrirlo (incluso tras

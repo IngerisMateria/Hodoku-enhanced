@@ -431,6 +431,78 @@ public final class Options {
 	public void setTechniqueDisplayNames(String techniqueDisplayNames) {
 		this.techniqueDisplayNames = techniqueDisplayNames == null ? "" : techniqueDisplayNames;
 	}
+
+	// Popup position memory (milestone 1.9, P-003): the last on-screen location
+	// the user left each dialog at, so it reopens there instead of the generic
+	// spot. Format "fully.Qualified.DialogClass=x,y;...", keyed by dialog class
+	// name (no '=' or ';' in class names); empty = no memory. Maintained by
+	// solver-independent DialogPositionMemory; only java.awt.Dialog windows are
+	// tracked (frames, incl. the MainFrame, are out of scope).
+	public static final String DIALOG_LOCATIONS = "";
+	private String dialogLocations = DIALOG_LOCATIONS;
+
+	public String getDialogLocations() {
+		return dialogLocations;
+	}
+
+	public void setDialogLocations(String dialogLocations) {
+		this.dialogLocations = dialogLocations == null ? "" : dialogLocations;
+	}
+
+	/**
+	 * The remembered on-screen location of one dialog class, or null if none is
+	 * stored (P-003, milestone 1.9).
+	 *
+	 * @param key the dialog class name
+	 * @return the stored location, or null
+	 */
+	public java.awt.Point getDialogLocation(String key) {
+		String raw = dialogLocations == null ? "" : dialogLocations;
+		for (String entry : raw.split(";")) {
+			int eq = entry.indexOf('=');
+			if (eq <= 0 || !entry.substring(0, eq).equals(key)) {
+				continue;
+			}
+			String[] xy = entry.substring(eq + 1).split(",");
+			if (xy.length == 2) {
+				try {
+					return new java.awt.Point(Integer.parseInt(xy[0].trim()), Integer.parseInt(xy[1].trim()));
+				} catch (NumberFormatException ex) {
+					return null;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Stores the on-screen location of one dialog class (P-003, milestone 1.9).
+	 *
+	 * @param key the dialog class name (must not contain '=' or ';')
+	 * @param location the on-screen location
+	 */
+	public void setDialogLocation(String key, java.awt.Point location) {
+		if (key == null || location == null || key.indexOf('=') >= 0 || key.indexOf(';') >= 0) {
+			return;
+		}
+		java.util.LinkedHashMap<String, String> map = new java.util.LinkedHashMap<String, String>();
+		String raw = dialogLocations == null ? "" : dialogLocations;
+		for (String entry : raw.split(";")) {
+			int eq = entry.indexOf('=');
+			if (eq > 0) {
+				map.put(entry.substring(0, eq), entry.substring(eq + 1));
+			}
+		}
+		map.put(key, location.x + "," + location.y);
+		StringBuilder sb = new StringBuilder();
+		for (java.util.Map.Entry<String, String> e : map.entrySet()) {
+			if (sb.length() > 0) {
+				sb.append(';');
+			}
+			sb.append(e.getKey()).append('=').append(e.getValue());
+		}
+		dialogLocations = sb.toString();
+	}
 	// FishSolver
 	public static final int MAX_FINS = 5; // Maximale Anzahl Fins
 	public static final int MAX_ENDO_FINS = 2; // Maximale Anzahl Endo-Fins

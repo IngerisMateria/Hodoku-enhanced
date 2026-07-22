@@ -1065,6 +1065,10 @@ public class Main {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				// modern fork (milestone 1.9, P-003): dialogs reopen where the
+				// user left them — one global listener, installed before any
+				// dialog can be shown
+				DialogPositionMemory.install();
 				MainFrame mainFrame = new MainFrame(lf);
 				mainFrame.setVisible(true);
 			}
