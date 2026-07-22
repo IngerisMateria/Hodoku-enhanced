@@ -358,10 +358,16 @@ public class ConfigStepPanel extends javax.swing.JPanel {
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
 								.addGroup(fishPanelLayout.createSequentialGroup().addContainerGap()
 										.addComponent(fishDisplayTypeLabel).addGap(72, 72, 72)))
-								.addGroup(fishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addComponent(maxFinsComboBox, 0, 59, Short.MAX_VALUE)
-										.addComponent(maxEndoFinsComboBox, 0, 59, Short.MAX_VALUE)
-										.addComponent(fishDisplayTypeComboBox, 0, 59, Short.MAX_VALUE)))
+								// UiMetrics (1.10 nota B): the label column already grows, so the
+								// toggles only need their cap; TRAILING lines them up on the right
+								// like the All possible Steps tab, which is now the reference.
+								.addGroup(fishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+										.addComponent(maxFinsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(maxEndoFinsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(fishDisplayTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE)))
 						.addGroup(fishPanelLayout.createSequentialGroup().addContainerGap()
 								.addGroup(fishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 										.addGroup(fishPanelLayout.createSequentialGroup().addGap(4, 4, 4)
@@ -412,7 +418,9 @@ public class ConfigStepPanel extends javax.swing.JPanel {
 										.addComponent(restrictChainSizeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 114,
 												Short.MAX_VALUE)
 										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-										.addComponent(restrictChainSizeComboBox, 0, 70, Short.MAX_VALUE)))
+										.addComponent(restrictChainSizeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+												UiMetrics.TOGGLE_WIDTH_COMPACT,
+												javax.swing.GroupLayout.PREFERRED_SIZE)))
 						.addContainerGap()));
 		jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel3Layout.createSequentialGroup()
@@ -478,11 +486,15 @@ public class ConfigStepPanel extends javax.swing.JPanel {
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
 						.addGroup(krakenFishPanelLayout.createSequentialGroup().addComponent(krakenFishMaxSizeLabel)
 								.addGap(36, 36, 36)))
-						.addGroup(krakenFishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-								.addComponent(krakenFishMaxSizeComboBox, 0, 84, Short.MAX_VALUE)
-								.addComponent(krakenFishMaxEndoFinsComboBox, 0, 84, Short.MAX_VALUE)
-								.addComponent(krakenFishMaxFinsComboBox, 0, 84, Short.MAX_VALUE)
-								.addComponent(krakenFishTypeComboBox, 0, 84, Short.MAX_VALUE))
+						.addGroup(krakenFishPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+								.addComponent(krakenFishMaxSizeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(krakenFishMaxEndoFinsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(krakenFishMaxFinsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.TOGGLE_WIDTH_COMPACT, javax.swing.GroupLayout.PREFERRED_SIZE)
+								.addComponent(krakenFishTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE,
+										UiMetrics.TOGGLE_WIDTH, javax.swing.GroupLayout.PREFERRED_SIZE))
 						.addContainerGap()));
 		krakenFishPanelLayout.setVerticalGroup(krakenFishPanelLayout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

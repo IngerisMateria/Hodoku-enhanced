@@ -96,4 +96,23 @@ public final class UiMetrics {
 
 	/** Vertical space between two bullets stacked in the same column. */
 	public static final int BULLET_GAP = 6;
+
+	/**
+	 * Width of the search field of the config tabs. A {@code JTextField} with no
+	 * text is a few pixels wide, so without a floor the field collapses whenever
+	 * something asks the toolbar for its preferred size - which is exactly what
+	 * happens when the toolbar is dragged out into its own window.
+	 */
+	public static final int SEARCH_FIELD_WIDTH = 160;
+
+	/**
+	 * Width of the technique aside of the Solver tab.
+	 * <p>
+	 * The aside is a fixed column by design (the step list takes the rest), so its
+	 * width must not depend on how long its contents happen to be. Without this
+	 * cap the "also affects: ..." lines - plain, non-wrapping labels - push the
+	 * preferred width of the whole column out, which is what made the aside
+	 * suddenly expand and drag the Reset button towards the middle of the tab.
+	 */
+	public static final int ASIDE_WIDTH = 300;
 }

@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.UIManager;
+import sudoku.ui.UiMetrics;
 
 /**
  *
@@ -493,8 +494,11 @@ public class ConfigColorPanel extends javax.swing.JPanel {
 						.addGroup(backGroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(normalBGLabel).addComponent(validBGLabel).addComponent(invalidBGLabel)
 								.addComponent(cursorBGLabel).addComponent(alternateBGLabel).addComponent(filterDigitBGButtonLabel))
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-								javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						// UiMetrics (1.10): a color swatch belongs next to the name it colors,
+						// like every other bullet of this tab - so this gap stays fixed and the
+						// slack goes to the trailing one. (It was already resizable, but the
+						// bullet used to be pinned by a linkSize so it never had slack to eat.)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(backGroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 								.addComponent(filterDigitBGButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40,
 										javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -549,7 +553,7 @@ public class ConfigColorPanel extends javax.swing.JPanel {
 														.addComponent(alsHintBGButton3,
 																javax.swing.GroupLayout.PREFERRED_SIZE, 40,
 																javax.swing.GroupLayout.PREFERRED_SIZE)))))
-						.addGap(10, 10, 10)));
+						.addContainerGap(UiMetrics.BULLET_INSET, Short.MAX_VALUE)));
 		backGroundPanelLayout.setVerticalGroup(backGroundPanelLayout
 				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(backGroundPanelLayout.createSequentialGroup()

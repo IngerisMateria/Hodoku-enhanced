@@ -667,8 +667,15 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel");
 		searchField = new javax.swing.JTextField();
 		searchField.setToolTipText(bundle.getString("ConfigSolverPanel.searchField.tooltip"));
-		searchField.setMaximumSize(new java.awt.Dimension(Integer.MAX_VALUE,
+		// milestone 1.10 (nota D2): an empty JTextField is a few pixels wide, so
+		// without a floor the field collapses whenever something sizes the toolbar
+		// to its preferred size - which is what a floated toolbar does
+		searchField.setMinimumSize(new java.awt.Dimension(sudoku.ui.UiMetrics.SEARCH_FIELD_WIDTH,
 				searchField.getPreferredSize().height));
+		searchField.setPreferredSize(new java.awt.Dimension(sudoku.ui.UiMetrics.SEARCH_FIELD_WIDTH,
+				searchField.getPreferredSize().height));
+		searchField.setMaximumSize(
+				new java.awt.Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
 		searchField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -754,8 +761,7 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		gbc.weightx = 1;
 		gbc.fill = java.awt.GridBagConstraints.NONE;
 		gbc.anchor = java.awt.GridBagConstraints.LINE_END;
-		levelComboBox.setPreferredSize(
-				new java.awt.Dimension(UiMetrics.TOGGLE_WIDTH, levelComboBox.getPreferredSize().height));
+		fixWidth(levelComboBox, UiMetrics.TOGGLE_WIDTH);
 		asideContent.add(levelComboBox, gbc);
 		gbc.gridy++;
 		gbc.gridx = 0;
@@ -767,8 +773,7 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		gbc.weightx = 1;
 		gbc.fill = java.awt.GridBagConstraints.NONE;
 		gbc.anchor = java.awt.GridBagConstraints.LINE_END;
-		scoreTextField.setPreferredSize(
-				new java.awt.Dimension(UiMetrics.NUMERIC_INPUT_WIDTH, scoreTextField.getPreferredSize().height));
+		fixWidth(scoreTextField, UiMetrics.NUMERIC_INPUT_WIDTH);
 		asideContent.add(scoreTextField, gbc);
 		gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
 		gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -966,14 +971,21 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 			label.setToolTipText(tooltip);
 			label.setEnabled(owned);
 			row.add(label, gbc);
+			// UiMetrics (1.10, note C1): the editor keeps a standard width anchored
+			// to the right of the aside, same rule as the classic tabs - the slack
+			// goes to the label cell instead of stretching the control
 			gbc.gridx = 1;
 			gbc.weightx = 1;
-			gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gbc.fill = java.awt.GridBagConstraints.NONE;
+			gbc.anchor = java.awt.GridBagConstraints.LINE_END;
 			row.add(editor, gbc);
+			gbc.anchor = java.awt.GridBagConstraints.WEST;
 		} else {
+			// a labelless editor is a checkbox: its own text is the label, so it
+			// stays on the left at its natural size
 			gbc.gridwidth = 2;
 			gbc.weightx = 1;
-			gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gbc.fill = java.awt.GridBagConstraints.NONE;
 			row.add(editor, gbc);
 		}
 
@@ -1059,17 +1071,40 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		} else if (classic instanceof javax.swing.JComboBox) {
 			javax.swing.JComboBox<String> combo = new javax.swing.JComboBox<String>();
 			combo.setModel(((javax.swing.JComboBox<String>) classic).getModel());
+			fixWidth(combo, UiMetrics.TOGGLE_WIDTH);
 			mirror = combo;
 		} else if (classic instanceof javax.swing.JTextField) {
 			javax.swing.JTextField field = new javax.swing.JTextField();
 			field.setDocument(((javax.swing.JTextField) classic).getDocument());
 			field.setColumns(5);
+			fixWidth(field, UiMetrics.NUMERIC_INPUT_WIDTH);
 			mirror = field;
 		}
 		if (mirror != null) {
 			optionMirrors.put(optionKey, mirror);
 		}
 		return mirror;
+	}
+
+	/**
+	 * Pins a control of the aside to a standard width (milestone 1.10, notes
+	 * C1/C2).
+	 * <p>
+	 * Both ends matter here. The maximum stops the control from stretching across
+	 * the aside when the window is large, and the <em>minimum</em> stops the
+	 * GridBag from squeezing it down to a couple of pixels when the window is
+	 * small - which is what turned the score field into a one-character box on the
+	 * techniques whose aside asks for more room than the others.
+	 *
+	 * @param control the control
+	 * @param width   the width it keeps
+	 */
+	private static void fixWidth(javax.swing.JComponent control, int width) {
+		int height = control.getPreferredSize().height;
+		java.awt.Dimension size = new java.awt.Dimension(width, height);
+		control.setPreferredSize(size);
+		control.setMinimumSize(size);
+		control.setMaximumSize(size);
 	}
 
 	/** Read-only wrapping text area styled like a label. */
@@ -1091,6 +1126,31 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 	/** JPanel that tracks the viewport width so wrapped text areas re-wrap. */
 	private static class ScrollablePanel extends javax.swing.JPanel implements javax.swing.Scrollable {
 		private static final long serialVersionUID = 1L;
+
+		/**
+		 * The aside is a fixed column, so its preferred width is a constant and not
+		 * a function of its contents (milestone 1.10, notes C3/C4).
+		 * <p>
+		 * The "also affects: ..." lines are plain non-wrapping labels: their
+		 * preferred width is the width of the whole sentence. Reporting that
+		 * upwards let one long line push the preferred width of the aside - and
+		 * with it the whole right hand column, which is sized to its preferred
+		 * width - so the aside would suddenly widen and drag the Reset button
+		 * towards the middle of the tab, with no way back short of rebuilding the
+		 * tab. Capping here fixes the cause; the labels still clip with an ellipsis
+		 * and still show the full list on hover.
+		 */
+		@Override
+		public java.awt.Dimension getPreferredSize() {
+			java.awt.Dimension size = super.getPreferredSize();
+			if (isPreferredSizeSet()) {
+				return size;
+			}
+			// a constant, not a cap: if the width still depended on the contents the
+			// column would jump every time the selected technique changed how much
+			// it has to say
+			return new java.awt.Dimension(sudoku.ui.UiMetrics.ASIDE_WIDTH, size.height);
+		}
 
 		@Override
 		public java.awt.Dimension getPreferredScrollableViewportSize() {

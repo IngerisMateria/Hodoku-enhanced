@@ -79,6 +79,13 @@ public class ConfigTrainigPanel extends javax.swing.JPanel {
 		searchField = new javax.swing.JTextField();
 		searchField.setToolTipText(java.util.ResourceBundle.getBundle("intl/ConfigSolverPanel")
 				.getString("ConfigSolverPanel.searchField.tooltip"));
+		// milestone 1.10 (nota D2): an empty JTextField is a few pixels wide, so
+		// without a floor the field collapses whenever something sizes the toolbar
+		// to its preferred size - which is what a floated toolbar does
+		searchField.setMinimumSize(new java.awt.Dimension(sudoku.ui.UiMetrics.SEARCH_FIELD_WIDTH,
+				searchField.getPreferredSize().height));
+		searchField.setPreferredSize(new java.awt.Dimension(sudoku.ui.UiMetrics.SEARCH_FIELD_WIDTH,
+				searchField.getPreferredSize().height));
 		searchField.setMaximumSize(
 				new java.awt.Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
 		searchField.getDocument().addDocumentListener(new DocumentListener() {
