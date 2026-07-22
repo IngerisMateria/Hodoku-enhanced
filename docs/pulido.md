@@ -106,12 +106,19 @@ reconstruirlo.
   de datos; la UX rica encima se difiere. Diseño completo en
   estrategia-taxonomia.md §5 y en el prompt archivado de 1.4
   (docs/milestones/1.4.md).
+- Nota (2026-07-22, milestone 1.9): la vista de carpetas POR FAMILIA se
+  entregó en 1.9 (agrupación sobre el registro en las 4 superficies,
+  `solver.modern.registry.TechniqueFolders`). Queda diferido de este ítem
+  el resto: las otras vistas de carpeta, los presets de enable y el
+  resaltado de solapamiento.
 - Alcance diferido:
-  - Carpetas del solver: 3 vistas (por familia, por convención de
-    nomenclatura, jerárquica por las 4 raíces del mapa del dueño) +
-    vistas custom del usuario. Las vistas son SOLO visuales: el orden de
-    ejecución vive únicamente en la lista plana exhaustiva, y una técnica
-    puede repetirse en varias carpetas.
+  - Carpetas del solver: las vistas restantes (por convención de
+    nomenclatura, jerárquica por las 4 raíces del mapa del dueño) + vistas
+    custom del usuario + multi-carpeta real (una técnica en varias
+    carpetas; hoy el modelo lo soporta pero se puebla una sola por técnica
+    para no desincronizar los checkboxes tri-estado). Las vistas son SOLO
+    visuales: el orden de ejecución vive únicamente en la lista plana
+    exhaustiva.
   - Presets de enable para find-all-steps (máscaras de enable guardadas;
     propuesta inicial: "Wings", "ALS", "Cadenas", "Fish", "Unicidad",
     "Clásico HoDoKu").
@@ -120,3 +127,35 @@ reconstruirlo.
     presentes en el registro como taxonomía/overlaps).
 - Criterio de cierre: decisión del dueño post-release sobre qué subconjunto
   entra, con el registro como única fuente de datos.
+
+## P-005 — Editor de colores de highlight por estrategia
+- Fecha: 2026-07-22 · Origen: dueño (#6 del milestone 1.9) · Estado:
+  diferido a milestone propio futuro (registrado en 1.9, NO implementado)
+- Contexto: hoy el resaltado de los pasos es un esquema fijo y global —
+  todo verde/rojo (celdas/candidatos a colocar vs. a eliminar) con algo de
+  azul para estructuras. Cada estrategia pinta con esa paleta compartida;
+  no hay forma de que una técnica use colores propios ni de que el usuario
+  los edite.
+- Diseño discutido por el dueño: cada estrategia expone su propio conjunto
+  de colores de highlight (los roles que resalta: base, cover, fins,
+  guardianes, pivote/alas, eslabones de cadena, etc.), editables por el
+  usuario, con persistencia. El rendering (SudokuPanel) los consulta por
+  estrategia + rol en vez de usar la paleta global fija.
+- Alcance estimado (por eso es milestone propio, no cabe en 1.9):
+  - Modelo de color por técnica/rol (qué roles resalta cada estrategia) —
+    naturalmente se apoya en el registro (milestone 1.4) como fuente de la
+    lista de estrategias, más una tabla rol→color por técnica.
+  - Persistencia en Options (mapa técnica/rol → color) + migración/default
+    que reproduzca el esquema verde/rojo/azul actual (cero cambio visual
+    hasta que el usuario edite).
+  - UI de edición: extender `ConfigColorPanel` (la pestaña COLORS canónica)
+    con la selección por estrategia y sus roles; opcionalmente reflejarlo
+    en el aside de cada técnica (patrón del 1.5).
+  - Rendering: `SudokuPanel` (y los formateadores/anotadores de pasos)
+    resuelven el color por (estrategia, rol) en vez de las constantes
+    globales; auditar cada punto donde hoy se hardcodea verde/rojo/azul.
+  - Tests: roundtrip de persistencia, default == esquema actual, y que cada
+    estrategia con highlight propio tenga sus roles cubiertos.
+- Criterio de cierre: decisión del dueño de arrancar el milestone; al
+  entregarlo, un usuario puede recolorear el highlight de una estrategia y
+  el cambio persiste y se ve en el tablero.

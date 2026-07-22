@@ -1,5 +1,105 @@
 # Log de milestones
 
+## 1.9 — Consolidación UI y taxonomía — 2026-07-22
+
+Milestone redefinido por el dueño: cero teoría/álgebra nueva, todo sobre la estructura ya
+construida (registro del 1.4, aside/buscador del 1.5, framework de config). El SDC/R0 que
+ocupaba el 1.9 se difirió a la cola de teoría [Fable] en CLAUDE.md, junto con
+M/L/H/S/T-Wings y ALS-W-Wing/Ext-SDC/AHS. Prompt archivado verbatim en
+`docs/milestones/1.9.md`. Cinco commits lógicos: desglose ExtUR / carpetas / buscador /
+toggle / popups.
+
+**1. Desglose Extended UR (T1/T2).** La entrada única `EXTENDED_UR` se desglosó en
+`EXTENDED_UR_TYPE_1` (guardianes en una sola celda → strip del triple) y `_TYPE_2`
+(guardián de dígito uniforme → eliminación en celdas que ven todos), cada uno con
+StepConfig propio (library codes 0625/0626, tail libre del bloque 06xx). El genérico
+`EXTENDED_UR` (code 0621) queda como ancla taxonómica SIN StepConfig — mismo patrón que
+`KRAKEN_FISH` en el 1.5. `getStep(EXTENDED_UR)` busca ambos subtipos (así las fixtures
+`:0621:` siguen andando); el solver filtra por tipo pedido vía `extUrTypeFilter` en
+`UniquenessPackSolver` (la ladder de guardianes ahora emite el subtipo por rama). Honrado
+por solver, all-steps (`FindAllSteps` chequea los dos subtipos y `filterSteps` filtra por
+tipo concreto), progress y training. Migración one-shot de hcfg viejos
+(`Options.migrateExtendedUrStepConfig`, espejo de la de kraken). Registro: filas para los
+dos subtipos (subsumidos por el ancla, que sigue subsumido por MUG); `MODERN_TECHNIQUES` y
+la ficha genérica actualizadas. Formatter: no repite " Type 1/2" (ya viene en el display
+name) y agrega la justificación de los subtipos.
+
+**2. Modelo de carpetas por familia.** Las 4 vistas de árbol de config (solver, all-steps,
+progress, training) agrupan por la familia del registro en vez de la `SolutionCategory`
+legacy. Helper compartido `solver.modern.registry.TechniqueFolders` (`folderOf` = familia,
+fallback `LAST_RESORT` para los pseudo-pasos sin fila); `Family` gana `getFolderName()`;
+`CheckNode` gana la clave de agrupación `family`. Aparecen la carpeta **Oddagons** (Broken
+Wing + Bivalue Oddagon + Tridagon) y la carpeta única **Uniqueness** (UR legacy + los 5 del
+pack, con ExtUR ya desglosado). Multi-carpeta queda MODELADO (`foldersOf` devuelve lista)
+pero poblado con una sola carpeta por técnica: un leaf duplicado desincronizaría los
+checkboxes tri-estado hasta el próximo rebuild, así que Broken Wing va en Oddagons (el
+fallback explícito del dueño). Carpetas SOLO visuales; el orden de resolución sigue en la
+lista plana (P-004).
+
+**3. Buscador en Progress y Training.** El mismo predicado del registro del 1.5 (nombre +
+aliases + descripción), sobre lista y árbol. En Progress, con filtro activo se bloquea el
+reordenamiento (up/down + drag) porque los índices filtrados no matchean el orden de
+progreso; Training no reordena, solo filtra. La selección sobrevive al filtrar.
+
+**4. Toggle lista/carpeta en All Possible Steps.** La pestaña ganó la vista de lista plana
+y los botones de alternancia que las otras ya tenían, más el buscador, en una toolbar
+montada como column header del scroll pane (la GroupLayout generada quedó intacta). La
+preferencia se recuerda en `Options.allStepsShowList` (default carpetas) y sobrevive
+reaperturas/reinicios. Predicado de exclusión compartido (`isListedStep`: sin peces —van
+por los fish panels— ni Brute Force) entre lista y árbol.
+
+**5. Memoria de posición de popups (P-003).** Un único `AWTEventListener` global
+(`sudoku.DialogPositionMemory`, instalado al arranque desde `Main` antes de mostrar
+cualquier diálogo) cubre todo `java.awt.Dialog` sin tocar clase por clase: al mostrarse
+restaura la posición guardada (si sigue en una pantalla conectada, con margen para agarrar
+la barra de título), al moverse la guarda. Persistencia en `Options.dialogLocations`
+(string `clase=x,y;...`). P-003 marcada ejecutada; P-005 (editor de colores por estrategia)
+registrada en pulido.md SIN implementar.
+
+Desvíos / hallazgos:
+
+- **Snapshots — solo etiqueta.** Dos puzzles del corpus (líneas 40/41 de snapshots.jsonl)
+  tenían un paso `EXTENDED_UR` en su solve path default. Tras el desglose el label pasó a
+  `EXTENDED_UR_TYPE_1` (ambos eran Type 1). Verificado byte a byte: normalizando el label
+  de vuelta a `EXTENDED_UR`, las dos líneas quedan idénticas a las commiteadas → mismas
+  deducciones, distinta etiqueta (exactamente lo que pedía el prompt). Snapshots
+  regenerados con `gradlew updateSnapshots`.
+- **Índice de migración +5, no +10.** La de kraken usa `old.getIndex()+10`; acá el default
+  vecino (Reverse BUG) está en 4060 y ExtUR T1 en 4050, así que +10 colisionaría. T2 usa
+  +5 (4055), y el default también.
+- **GUI verificada por render real, no por corrida manual.** No hay tool de automatización
+  Swing en el entorno, así que las capturas se generaron pintando los paneles reales a PNG
+  vía reflexión (paneles construidos + `buildTree`/`checkButtons` reales). Verificado: (a)
+  árbol del solver con carpetas Oddagons {BW, BO, Tridagon} y Uniqueness {UR legacy + pack
+  con ExtUR T1/T2}; (b) ExtUR Type 1 y Type 2 como entradas separadas; (c) Progress
+  filtrado por "oddagon" → solo la carpeta Oddagons; (d) all-steps en vista de lista plana.
+  (e) memoria de popups: store testeado + `install()` corre sin excepción; el reopen visual
+  queda para la revisión del dueño en la app.
+- **Carpetas por familia difieren de las categorías legacy.** El árbol antes agrupaba por
+  `SolutionCategory`; ahora por `Family`. Efecto visible esperado: p. ej. los Kraken Fish
+  (familia FISH, categoría LAST_RESORT) ahora caen bajo la carpeta "Fish" en all-steps, no
+  bajo "Last Resort". Consistente con "agrupación por familia".
+
+Criterio de aceptación: suite verde local (incluidos los tests nuevos: desglose ExtUR +
+filtro, completitud del registro con las filas nuevas, roundtrip de migración de hcfg,
+custodia de carpetas Oddagons/Uniqueness, persistencia del toggle y del store de popups) y
+snapshots verificados label-only; las 5 verificaciones GUI; cero cambios de solve path
+(deducciones idénticas); cero álgebra de solving tocada. `TablingSolver` y el generador,
+sin tocar.
+
+### Resumen para el dueño del proyecto
+
+Este milestone fue de ordenar y pulir la interfaz, sin tocar nada del "cerebro" que resuelve
+sudokus. Cuatro cosas: (1) el "Extended UR" ahora aparece separado en Tipo 1 y Tipo 2, como
+ya pasa con los otros rectángulos, así podés prenderlos por separado. (2) Las técnicas se
+agrupan en carpetas por familia en las cuatro pantallas de configuración: creamos la carpeta
+"Oddagons" (Broken Wing, Bivalue Oddagon, Tridagon juntos) y una sola carpeta "Uniqueness"
+con todo lo de unicidad. (3) El buscador que ya estaba en la pantalla del solver ahora
+también funciona en Progress y en Training. (4) La pantalla de "todos los pasos posibles"
+ganó el botón para ver la lista plana o las carpetas, y recuerda cuál elegiste. Y de yapa:
+los diálogos ahora reaparecen donde los dejaste, no siempre en el mismo lugar. El editor de
+colores por estrategia que charlamos queda anotado como próximo, para cuando quieras.
+
 ## 1.8 — Confiabilidad (Parte A) + Uniqueness Pack (Parte B) — 2026-07-21
 
 Milestone doble por decisión del dueño. Prompt archivado verbatim en
