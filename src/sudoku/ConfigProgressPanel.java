@@ -599,15 +599,32 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 	}
 
 	/**
+	 * The techniques the Progress surface lists: every configured step, no
+	 * level filter (milestone 1.8, A3 — the legacy panel dropped every EXTREME
+	 * technique). Single source of the surface's contents so both the list/tree
+	 * and the headless custody test ({@code ProgressConfigTest}) agree; a future
+	 * filter belongs here and the test guards its completeness. Headless-safe
+	 * (no Swing), so the custody test runs on CI.
+	 *
+	 * @param progressSteps the sorted progress StepConfigs to display
+	 * @return the steps to show, in order
+	 */
+	public static java.util.List<StepConfig> progressSurfaceSteps(StepConfig[] progressSteps) {
+		java.util.List<StepConfig> out = new java.util.ArrayList<StepConfig>();
+		for (StepConfig step : progressSteps) {
+			out.add(step);
+		}
+		return out;
+	}
+
+	/**
 	 * Rebuilds the list and the tree
 	 */
 	private void resetView() {
 		// Liste neu laden
 		model.removeAllElements();
-		for (int i = 0; i < steps.length; i++) {
-			// modern fork (milestone 1.8, A3): no level filter — every technique
-			// with a StepConfig is configurable for the progress rating
-			model.addElement(steps[i]);
+		for (StepConfig step : progressSurfaceSteps(steps)) {
+			model.addElement(step);
 		}
 		stepList.setSelectedIndex(-1);
 		stepList.ensureIndexIsVisible(0);
@@ -619,33 +636,32 @@ public class ConfigProgressPanel extends javax.swing.JPanel implements ListDragA
 
 	public void buildTree() {
 		CheckNode root = new CheckNode();
-		for (int i = 0; i < steps.length; i++) {
-			// modern fork (milestone 1.8, A3): no level filter, see resetView()
+		for (StepConfig step : progressSurfaceSteps(steps)) {
 			@SuppressWarnings("unchecked")
 			Enumeration<CheckNode> en = (Enumeration<CheckNode>) (Enumeration<?>) root.children();
 			CheckNode act = null;
 			while (en.hasMoreElements()) {
 				act = en.nextElement();
-				if (act.getCategory() == steps[i].getCategory()) {
+				if (act.getCategory() == step.getCategory()) {
 					break;
 				}
 				act = null;
 			}
 			if (act == null) {
 				// neue Kategorie
-				act = new CheckNode(steps[i].getCategoryName(), true,
-						steps[i].isEnabledProgress() ? CheckNode.FULL : CheckNode.NONE, null, false, true, false,
-						steps[i].getCategory());
+				act = new CheckNode(step.getCategoryName(), true,
+						step.isEnabledProgress() ? CheckNode.FULL : CheckNode.NONE, null, false, true, false,
+						step.getCategory());
 				root.add(act);
 			}
 			// modern fork (milestone 1.5): render the preferred display name
-			act.add(new CheckNode(steps[i].toString(), false,
-					steps[i].isEnabledProgress() ? CheckNode.FULL : CheckNode.NONE, steps[i], false, true, false,
+			act.add(new CheckNode(step.toString(), false,
+					step.isEnabledProgress() ? CheckNode.FULL : CheckNode.NONE, step, false, true, false,
 					null));
-			if (act.getSelectionState() == CheckNode.FULL && !steps[i].isEnabledProgress()) {
+			if (act.getSelectionState() == CheckNode.FULL && !step.isEnabledProgress()) {
 				act.setSelectionState(CheckNode.HALF);
 			}
-			if (act.getSelectionState() == CheckNode.NONE && steps[i].isEnabledProgress()) {
+			if (act.getSelectionState() == CheckNode.NONE && step.isEnabledProgress()) {
 				act.setSelectionState(CheckNode.HALF);
 			}
 		}

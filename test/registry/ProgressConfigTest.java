@@ -20,10 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Field;
 import java.util.EnumSet;
-
-import javax.swing.DefaultListModel;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -73,60 +70,21 @@ public class ProgressConfigTest {
 	}
 
 	@Test
-	public void progressTabListsEveryConfiguredTechnique() throws Exception {
+	public void progressSurfaceListsEveryConfiguredTechnique() {
 		Options.resetAll();
-		ConfigProgressPanel panel = new ConfigProgressPanel();
-
-		Field modelField = ConfigProgressPanel.class.getDeclaredField("model");
-		modelField.setAccessible(true);
-		@SuppressWarnings("unchecked")
-		DefaultListModel<StepConfig> model = (DefaultListModel<StepConfig>) modelField.get(panel);
-
+		// the list and the tree both iterate ConfigProgressPanel.progressSurfaceSteps
+		// (the single, Swing-free source of the surface's contents) — assert it
+		// covers exactly the configured techniques (no level filter, A3), without
+		// instantiating the panel (the drag-and-drop setup needs a display, which
+		// the CI runner does not have).
+		StepConfig[] progress = Options.getInstance().copyStepConfigs(Options.getInstance().solverStepsProgress, true,
+				false, false, true);
 		EnumSet<SolutionType> listed = EnumSet.noneOf(SolutionType.class);
-		for (int i = 0; i < model.getSize(); i++) {
-			listed.add(model.getElementAt(i).getType());
+		for (StepConfig step : ConfigProgressPanel.progressSurfaceSteps(progress)) {
+			listed.add(step.getType());
 		}
-		EnumSet<SolutionType> expected = configuredTechniques();
-		EnumSet<SolutionType> missing = EnumSet.copyOf(expected);
-		missing.removeAll(listed);
-		assertTrue(missing.isEmpty(), "techniques missing from the Progress tab list: " + missing);
-		EnumSet<SolutionType> extra = EnumSet.copyOf(listed);
-		extra.removeAll(expected);
-		assertTrue(extra.isEmpty(), "pseudo steps leaked into the Progress tab list: " + extra);
-	}
-
-	@Test
-	public void progressTreeCoversEveryConfiguredTechnique() throws Exception {
-		Options.resetAll();
-		ConfigProgressPanel panel = new ConfigProgressPanel();
-		panel.buildTree();
-
-		Field treeField = ConfigProgressPanel.class.getDeclaredField("stepTree");
-		treeField.setAccessible(true);
-		javax.swing.JTree tree = (javax.swing.JTree) treeField.get(panel);
-		Object root = tree.getModel().getRoot();
-
-		EnumSet<SolutionType> listed = EnumSet.noneOf(SolutionType.class);
-		collectTreeSteps(tree, root, listed);
 		assertEquals(configuredTechniques(), listed,
-				"the Progress tab tree must cover exactly the configured techniques");
-	}
-
-	private static void collectTreeSteps(javax.swing.JTree tree, Object node, EnumSet<SolutionType> out)
-			throws Exception {
-		Field stepField = sudoku.CheckNode.class.getDeclaredField("step");
-		stepField.setAccessible(true);
-		int count = tree.getModel().getChildCount(node);
-		for (int i = 0; i < count; i++) {
-			Object child = tree.getModel().getChild(node, i);
-			if (child instanceof sudoku.CheckNode) {
-				StepConfig step = (StepConfig) stepField.get(child);
-				if (step != null) {
-					out.add(step.getType());
-				}
-			}
-			collectTreeSteps(tree, child, out);
-		}
+				"the Progress surface must list exactly the configured techniques (no level filter, A3)");
 	}
 
 	@Test
