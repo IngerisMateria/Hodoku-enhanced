@@ -247,7 +247,18 @@ public enum SolutionType {
 			"xur"),
 	BUG_LITE(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("BUG_Lite"), "0622", "bgl"),
 	REVERSE_BUG(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Reverse_BUG"), "0623", "rbug"),
-	MUG(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("MUG"), "0624", "mug");
+	MUG(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("MUG"), "0624", "mug"),
+	// Extended UR desglose (milestone 1.9): the single EXTENDED_UR config entry is
+	// split into Type 1 (all guardians in one cell) and Type 2 (uniform guardian
+	// digit), like the legacy UR and the Kraken Fish split (P-002). Library codes
+	// 0625/0626: the next free tail of the uniqueness family block 06xx (0600-0608
+	// and 0610 upstream, 0620-0624 the pack; both verified free against every code
+	// in this enum). The generic EXTENDED_UR (code 0621) stays as their taxonomy
+	// anchor and loses its StepConfig (old hcfg migrated in Options.readOptions()).
+	EXTENDED_UR_TYPE_1(java.util.ResourceBundle.getBundle("intl/SolutionType")
+			.getString("Extended_Unique_Rectangle_Type_1"), "0625", "xur1"),
+	EXTENDED_UR_TYPE_2(java.util.ResourceBundle.getBundle("intl/SolutionType")
+			.getString("Extended_Unique_Rectangle_Type_2"), "0626", "xur2");
 	private String stepName;
 	private String libraryType;
 	private String argName;

@@ -84,6 +84,11 @@ class UniquenessPackFormatter implements ModernStep.HintFormatter {
 		if (step.getType() == SolutionType.REVERSE_BUG || step.getFins().isEmpty()) {
 			return;
 		}
+		if (step.getType() == SolutionType.EXTENDED_UR_TYPE_1 || step.getType() == SolutionType.EXTENDED_UR_TYPE_2) {
+			// the desglose (milestone 1.9) carries the subtype in the display name
+			// already ("Extended Unique Rectangle Type 1/2") — don't repeat it
+			return;
+		}
 		List<Candidate> fins = step.getFins();
 		int cell = fins.get(0).getIndex();
 		boolean oneCell = true;
@@ -120,6 +125,8 @@ class UniquenessPackFormatter implements ModernStep.HintFormatter {
 			tmp.append(" (without a true guardian the loop cells could swap the pair - two solutions)");
 			break;
 		case EXTENDED_UR:
+		case EXTENDED_UR_TYPE_1:
+		case EXTENDED_UR_TYPE_2:
 			tmp.append(" (without a true guardian the six cells could permute the triple - two solutions)");
 			break;
 		case BUG_LITE:

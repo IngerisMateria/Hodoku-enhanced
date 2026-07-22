@@ -244,7 +244,8 @@ public class FindAllSteps implements Runnable {
 					steps.addAll(steps1);
 				}
 				// modern fork (milestone 1.8): Uniqueness Pack, same filtering
-				if (isAllStepsEnabled(SolutionType.UNIQUE_LOOP) || isAllStepsEnabled(SolutionType.EXTENDED_UR)
+				if (isAllStepsEnabled(SolutionType.UNIQUE_LOOP) || isAllStepsEnabled(SolutionType.EXTENDED_UR_TYPE_1)
+						|| isAllStepsEnabled(SolutionType.EXTENDED_UR_TYPE_2)
 						|| isAllStepsEnabled(SolutionType.BUG_LITE) || isAllStepsEnabled(SolutionType.REVERSE_BUG)
 						|| isAllStepsEnabled(SolutionType.MUG)) {
 					steps1 = stepFinder.getAllUniquenessPack(sudoku);
@@ -380,6 +381,18 @@ public class FindAllSteps implements Runnable {
 			}
 			if (!testStep.contains(SolutionType.KRAKEN_FISH_TYPE_2)) {
 				testStep.add(SolutionType.KRAKEN_FISH_TYPE_2);
+			}
+		}
+		// modern fork (milestone 1.9): the generic EXTENDED_UR test type (batch arg
+		// "xur") means "both Extended UR subtypes"
+		if (testStep != null && testStep.contains(SolutionType.EXTENDED_UR)) {
+			testStep = new java.util.ArrayList<SolutionType>(testStep);
+			testStep.remove(SolutionType.EXTENDED_UR);
+			if (!testStep.contains(SolutionType.EXTENDED_UR_TYPE_1)) {
+				testStep.add(SolutionType.EXTENDED_UR_TYPE_1);
+			}
+			if (!testStep.contains(SolutionType.EXTENDED_UR_TYPE_2)) {
+				testStep.add(SolutionType.EXTENDED_UR_TYPE_2);
 			}
 		}
 		this.testTypes = testStep;

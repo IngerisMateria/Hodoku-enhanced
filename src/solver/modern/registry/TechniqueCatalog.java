@@ -198,13 +198,28 @@ final class TechniqueCatalog {
 						+ "deadly. Lengths 14+ out of scope v1.")
 				.aliases("UL").subsumedBy(BUG_LITE)
 				.refs("docs/specs/uniqueness-pack.md §1").build());
+		// Extended UR desglose (milestone 1.9): the generic EXTENDED_UR keeps its
+		// enum constant and library code (0621) as the taxonomy anchor but lost its
+		// StepConfig in the split (documented exception in TechniqueRegistryTest,
+		// same pattern as KRAKEN_FISH); the configured entries are the two subtypes
+		// below, each subsumed by this anchor which is itself subsumed by MUG.
 		rows.add(t(EXTENDED_UR, Family.UNIQUENESS, "UniquenessPackSolver",
 				"Six cells of a triple {a,b,c} on two parallel lines of one chute, crossing exactly three boxes (the "
 						+ "searchable 2x3 form of the 3x3 deadly pattern): stripped bare the triple could permute, so "
-						+ "the extra candidates cannot all be false. Type 1 strips the triple from the single guardian "
-						+ "cell; Type 2 eliminates the uniform guardian digit from cells seeing all guardians.")
+						+ "the extra candidates cannot all be false. Split into Type 1 and Type 2 config entries "
+						+ "(milestone 1.9); this generic entry remains the common taxonomy parent of both.")
 				.aliases("Extended UR", "XUR").subsumedBy(MUG)
 				.refs("docs/specs/uniqueness-pack.md §2", "sudokuwiki.org/Extended_Unique_Rectangles").build());
+		rows.add(t(EXTENDED_UR_TYPE_1, Family.UNIQUENESS, "UniquenessPackSolver",
+				"An Extended Unique Rectangle whose extra candidates (guardians) all sit in a single cell: that "
+						+ "cell's solution is none of the triple digits, so the triple is stripped from it.")
+				.aliases("Extended UR Type 1", "XUR Type 1").subsumedBy(EXTENDED_UR)
+				.refs("docs/specs/uniqueness-pack.md §2").build());
+		rows.add(t(EXTENDED_UR_TYPE_2, Family.UNIQUENESS, "UniquenessPackSolver",
+				"An Extended Unique Rectangle whose guardians are all the same digit over several cells: some "
+						+ "guardian is true, so that digit is eliminated from every external cell seeing them all.")
+				.aliases("Extended UR Type 2", "XUR Type 2").subsumedBy(EXTENDED_UR)
+				.refs("docs/specs/uniqueness-pack.md §2").build());
 		rows.add(t(BUG_LITE, Family.UNIQUENESS, "UniquenessPackSolver",
 				"A connected set of 6, 8 or 9 cells with a nominal pair each where every digit appears exactly 0 or 2 "
 						+ "times in every house of the pattern — the general bivalue deadly pattern (UR and BUG are "

@@ -72,9 +72,11 @@ public class TechniqueRegistryTest {
 	/**
 	 * Registry rows that intentionally have no StepConfig: pure taxonomy
 	 * anchors. KRAKEN_FISH lost its config in the P-002 split (milestone
-	 * 1.5) but remains the common parent of the two configured types.
+	 * 1.5) and EXTENDED_UR in the milestone 1.9 desglose, but each remains the
+	 * common parent of its two configured subtypes.
 	 */
-	private static final Set<SolutionType> CONFIGLESS_ROWS = EnumSet.of(SolutionType.KRAKEN_FISH);
+	private static final Set<SolutionType> CONFIGLESS_ROWS = EnumSet.of(SolutionType.KRAKEN_FISH,
+			SolutionType.EXTENDED_UR);
 
 	@BeforeAll
 	public static void resetOptions() {
@@ -126,6 +128,20 @@ public class TechniqueRegistryTest {
 		assertNotNull(registry.get(SolutionType.KRAKEN_FISH), "the generic KRAKEN_FISH taxonomy anchor must stay");
 		assertTrue(registry.get(SolutionType.KRAKEN_FISH_TYPE_1).getSubsumedBy().contains(SolutionType.KRAKEN_FISH));
 		assertTrue(registry.get(SolutionType.KRAKEN_FISH_TYPE_2).getSubsumedBy().contains(SolutionType.KRAKEN_FISH));
+	}
+
+	@Test
+	public void extendedUrSplitRowsExist() {
+		// milestone 1.9 desglose: the two configured Extended UR subtypes must be
+		// registered; the generic row stays as their taxonomy parent (which is
+		// itself a case of MUG)
+		TechniqueRegistry registry = TechniqueRegistry.getInstance();
+		assertNotNull(registry.get(SolutionType.EXTENDED_UR_TYPE_1), "EXTENDED_UR_TYPE_1 must have a registry row");
+		assertNotNull(registry.get(SolutionType.EXTENDED_UR_TYPE_2), "EXTENDED_UR_TYPE_2 must have a registry row");
+		assertNotNull(registry.get(SolutionType.EXTENDED_UR), "the generic EXTENDED_UR taxonomy anchor must stay");
+		assertTrue(registry.get(SolutionType.EXTENDED_UR_TYPE_1).getSubsumedBy().contains(SolutionType.EXTENDED_UR));
+		assertTrue(registry.get(SolutionType.EXTENDED_UR_TYPE_2).getSubsumedBy().contains(SolutionType.EXTENDED_UR));
+		assertTrue(registry.get(SolutionType.EXTENDED_UR).getSubsumedBy().contains(SolutionType.MUG));
 	}
 
 	@Test

@@ -109,6 +109,9 @@ public class ModernStep extends SolutionStep {
 		HintFormatter uniquenessPack = new UniquenessPackFormatter();
 		registerFormatter(SolutionType.UNIQUE_LOOP, uniquenessPack);
 		registerFormatter(SolutionType.EXTENDED_UR, uniquenessPack);
+		// Extended UR desglose (milestone 1.9): the finder emits the two subtypes
+		registerFormatter(SolutionType.EXTENDED_UR_TYPE_1, uniquenessPack);
+		registerFormatter(SolutionType.EXTENDED_UR_TYPE_2, uniquenessPack);
 		registerFormatter(SolutionType.BUG_LITE, uniquenessPack);
 		registerFormatter(SolutionType.REVERSE_BUG, uniquenessPack);
 		registerFormatter(SolutionType.MUG, uniquenessPack);
