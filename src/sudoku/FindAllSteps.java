@@ -243,6 +243,14 @@ public class FindAllSteps implements Runnable {
 					filterSteps(steps1);
 					steps.addAll(steps1);
 				}
+				// modern fork (milestone 1.8): Uniqueness Pack, same filtering
+				if (isAllStepsEnabled(SolutionType.UNIQUE_LOOP) || isAllStepsEnabled(SolutionType.EXTENDED_UR)
+						|| isAllStepsEnabled(SolutionType.BUG_LITE) || isAllStepsEnabled(SolutionType.REVERSE_BUG)
+						|| isAllStepsEnabled(SolutionType.MUG)) {
+					steps1 = stepFinder.getAllUniquenessPack(sudoku);
+					filterSteps(steps1);
+					steps.addAll(steps1);
+				}
 				if (isAllStepsEnabled(SolutionType.SIMPLE_COLORS)) {
 					steps1 = stepFinder.findAllSimpleColors(sudoku);
 					steps.addAll(steps1);

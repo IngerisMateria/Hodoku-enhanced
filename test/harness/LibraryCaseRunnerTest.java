@@ -52,6 +52,11 @@ public class LibraryCaseRunnerTest {
 			"broken-wing.txt", // milestone 1.6 (oddagons I)
 			"bivalue-oddagon.txt",
 			"tridagon.txt", // milestone 1.7 (oddagons II)
+			"unique-loop.txt", // milestone 1.8 (Uniqueness Pack)
+			"extended-ur.txt",
+			"bug-lite.txt",
+			"reverse-bug.txt",
+			"mug.txt",
 	};
 
 	@TestFactory

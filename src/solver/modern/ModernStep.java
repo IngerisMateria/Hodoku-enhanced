@@ -64,6 +64,14 @@ import sudoku.SolutionType;
  * loop order, then the 4 rectangle cells; {@code fins} holds the guardians
  * (digits outside the triple) followed by the rectangle cells with the triple
  * digits (display); one display chain traces the closed 8-loop.</li>
+ * <li>Uniqueness Pack ({@link SolutionType#UNIQUE_LOOP},
+ * {@link SolutionType#EXTENDED_UR}, {@link SolutionType#BUG_LITE},
+ * {@link SolutionType#REVERSE_BUG}, {@link SolutionType#MUG}, milestone 1.8):
+ * {@code values} holds the pattern digits ascending; {@code indices} holds the
+ * pattern cells (Unique Loop: loop order; Reverse BUG: the solved cells of the
+ * pair, then the target cell last); {@code fins} holds the guardians (Reverse
+ * BUG: none); the Unique Loop adds one display chain tracing the closed
+ * loop.</li>
  * </ul>
  */
 public class ModernStep extends SolutionStep {
@@ -97,6 +105,13 @@ public class ModernStep extends SolutionStep {
 		registerFormatter(SolutionType.BIVALUE_ODDAGON, oddagons);
 		// the Tridagon (milestone 1.7)
 		registerFormatter(SolutionType.TRIDAGON, new TridagonFormatter());
+		// the Uniqueness Pack (milestone 1.8): one shared formatter
+		HintFormatter uniquenessPack = new UniquenessPackFormatter();
+		registerFormatter(SolutionType.UNIQUE_LOOP, uniquenessPack);
+		registerFormatter(SolutionType.EXTENDED_UR, uniquenessPack);
+		registerFormatter(SolutionType.BUG_LITE, uniquenessPack);
+		registerFormatter(SolutionType.REVERSE_BUG, uniquenessPack);
+		registerFormatter(SolutionType.MUG, uniquenessPack);
 	}
 
 	/**

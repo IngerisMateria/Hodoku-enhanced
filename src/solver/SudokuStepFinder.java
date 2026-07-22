@@ -66,6 +66,8 @@ public class SudokuStepFinder {
 	private OddagonSolver oddagonSolver;
 	/** The specialized solver for Tridagons (modern fork, milestone 1.7). */
 	private TridagonSolver tridagonSolver;
+	/** The specialized solver for the Uniqueness Pack (modern fork, milestone 1.8). */
+	private solver.modern.UniquenessPackSolver uniquenessPackSolver;
 	/** The specialized solver for Coloring. */
 	private ColoringSolver coloringSolver;
 	/** The specialized solver for simple chains. */
@@ -244,6 +246,7 @@ public class SudokuStepFinder {
 			wxyzWingSolver = new WxyzWingSolver(this);
 			oddagonSolver = new OddagonSolver(this);
 			tridagonSolver = new TridagonSolver(this);
+			uniquenessPackSolver = new solver.modern.UniquenessPackSolver(this);
 			coloringSolver = new ColoringSolver(this);
 			chainSolver = new ChainSolver(this);
 			alsSolver = new AlsSolver(this);
@@ -254,7 +257,8 @@ public class SudokuStepFinder {
 			incompleteSolver = new IncompleteSolver(this);
 			giveUpSolver = new GiveUpSolver(this);
 			solvers = new AbstractSolver[] { simpleSolver, fishSolver, singleDigitPatternSolver, uniquenessSolver,
-					wingSolver, wxyzWingSolver, bentSubsetSolver, oddagonSolver, tridagonSolver, coloringSolver,
+					wingSolver, wxyzWingSolver, bentSubsetSolver, oddagonSolver, tridagonSolver, uniquenessPackSolver,
+					coloringSolver,
 					chainSolver, alsSolver,
 					miscellaneousSolver, tablingSolver, templateSolver, bruteForceSolver, incompleteSolver,
 					giveUpSolver };
@@ -662,6 +666,22 @@ public class SudokuStepFinder {
 		Sudoku2 oldSudoku = getSudoku();
 		setSudoku(newSudoku);
 		List<SolutionStep> steps = tridagonSolver.getAllTridagons();
+		setSudoku(oldSudoku);
+		return steps;
+	}
+
+	/**
+	 * Find all Uniqueness Pack steps (modern fork, milestone 1.8). Callers
+	 * (FindAllSteps) filter by enabled step types themselves.
+	 *
+	 * @param newSudoku
+	 * @return
+	 */
+	public List<SolutionStep> getAllUniquenessPack(Sudoku2 newSudoku) {
+		initialize();
+		Sudoku2 oldSudoku = getSudoku();
+		setSudoku(newSudoku);
+		List<SolutionStep> steps = uniquenessPackSolver.getAllUniquenessPack();
 		setSudoku(oldSudoku);
 		return steps;
 	}

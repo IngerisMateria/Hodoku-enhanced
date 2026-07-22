@@ -64,3 +64,13 @@
 # Fuente y licencia: docs/corpora.md.
 1..4.6...4..18.......37.41..4.....9759.7..3.17..9..54.37..9..54.14...9.39.5......
 1.34...894...89......13..........3.8....21.65....48.72.3429.8..8.2.1....91.8..2..
+# CUSTODIA UNIQUENESS PACK (milestone 1.8, regla de custodia): Extended UR y
+# BUG-Lite quedan custodiados por snapshots. BUG-Lite: puzzle preexistente del
+# corpus (indice 20, 0-based) cuyo path default paso a contener un paso BUG-Lite
+# al habilitar el pack (ver diff de snapshots en docs/log.md). Extended UR: dos
+# puzzles del subset te2-eleven-100 (indices 16 y 31 del harvest) cuyos paths
+# default contienen un paso ExtUR. Unique Loop, Reverse BUG y MUG NO son
+# custodiables por snapshots (dominados por la familia UR / condiciones duras);
+# su custodia son las fixtures de libreria (docs/log.md). Fuente: docs/corpora.md.
+..3....894.....2...89.....1.7..1..9....2..........56..5....4.......9......1.3..78
+.23...7.....78......9.32...2....38......4..6....5....13....79...6......4....1..5.

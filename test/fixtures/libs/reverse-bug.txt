@@ -1,0 +1,19 @@
+# Reverse BUG (milestone 1.8, Uniqueness Pack) - library code 0623.
+# NO cosechable de los corpora: la tecnica exige un par de digitos SIN ningun
+# given (condicion dura, espeja el tracking de givens del AvoidableRectangle),
+# y todo puzzle real tiene givens de casi todos los digitos -> 0 instancias en
+# corpus/te2/te3 (15.658 estados, ver docs/log.md). Fixtures ARTESANALES
+# construidos desde una solucion real (rectangulo 2x2 en 2 cajas: tres esquinas
+# a/b/b resueltas no-given + celda objetivo con candidato a) y verificados
+# mecanicamente (getStep(REVERSE_BUG)). Negativo rey: un given adentro del
+# conjunto -> no hay eliminacion.
+#
+# Positivos:
+:0623:12:..5784693743+269+185968..5+247.39.4657848.95736.57683.9.489.67345.35749.8.66.45.8739::134::
+:0623:16:.25784.937432.9.859.83.5247239.4.57848.9573.257.8329.4892+67345+1357.9.82+6..4528739::184::
+:0623:17:+125+784693+743.69.859683.524.239.465.848.95.3625.68329.48926.345.35.49.8266.4528.39::124::
+#
+# Negativos (rey: given adentro):
+:0623-x:x:..5784693743+269185968..5+247.39.4657848.95736.57683.9.489.67345.35749.8.66.45.8739:::
+:0623-x:x:.25784.937432.9.859.83.5247239.4.57848.9573.257.8329.4892+673451357.9.82+6..4528739:::
+:0623-x:x:125+784693+743.69.859683.524.239.465.848.95.3625.68329.48926.345.35.49.8266.4528.39:::

@@ -238,7 +238,16 @@ public enum SolutionType {
 			"bvo"),
 	// Tridagon (milestone 1.7): the trivalue oddagon over four boxes. Library code 1402,
 	// reserved for it since 1.6 within the 14xx oddagon block.
-	TRIDAGON(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Tridagon"), "1402", "trid");
+	TRIDAGON(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Tridagon"), "1402", "trid"),
+	// Uniqueness Pack (milestone 1.8): library codes 0620-0624, the free tail of
+	// the uniqueness family block 06xx (0600-0608 and 0610 are taken upstream;
+	// verified free against every code in this enum).
+	UNIQUE_LOOP(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Unique_Loop"), "0620", "ul"),
+	EXTENDED_UR(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Extended_Unique_Rectangle"), "0621",
+			"xur"),
+	BUG_LITE(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("BUG_Lite"), "0622", "bgl"),
+	REVERSE_BUG(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("Reverse_BUG"), "0623", "rbug"),
+	MUG(java.util.ResourceBundle.getBundle("intl/SolutionType").getString("MUG"), "0624", "mug");
 	private String stepName;
 	private String libraryType;
 	private String argName;

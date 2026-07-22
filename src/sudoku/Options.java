@@ -327,7 +327,31 @@ public final class Options {
 			// modernization, so it fires long before the chain/forcing engines.
 			// MISCELLANEOUS: BO's canonical STEPS drawer (no classic category fits).
 			new StepConfig(5695, SolutionType.TRIDAGON, DifficultyType.EXTREME.ordinal(),
-					SolutionCategory.MISCELLANEOUS, 500, 0, true, true, 5695, true, false) };
+					SolutionCategory.MISCELLANEOUS, 500, 0, true, true, 5695, true, false),
+			// Uniqueness Pack (milestone 1.8, Parte B): the five entries go right
+			// after the legacy UR family (UR 3500-4000, Hidden Rect 4010,
+			// Avoidable Rect 4020/4030), specific before general per the spec:
+			// UL and ExtUR before BUG-Lite before MUG; Reverse BUG next to its
+			// Avoidable Rectangle sibling. Scores read the legacy UR scale
+			// (UR1-6 = 100, BUG+1 = 100): UL 100 (the direct UR generalization),
+			// ExtUR 110, Reverse BUG 110 (an AR-style non-given argument),
+			// BUG-Lite 130 (harder to spot), MUG 150 (catalog forms). All HARD /
+			// UNIQUENESS like the whole family; enabledProgress=true (regla A2).
+			new StepConfig(4040, SolutionType.UNIQUE_LOOP, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 100, 0, true, true, 4040, true, false),
+			new StepConfig(4050, SolutionType.EXTENDED_UR, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 110, 0, true, true, 4050, true, false),
+			new StepConfig(4060, SolutionType.REVERSE_BUG, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 110, 0, true, true, 4060, true, false),
+			new StepConfig(4070, SolutionType.BUG_LITE, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 130, 0, true, true, 4070, true, false),
+			// MUG enabled=false (spec §5): the catalog forms are not harvestable
+			// from the corpora — in real puzzles they collapse into ExtUR/BUG-Lite —
+			// so MUG ships off by default with fixture custody (docs/log.md). It
+			// keeps allSteps=true so find-all-steps can still surface it, and
+			// enabledProgress=true like the rest of the pack.
+			new StepConfig(4080, SolutionType.MUG, DifficultyType.HARD.ordinal(),
+					SolutionCategory.UNIQUENESS, 150, 0, false, true, 4080, true, false) };
 	// modern fork (milestone 1.8, A2): the modern techniques of this fork — the
 	// entries whose finders live in solver.modern. Used by the progress-flag
 	// migration below and guarded against the registry by test
@@ -336,7 +360,9 @@ public final class Options {
 	public static final java.util.EnumSet<SolutionType> MODERN_TECHNIQUES = java.util.EnumSet.of(
 			SolutionType.WXYZ_WING, SolutionType.BENT_QUAD, SolutionType.VWXYZ_WING, SolutionType.UVWXYZ_WING,
 			SolutionType.TUVWXYZ_WING, SolutionType.STUVWXYZ_WING, SolutionType.RSTUVWXYZ_WING,
-			SolutionType.BROKEN_WING, SolutionType.BIVALUE_ODDAGON, SolutionType.TRIDAGON);
+			SolutionType.BROKEN_WING, SolutionType.BIVALUE_ODDAGON, SolutionType.TRIDAGON,
+			SolutionType.UNIQUE_LOOP, SolutionType.EXTENDED_UR, SolutionType.BUG_LITE, SolutionType.REVERSE_BUG,
+			SolutionType.MUG);
 
 	// nicht sortierte steps mit allen Änderungen -> wird so in *.cfg-File
 	// geschrieben

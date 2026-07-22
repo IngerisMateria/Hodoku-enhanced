@@ -154,25 +154,25 @@ final class TechniqueCatalog {
 		// --- uniqueness (UniquenessSolver) ---
 		rows.add(t(UNIQUENESS_1, Family.UNIQUENESS, "UniquenessSolver",
 				"Unique Rectangle with one corner holding extra candidates: the UR digits are eliminated from that corner.")
-				.aliases("Unique Rectangle Type 1", "UR Type 1").build());
+				.aliases("Unique Rectangle Type 1", "UR Type 1").subsumedBy(BUG_LITE).build());
 		rows.add(t(UNIQUENESS_2, Family.UNIQUENESS, "UniquenessSolver",
 				"Unique Rectangle with one identical extra candidate in two corners: that digit is eliminated from cells seeing both.")
-				.aliases("Unique Rectangle Type 2", "UR Type 2").build());
+				.aliases("Unique Rectangle Type 2", "UR Type 2").subsumedBy(BUG_LITE).build());
 		rows.add(t(UNIQUENESS_3, Family.UNIQUENESS, "UniquenessSolver",
 				"Unique Rectangle whose two extra-candidate corners form a virtual naked subset with other cells of a common house.")
-				.aliases("Unique Rectangle Type 3", "UR Type 3").build());
+				.aliases("Unique Rectangle Type 3", "UR Type 3").subsumedBy(BUG_LITE).build());
 		rows.add(t(UNIQUENESS_4, Family.UNIQUENESS, "UniquenessSolver",
 				"Unique Rectangle where one UR digit is strongly linked between the extra-candidate corners: the other UR digit is eliminated from them.")
-				.aliases("Unique Rectangle Type 4", "UR Type 4").build());
+				.aliases("Unique Rectangle Type 4", "UR Type 4").subsumedBy(BUG_LITE).build());
 		rows.add(t(UNIQUENESS_5, Family.UNIQUENESS, "UniquenessSolver",
 				"Unique Rectangle with the same extra candidate in two diagonal (or three) corners: that digit is eliminated from "
 						+ "cells seeing all of them. Numbering caveat: HoDoKu and SudokuWiki disagree on Type 5/6 labels.")
-				.aliases("Unique Rectangle Type 5", "UR Type 5")
+				.aliases("Unique Rectangle Type 5", "UR Type 5").subsumedBy(BUG_LITE)
 				.refs("docs/sudoku_mapa_relacional.md §3.a (conflicto Type 5/6)").build());
 		rows.add(t(UNIQUENESS_6, Family.UNIQUENESS, "UniquenessSolver",
 				"Unique Rectangle with one UR digit restricted to a diagonal of the rectangle: it is eliminated from the other "
 						+ "diagonal. HoDoKu's Type 6 = SudokuWiki's Type 5 (documented numbering conflict).")
-				.aliases("Unique Rectangle Type 6", "UR Type 6")
+				.aliases("Unique Rectangle Type 6", "UR Type 6").subsumedBy(BUG_LITE)
 				.refs("docs/sudoku_mapa_relacional.md §3.a (conflicto Type 5/6)").build());
 		rows.add(t(HIDDEN_RECTANGLE, Family.UNIQUENESS, "UniquenessSolver",
 				"Unique Rectangle variant using strong links to rule out the deadly pattern when extra candidates hide it.")
@@ -183,6 +183,50 @@ final class TechniqueCatalog {
 		rows.add(t(AVOIDABLE_RECTANGLE_2, Family.UNIQUENESS, "UniquenessSolver",
 				"Avoidable Rectangle with two unsolved corners sharing an extra candidate: it is eliminated from cells seeing both.")
 				.aliases("AR Type 2").build());
+		// --- Uniqueness Pack (UniquenessPackSolver, milestone 1.8) ---
+		// Subsumption arrows per docs/specs/uniqueness-pack.md §6:
+		// UR -> BUG_LITE, UNIQUE_LOOP -> BUG_LITE, EXTENDED_UR -> MUG. The UR
+		// rows carry the arrow at pattern level (the v1 guardian ladder covers
+		// the Type 1/2 deductions; the UR Type 3-6 deductions remain UR-only,
+		// documented out of scope of the pack v1).
+		rows.add(t(UNIQUE_LOOP, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A closed loop of 6-12 cells all holding one pair {a,b}, consecutive cells sharing a house and every "
+						+ "house holding 0 or 2 loop cells: stripped bare, the pair could swap around the loop, so the "
+						+ "extra candidates (guardians) cannot all be false. One guardian cell strips the pair there "
+						+ "(Type 1); uniform-digit guardians eliminate that digit from cells seeing them all (Type 2). "
+						+ "The UR is the 4-cell case (own legacy entries); every emitted loop is mechanically verified "
+						+ "deadly. Lengths 14+ out of scope v1.")
+				.aliases("UL").subsumedBy(BUG_LITE)
+				.refs("docs/specs/uniqueness-pack.md §1").build());
+		rows.add(t(EXTENDED_UR, Family.UNIQUENESS, "UniquenessPackSolver",
+				"Six cells of a triple {a,b,c} on two parallel lines of one chute, crossing exactly three boxes (the "
+						+ "searchable 2x3 form of the 3x3 deadly pattern): stripped bare the triple could permute, so "
+						+ "the extra candidates cannot all be false. Type 1 strips the triple from the single guardian "
+						+ "cell; Type 2 eliminates the uniform guardian digit from cells seeing all guardians.")
+				.aliases("Extended UR", "XUR").subsumedBy(MUG)
+				.refs("docs/specs/uniqueness-pack.md §2", "sudokuwiki.org/Extended_Unique_Rectangles").build());
+		rows.add(t(BUG_LITE, Family.UNIQUENESS, "UniquenessPackSolver",
+				"A connected set of 6, 8 or 9 cells with a nominal pair each where every digit appears exactly 0 or 2 "
+						+ "times in every house of the pattern — the general bivalue deadly pattern (UR and BUG are "
+						+ "special cases). Every candidate set is mechanically verified deadly (exchange check) before "
+						+ "a step is emitted; guardians follow the standard ladder. Sizes 10+ and the 2-digit shapes "
+						+ "(those are URs/Unique Loops) are excluded.")
+				.aliases("BUG Lite")
+				.refs("docs/specs/uniqueness-pack.md §3").build());
+		rows.add(t(REVERSE_BUG, Family.UNIQUENESS, "UniquenessPackSolver",
+				"If placing a candidate of a digit pair would leave the solved cells of that pair (none of them givens) "
+						+ "as 2n cells in exactly n rows, n columns and n boxes, they would form an unavoidable set and "
+						+ "the puzzle could not be unique: the candidate is eliminated. Mirrors the Avoidable Rectangle "
+						+ "given-tracking; Reverse BUG-Lite is a documented future extension.")
+				.aliases("RBUG")
+				.refs("docs/specs/uniqueness-pack.md §4").build());
+		rows.add(t(MUG, Family.UNIQUENESS, "UniquenessPackSolver",
+				"Minimal Unavoidable Grouping, v1 by catalog: the t3210 ab/abc block forms (two parallel lines with "
+						+ "column contents ab|abc|bc and their isomorphs), each instance mechanically verified deadly "
+						+ "before use. Guardians are the extras over the catalog content of each cell; the general "
+						+ "(non-catalog) MUG search is documented out of scope.")
+				.aliases("Minimal Unavoidable Grouping")
+				.refs("docs/specs/uniqueness-pack.md §5", "forum.enjoysudoku.com t3210").build());
 		rows.add(t(BUG_PLUS_1, Family.UNIQUENESS, "UniquenessSolver",
 				"Bivalue Universal Grave + 1: if placing anything but the triple candidate left every unsolved cell bivalue, "
 						+ "the puzzle would have multiple solutions; the extra candidate is placed.")
