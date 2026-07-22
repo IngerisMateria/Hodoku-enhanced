@@ -38,8 +38,12 @@ solve path — verificado: el único diff de snapshots viene de la Parte B).
 escondía TODO lo EXTREME — kraken, forcing chains/nets, templates, brute force,
 Tridagon — no solo las modernas. Además `okPressed` comparaba
 `orgSteps[i].getLevel()` (índice equivocado) en vez de `[j]`. Se quitó el filtro
-en los tres lugares. Test de custodia nuevo `ProgressConfigTest` (mecánico):
-la lista Y el árbol de la pestaña cubren EXACTAMENTE las técnicas con StepConfig
+en los tres lugares. La enumeración de la superficie se centralizó en
+`ConfigProgressPanel.progressSurfaceSteps` (estático, sin Swing), que usan la
+lista, el árbol Y el test de custodia — así corre en CI sin display (el setup
+de drag-and-drop del panel tira `HeadlessException` en el runner Linux; ninguna
+prueba previa instanciaba Swing). Test de custodia nuevo `ProgressConfigTest`
+(mecánico): la superficie progress cubre EXACTAMENTE las técnicas con StepConfig
 (pseudo-steps aparte); `MODERN_TECHNIQUES` sincronizado con el registro;
 defaults A2 correctos; migración idempotente que preserva elecciones. Extiende
 la completitud del registro a la superficie progress: ninguna técnica futura
