@@ -198,8 +198,14 @@ public class ConfigSolverPanel extends javax.swing.JPanel implements ListDragAnd
 		jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel1Layout.createSequentialGroup()
 						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								// UiMetrics (1.10, nota E1): a fixed 105px gap left the Reset button
+								// short of the right margin every other tab uses. Resizable, so the
+								// button ends flush with the aside column above it - which is the
+								// right edge of the tab, like the reference tabs.
 								.addGroup(jPanel1Layout.createSequentialGroup().addComponent(downButton)
-										.addGap(105, 105, 105).addComponent(resetButton))
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+												javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(resetButton))
 								.addComponent(upButton).addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE,
 										javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 						.addContainerGap()));

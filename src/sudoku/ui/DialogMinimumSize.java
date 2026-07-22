@@ -79,4 +79,24 @@ public final class DialogMinimumSize {
 		}
 		window.setMinimumSize(floor);
 	}
+
+	/**
+	 * Recomputes the floor of a window whose content changed shape (milestone
+	 * 1.10, note F).
+	 * <p>
+	 * Needed by the main window: its narrowest part is the toolbar, and since
+	 * P-009 the user decides which buttons that toolbar carries - so the floor is
+	 * not a constant of the build. Clearing the stored minimum first is what makes
+	 * {@code getMinimumSize()} go back to asking the layout instead of returning
+	 * the value set last time.
+	 *
+	 * @param window the window
+	 */
+	public static void refresh(Window window) {
+		if (window == null) {
+			return;
+		}
+		window.setMinimumSize(null);
+		apply(window);
+	}
 }

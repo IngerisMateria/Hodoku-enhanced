@@ -231,8 +231,24 @@ public final class ConfigToolBarPanel extends JPanel {
 		c.weightx = 0.0;
 		c.fill = GridBagConstraints.NONE;
 		c.anchor = GridBagConstraints.LINE_END;
-		c.insets = new Insets(0, UiMetrics.BULLET_GAP, UiMetrics.BULLET_INSET, UiMetrics.BULLET_INSET);
+		// nota E3 (1.10): the classic tabs put the Reset button at the bottom right
+		// with GroupLayout's addContainerGap(), whose size comes from the look and
+		// feel - not from a number. Asking LayoutStyle for the same value lands the
+		// button on exactly the same pixel as the reference tabs, in any L&F.
+		c.insets = new Insets(0, UiMetrics.BULLET_GAP, containerGap(SwingConstants.SOUTH),
+				containerGap(SwingConstants.EAST));
 		add(resetButton, c);
+	}
+
+	/**
+	 * The look and feel's margin between a component and the edge of its window,
+	 * i.e. what {@code GroupLayout.addContainerGap()} uses.
+	 *
+	 * @param side one of {@link SwingConstants#SOUTH} / {@link SwingConstants#EAST}
+	 * @return the gap in pixels
+	 */
+	private int containerGap(int side) {
+		return javax.swing.LayoutStyle.getInstance().getContainerGap(resetButton, side, this);
 	}
 
 	private JList<String> createList(DefaultListModel<String> model) {

@@ -3032,6 +3032,8 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 	private void showHintButtonsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 		Options.getInstance().setShowHintButtonsInToolbar(showHintButtonsCheckBoxMenuItem.isSelected());
 		setShowHintButtonsInToolbar();
+		// the hint buttons change how wide the toolbar has to be (nota F)
+		refreshMinimumSize();
 	}
 
 	private void extendedPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -4580,6 +4582,24 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 		}
 		jToolBar1.revalidate();
 		jToolBar1.repaint();
+		// the toolbar is the narrowest part of the window, so its contents decide
+		// how small the window may get (milestone 1.10, note F)
+		refreshMinimumSize();
+	}
+
+	/**
+	 * Stops the window from being shrunk past its own contents (milestone 1.10,
+	 * note F).
+	 * <p>
+	 * Same rule the popups got, but recomputed instead of set once: the floor
+	 * depends on the toolbar, and since P-009 the toolbar is the user's to
+	 * arrange. Only while the window is showing - before that the layout has not
+	 * settled and the answer would be meaningless.
+	 */
+	void refreshMinimumSize() {
+		if (isShowing()) {
+			sudoku.ui.DialogMinimumSize.refresh(this);
+		}
 	}
 
 	/**

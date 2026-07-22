@@ -1071,6 +1071,11 @@ public class Main {
 				DialogPositionMemory.install();
 				MainFrame mainFrame = new MainFrame(lf);
 				mainFrame.setVisible(true);
+				// modern fork (milestone 1.10, note F): the window cannot be
+				// shrunk past its own contents. Set once it is on screen, where
+				// the layout has settled; MainFrame refreshes it afterwards
+				// whenever the toolbar changes shape.
+				mainFrame.refreshMinimumSize();
 			}
 		});
 	}
