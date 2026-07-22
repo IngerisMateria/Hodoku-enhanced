@@ -153,6 +153,34 @@ ejecutadas. Las que dejaron aprendizaje:
 Efecto colateral esperado y correcto: el mínimo del ConfigDialog pasó de 556x643 a
 599x627, recalculado solo por el piso de popups.
 
+**Segunda pasada del dueño (notas E y F).**
+
+- **E1/E2/E3 — el botón Reset**. Las diez pestañas quedan en el mismo píxel,
+  verificado con una probe sobre el `ConfigDialog` real a dos tamaños (720x640 y
+  1200x800): las diez dan `x=1032 y=648 117x23`, margen 10 a la derecha y 11 abajo.
+  En Solver el culpable era un `addGap(105,105,105)` fijo entre Down y Reset, que lo
+  dejaba 31px corto; con el hueco resizable el botón termina alineado con la columna
+  del aside, que es el borde derecho de la pestaña. En ColorKu **no había ningún
+  elemento duplicado** — cada pestaña tiene su propio botón, es el patrón normal; lo
+  único distinto era la cadena, `Reset to defaults` con d minúscula. En la pestaña
+  nueva (Toolbars) los insets eran números fijos: ahora pide el margen a
+  `LayoutStyle.getContainerGap()`, que es de donde sale el `addContainerGap()` de las
+  pestañas generadas, así que coincide en cualquier look and feel en vez de copiar un
+  número.
+- **F — mínimo de la ventana principal**. Misma regla que los popups, pero
+  **recalculada en vez de fijada una vez**: desde P-009 la toolbar es del usuario, y
+  la toolbar es la parte más angosta de la ventana. Se recalcula al arrancar, al
+  reordenar/ocultar botones y al prender o apagar los botones de hint. Con la toolbar
+  completa el piso es 652x515 y ahí entran toolbar, tablero, panel de hints con sus
+  cuatro botones y la línea de estado; a 300x260 sin piso se cortan todos. Si el
+  usuario saca los nueve dígitos, el piso baja solo a 325x515.
+  **Descartado a propósito**: sumarle al piso el ancho preferido de la línea de
+  estado. Probado — daba 754x515, o sea que la ventana se abriría más ancha de lo que
+  se abre hoy (empaquetada 693), porque el preferido de un `FlowLayout` cuenta labels
+  vacíos. La cola de la línea de estado puede recortarse en el caso extremo de
+  toolbar mínima; es una tira de estado con texto variable y no vale la pena atar el
+  piso de la ventana a texto transitorio.
+
 **Incidente de entorno (para no repetirlo).** Las probes de GUI de esta sesión
 corrieron contra el `hodoku.hcfg` real del usuario, y los clicks con `Robot` de la
 verificación del aside dieron vuelta seis flags de técnicas (enabled de Squirmbag /
