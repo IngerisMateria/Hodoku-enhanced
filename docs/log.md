@@ -121,6 +121,48 @@ Desvíos / hallazgos:
 - Al verificar toolbars con la GUI real se escribió el hcfg del entorno con una toolbar
   personalizada; se restauró a defaults al terminar.
 
+**Repaso del dueño (mismo día).** Ocho observaciones sobre las capturas, todas
+ejecutadas. Las que dejaron aprendizaje:
+
+- **Colors** — al sacar el `linkSize` la viñeta "Backgrounds/ALS" empezó a crecer, y
+  con eso se activó un hueco resizable que ya venía de fábrica entre la columna de
+  etiquetas y la de swatches: los colores se despegaron del nombre. Hueco fijo, y el
+  sobrante al de la derecha. **Lección**: al desfijar una viñeta hay que revisar qué
+  huecos internos pasan a tener sobrante que comerse.
+- **Steps** — sus toggles eran la referencia con la ventana chica, pero se estiraban
+  con la ventana grande. La referencia pasa a ser All possible Steps y los combos de
+  Steps se acotan con el mismo criterio.
+- **Solver C3/C4** — causa única, y la más instructiva del milestone: los renglones
+  "also affects:" son `JLabel` sin wrap, o sea que su ancho preferido es la oración
+  entera. Ese preferido subía hasta `jPanel3` y de ahí a la columna derecha, que se
+  dimensiona por su preferido → el aside se ensanchaba de golpe y arrastraba el botón
+  Reset hacia el medio, sin vuelta atrás salvo reconstruyendo la pestaña.
+  `ScrollablePanel.getPreferredSize` ahora devuelve `UiMetrics.ASIDE_WIDTH` como
+  **constante y no como tope**: si siguiera dependiendo del contenido, la columna
+  saltaría cada vez que cambia la técnica seleccionada. Verificado en las cuatro
+  combinaciones (ventana grande/chica × técnica con y sin opciones): 312 px siempre,
+  antes y después del click.
+- **Solver C2** — el input de score se aplastaba a un carácter con la ventana chica.
+  El helper `fixWidth` fija preferido, máximo **y mínimo**: el máximo evita que se
+  estire, el mínimo evita que el GridBag lo aplaste.
+- **D1/D2** — la toolbar de all-steps era la única con `setFloatable(false)`;
+  ahora se comporta como las demás. Y un `JTextField` vacío mide unos pocos píxeles,
+  así que al flotar la toolbar el buscador se creaba diminuto: `SEARCH_FIELD_WIDTH`
+  como mínimo y preferido en los cuatro buscadores.
+
+Efecto colateral esperado y correcto: el mínimo del ConfigDialog pasó de 556x643 a
+599x627, recalculado solo por el piso de popups.
+
+**Incidente de entorno (para no repetirlo).** Las probes de GUI de esta sesión
+corrieron contra el `hodoku.hcfg` real del usuario, y los clicks con `Robot` de la
+verificación del aside dieron vuelta seis flags de técnicas (enabled de Squirmbag /
+Whale / Leviathan y de Kraken Fish Type 1, enabledProgress de Hidden Single /
+Hidden Triple). Se detectó comparando contra las capturas previas a cualquier click
+y se restauró exactamente esos seis, sin tocar el resto de la configuración del
+dueño. **Regla nueva**: toda probe de GUI corre con `-Djava.io.tmpdir=<dir limpio>`,
+así `Options` nunca ve el hcfg real. Ya estaba anotado como técnica posible en la
+memoria del entorno; ahora es obligatorio.
+
 **Resumen llano.** Ahora podés armarte las dos barras de botones a gusto: entrás a
 *Edit → Preferences → Toolbars*, elegís qué botones querés ver y en qué orden, y queda así
 aunque cierres el programa. Las pestañas de configuración quedaron parejas: los desplegables y
