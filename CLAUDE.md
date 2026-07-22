@@ -69,13 +69,21 @@ del upstream 2.2.0 de hobiwan).
 - [x] 1.8 Uniqueness Pack: Unique Loop + Extended UR + BUG-Lite + Reverse BUG + MUG
       (+ Parte A: confiabilidad de find-all-steps y config). MUG enabled=false
       (no cosechable, spec §5); UL/Reverse BUG custodiados por fixtures.
-- [ ] 1.9 SDC extendido básico = régimen R0 del motor bent (locked n=4..9) ← PRÓXIMO
-- [ ] 1.10 3D Medusa + GEM (+ hallazgo B: coloring→generador)
+- [x] 1.9 Consolidación UI y taxonomía: desglose ExtUR T1/T2, modelo de carpetas por
+      familia (Oddagons, Uniqueness…) en las 4 superficies, buscador en Progress/Training,
+      toggle lista/carpeta en all-steps, memoria de posición de popups (P-003). Cero
+      teoría/álgebra nueva; cero cambios de solve path.
+- [ ] 1.10 3D Medusa + GEM (+ hallazgo B: coloring→generador) ← PRÓXIMO
 - [ ] 1.11 Fireworks*
 - [ ] 2.x Arco multi-sector*: SK-Loop, MSLS, SET
 - [ ] 3.x Arco Exocet*: JE → Double → JE+ → SE
 - [ ] 4.x Cadenas: motor AIC v2 (acá vuelven M/S/L/H, Nishio, dynamic/nested)
 - [ ] 5.0 Pulido (backlog) · 5.x recalibración, docs
+
+Cola de teoría diferida (para Fable — se difirió el SDC/R0 que estaba en 1.9):
+- [Fable] SDC extendido/R0 = régimen R0 del motor bent (locked n=4..9) + extensiones hobiwan
+- [Fable] M/L/H/S/T-Wings (AICs de forma fija, requieren motor de cadenas v2)
+- [Fable] ALS-W-Wing / Ext-SDC / AHS
 
 Contexto (2026-07-21): modo presupuesto-consciente — maximizar novedad teórica por
 iteración hasta una release pública financiable. M/S/L/H y el desglose fino de fish
